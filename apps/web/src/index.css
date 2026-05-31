@@ -1,0 +1,198 @@
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light Theme - Modern Minimalism */
+    --background: 0 0% 98%;
+    --foreground: 240 5% 10%;
+    
+    --card: 0 0% 100%;
+    --card-foreground: 240 5% 10%;
+    
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 5% 10%;
+    
+    /* Primary Orange (#ff6b35) -> HSL: 16 100% 60% */
+    --primary: 16 100% 60%;
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 240 5% 90%;
+    --secondary-foreground: 240 5% 10%;
+    
+    --muted: 240 5% 92%;
+    --muted-foreground: 240 4% 46%;
+    
+    --accent: 16 100% 60%;
+    --accent-foreground: 0 0% 100%;
+    
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    
+    --border: 240 6% 85%;
+    --input: 240 6% 85%;
+    --ring: 16 100% 60%;
+    --radius: 0.75rem;
+    
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5% 10%;
+    --sidebar-primary: 16 100% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 5% 90%;
+    --sidebar-accent-foreground: 240 5% 10%;
+    --sidebar-border: 240 6% 85%;
+    --sidebar-ring: 16 100% 60%;
+
+    /* Font Families */
+    --font-playful: 'Fredoka', sans-serif;
+
+    /* Layout Variables */
+    --header-height: 140px;
+  }
+
+  .dark {
+    /* Dark Theme - Sleek Grayscale with Orange Pop */
+    --background: 240 4% 5%;
+    --foreground: 0 0% 98%;
+    
+    --card: 240 4% 8%;
+    --card-foreground: 0 0% 98%;
+    
+    --popover: 240 4% 8%;
+    --popover-foreground: 0 0% 98%;
+    
+    --primary: 16 100% 60%;
+    --primary-foreground: 0 0% 100%;
+    
+    --secondary: 240 4% 15%;
+    --secondary-foreground: 0 0% 98%;
+    
+    --muted: 240 4% 15%;
+    --muted-foreground: 240 5% 65%;
+    
+    --accent: 16 100% 60%;
+    --accent-foreground: 0 0% 100%;
+    
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    
+    --border: 240 4% 18%;
+    --input: 240 4% 18%;
+    --ring: 16 100% 60%;
+
+    --sidebar-background: 240 4% 5%;
+    --sidebar-foreground: 0 0% 98%;
+    --sidebar-primary: 16 100% 60%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 4% 15%;
+    --sidebar-accent-foreground: 0 0% 98%;
+    --sidebar-border: 240 4% 18%;
+    --sidebar-ring: 16 100% 60%;
+
+    /* Font Families */
+    --font-playful: 'Fredoka', sans-serif;
+  }
+}
+
+@layer base {
+  * {
+    border-color: hsl(var(--border));
+  }
+  
+  body {
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    overflow-x: clip;
+    line-height: 1.625;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  /* Modern Typography Tokens via base styles */
+  h1, h2, h3, h4, h5, h6 {
+    text-wrap: balance;
+    letter-spacing: -0.02em;
+    font-weight: 700;
+  }
+
+  h1 { font-weight: 800; }
+  h2 { font-weight: 700; }
+
+  p {
+    max-width: 65ch;
+  }
+}
+
+@layer components {
+  .qty-btn {
+    @apply flex items-center justify-center w-7 h-7 rounded-md bg-muted text-foreground transition-all duration-200 cursor-pointer border border-transparent;
+  }
+  
+  .qty-btn:hover {
+    @apply bg-primary text-primary-foreground border-primary shadow-sm scale-105;
+  }
+  
+  .qty-btn:active {
+    @apply scale-95;
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  /* Font Family Utilities */
+  .font-playful {
+    font-family: var(--font-playful);
+  }
+  
+  /* Modern Typography Utilities */
+  .tracking-modern-tight {
+    letter-spacing: -0.03em;
+  }
+  
+  .tracking-modern-wide {
+    letter-spacing: 0.15em;
+  }
+
+  .tracking-playful {
+    letter-spacing: 0.05em;
+  }
+
+  /* Soft Shadows & Depth Effects */
+  .shadow-soft {
+    box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.08);
+  }
+  
+  .dark .shadow-soft {
+    box-shadow: 0 8px 30px -4px rgba(0, 0, 0, 0.4);
+  }
+
+  .shadow-glow-primary {
+    box-shadow: 0 0 20px -5px hsl(var(--primary) / 0.4);
+  }
+
+  /* Gradient Overlays */
+  .gradient-overlay-b {
+    background: linear-gradient(180deg, transparent 0%, rgba(0,0,0,0.8) 100%);
+  }
+  
+  .gradient-overlay-t {
+    background: linear-gradient(0deg, transparent 0%, rgba(0,0,0,0.8) 100%);
+  }
+
+  /* Layout Utilities */
+  .scroll-mt-header {
+    scroll-margin-top: var(--header-height);
+  }
+}
