@@ -309,7 +309,7 @@ function CheckoutPage() {
                           collisionPadding={12}
                         >
                           <div
-                            className="rounded-xl overflow-hidden"
+                            className="rounded-xl"
                             style={theme === 'dark'
                               ? { backgroundColor: '#141416', color: '#fafafa' }
                               : { backgroundColor: '#ffffff', color: '#18181b' }}
