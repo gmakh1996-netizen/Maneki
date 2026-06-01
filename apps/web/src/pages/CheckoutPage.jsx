@@ -311,16 +311,16 @@ function CheckoutPage() {
                           <div
                             className="rounded-xl"
                             style={theme === 'dark'
-                              ? { backgroundColor: '#141416', color: '#fafafa', maxHeight: '70vh', overflowY: 'auto' }
-                              : { backgroundColor: '#ffffff', color: '#18181b', maxHeight: '70vh', overflowY: 'auto' }}
+                              ? { backgroundColor: '#141416', color: '#fafafa' }
+                              : { backgroundColor: '#ffffff', color: '#18181b' }}
                           >
                           <Calendar
                             mode="single"
-                            fixedWeeks
-                            showOutsideDays={false}
-                            className="w-full [--cell-size:1.75rem] p-2 pb-2"
+                            showOutsideDays={true}
+                            className="w-full [--cell-size:1.75rem] p-2 pb-2 bg-transparent"
                             classNames={{
                               hidden: 'opacity-0 pointer-events-none select-none',
+                              outside: 'opacity-0 pointer-events-none select-none',
                             }}
                             selected={formData.deliveryDate ? parseISO(formData.deliveryDate) : undefined}
                             onSelect={(date) => {
