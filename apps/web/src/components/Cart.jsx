@@ -2,14 +2,16 @@
 import React, { useState } from 'react';
 import { X, ShoppingCart, Minus, Plus, ChevronDown, ChevronUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../hooks/useLanguage';
 
 function Cart({ items, onRemoveItem, onUpdateQuantity }) {
   const navigate = useNavigate();
-  const [isExpanded, setIsExpanded] = useState(true);
+  const [isExpanded, setIsExpanded] = useState(() => {
+    const saved = localStorage.getItem('cartExpanded');
+    return saved === null ? false : saved === 'true';
+  });
   const { language, t } = useLanguage();
   
   if (items.length === 0) return null;
@@ -32,11 +34,15 @@ function Cart({ items, onRemoveItem, onUpdateQuantity }) {
   };
 
   return (
-    <div className="bg-card rounded-2xl border border-border shadow-sm flex flex-col overflow-hidden max-h-[calc(100vh-8rem)]">
+    <div className="bg-card rounded-2xl border border-border shadow-sm flex flex-col overflow-hidden max-h-[calc(100vh-11rem)] overscroll-contain">
       {/* Header / Toggle */}
       <div 
         className="p-4 flex items-center justify-between cursor-pointer hover:bg-muted/40 transition-colors bg-card z-10"
-        onClick={() => setIsExpanded(!isExpanded)}
+        onClick={() => {
+          const next = !isExpanded;
+          setIsExpanded(next);
+          localStorage.setItem('cartExpanded', String(next));
+        }}
         aria-expanded={isExpanded}
       >
         <div className="flex items-center gap-3">
@@ -64,7 +70,10 @@ function Cart({ items, onRemoveItem, onUpdateQuantity }) {
             className="flex flex-col overflow-hidden"
           >
             <div className="p-5 pt-0 border-t border-border flex flex-col min-h-0">
-              <ScrollArea className="flex-1 -mx-5 px-5 max-h-[45vh]">
+              <div
+                className="flex-1 -mx-5 px-5 overflow-y-auto overscroll-contain"
+                style={{ maxHeight: '45vh', WebkitOverflowScrolling: 'touch' }}
+              >
                 <div className="space-y-4 pt-4">
                   {items.map((item) => {
                     const itemName = item.name?.[language] || item.name?.en || '';
@@ -123,7 +132,7 @@ function Cart({ items, onRemoveItem, onUpdateQuantity }) {
                     );
                   })}
                 </div>
-              </ScrollArea>
+              </div>
 
               <div className="mt-4 pt-4 border-t border-border space-y-3">
                 <div className="flex justify-between text-sm">
