@@ -18,7 +18,7 @@ function App() {
             <Route path="/" element={<HomePage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
           </Routes>
-          <Toaster />
+          <Toaster position="top-center" offset="72px" />
         </Router>
       </LanguageProvider>
     </ThemeProvider>
