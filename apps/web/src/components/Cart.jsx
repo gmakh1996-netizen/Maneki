@@ -34,7 +34,7 @@ function Cart({ items, onRemoveItem, onUpdateQuantity }) {
   };
 
   return (
-    <div className="bg-card rounded-2xl border border-border shadow-sm flex flex-col overflow-hidden max-h-[calc(100vh-15rem)] overscroll-contain">
+    <div className="bg-card rounded-t-2xl rounded-b-none xl:rounded-2xl border border-border shadow-sm flex flex-col overflow-hidden max-h-[calc(100vh-6rem)] overscroll-contain">
       {/* Header / Toggle */}
       <div 
         className="p-4 flex items-center justify-between cursor-pointer hover:bg-muted/40 transition-colors bg-card z-10"
