@@ -113,20 +113,6 @@ function HomePage() {
           </div>
           
           <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-12">
-            <motion.h1 initial={{
-            opacity: 0,
-            y: 30
-          }} animate={{
-            opacity: 1,
-            y: 0
-          }} transition={{
-            duration: 0.6
-          }} className="text-3xl md:text-4xl lg:text-5xl font-bold text-white mb-6 leading-tight whitespace-pre-line" style={{
-            letterSpacing: '-0.02em',
-            minHeight: '3.2em',
-          }}>
-              {t('hero.title')}
-            </motion.h1>
             <motion.p initial={{
             opacity: 0,
             y: 30
