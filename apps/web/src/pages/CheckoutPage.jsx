@@ -315,6 +315,7 @@ function CheckoutPage() {
                             mode="single"
                             showOutsideDays={false}
                             className="w-full [--cell-size:1.75rem] p-2 pb-3"
+                            classNames={{ hidden: 'opacity-0 pointer-events-none' }}
                             selected={formData.deliveryDate ? parseISO(formData.deliveryDate) : undefined}
                             onSelect={(date) => {
                               setFormData({
