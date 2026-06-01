@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, CheckCircle2, Minus, Plus, CalendarIcon, Loader2 } from 'lucide-react';
@@ -40,6 +40,7 @@ function CheckoutPage() {
   const { language, t } = useLanguage();
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const submittingRef = useRef(false);
   const [deliveryMethod, setDeliveryMethod] = useState('pickup');
   const [formData, setFormData] = useState({
     name: '',
@@ -154,6 +155,8 @@ function CheckoutPage() {
       timestamp: new Date().toISOString()
     };
 
+    if (submittingRef.current) return;
+    submittingRef.current = true;
     setIsLoading(true);
     try {
       const orders = JSON.parse(localStorage.getItem('orders') || '[]');
@@ -163,6 +166,7 @@ function CheckoutPage() {
       await sendTelegramNotification(order);
       setOrderPlaced(true);
     } finally {
+      submittingRef.current = false;
       setIsLoading(false);
     }
   };
