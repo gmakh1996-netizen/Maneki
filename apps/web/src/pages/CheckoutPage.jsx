@@ -300,16 +300,15 @@ function CheckoutPage() {
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent
-                          className="p-0 w-[var(--radix-popover-trigger-width)] max-h-[var(--radix-popover-available-height)] overflow-auto"
+                          className="p-0 w-[var(--radix-popover-trigger-width)] bg-card border border-border rounded-xl shadow-lg"
                           align="start"
                           sideOffset={4}
                           collisionPadding={12}
                         >
                           <Calendar
                             mode="single"
-                            fixedWeeks
                             showOutsideDays={false}
-                            className="w-full [--cell-size:1.75rem] p-2"
+                            className="w-full [--cell-size:1.75rem] p-2 bg-card rounded-xl"
                             selected={formData.deliveryDate ? parseISO(formData.deliveryDate) : undefined}
                             onSelect={(date) =>
                               setFormData({
