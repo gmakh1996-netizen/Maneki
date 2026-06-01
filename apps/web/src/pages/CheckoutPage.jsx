@@ -287,8 +287,9 @@ function CheckoutPage() {
                           <Button
                             type="button"
                             variant="outline"
+                            style={{ paddingLeft: '0.75rem' }}
                             className={cn(
-                              'w-full justify-start text-left font-normal bg-input border-input text-foreground hover:bg-input/80 !pl-3',
+                              'w-full justify-start text-left font-normal bg-input border-input text-foreground hover:bg-input/80',
                               !formData.deliveryDate && 'text-muted-foreground'
                             )}
                           >
