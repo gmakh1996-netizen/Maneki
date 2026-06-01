@@ -2,46 +2,42 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Minus, Plus, CalendarIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { format, parseISO } from 'date-fns';
+import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { useLanguage } from '../hooks/useLanguage';
 
-const DELIVERY_OPTIONS = [
-  { 
-    id: 'pickup', 
-    label: 'Pickup', 
-    price: 0, 
-    description: 'Pick up your order directly from our restaurant.' 
-  },
-  { 
-    id: 'nearest', 
-    label: 'Nearest region: Saburtalo, Vake', 
-    price: 5, 
-    description: 'Standard delivery to nearby central areas.' 
-  },
-  { 
-    id: 'outlying', 
-    label: 'Outlying areas / შორი რაიონები', 
-    price: 10, 
-    description: 'Delivery to further districts within the city.' 
-  },
-  { 
-    id: 'suburbs', 
-    label: 'Delivery to suburbs of Tbilisi', 
-    price: 0, 
-    isTaxi: true, 
-    description: 'Delivery fee will be calculated based on current taxi rates.' 
+// Working hours: 14:00–23:30 then 00:00–02:00 (crosses midnight)
+const TIME_SLOTS = (() => {
+  const slots = [];
+  for (let h = 14; h < 24; h++) {
+    slots.push(`${String(h).padStart(2, '0')}:00`);
+    slots.push(`${String(h).padStart(2, '0')}:30`);
   }
-];
+  for (let h = 0; h <= 2; h++) {
+    slots.push(`${String(h).padStart(2, '0')}:00`);
+    if (h < 2) slots.push(`${String(h).padStart(2, '0')}:30`);
+  }
+  return slots;
+})();
+
+function toMinutes(time) {
+  const [h, m] = time.split(':').map(Number);
+  return h * 60 + m;
+}
 
 function CheckoutPage() {
   const navigate = useNavigate();
-  const { language } = useLanguage();
+  const { language, t } = useLanguage();
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [deliveryMethod, setDeliveryMethod] = useState('pickup');
   const [formData, setFormData] = useState({
@@ -54,38 +50,104 @@ function CheckoutPage() {
     instructions: ''
   });
 
+  const now = new Date();
+  const today = now.toISOString().split('T')[0];
+  const maxDate = `${now.getFullYear()}-12-31`;
+
+  const DELIVERY_OPTIONS = [
+    { id: 'pickup',   label: t('checkout.pickup'),   price: 0,  description: t('checkout.pickupDesc') },
+    { id: 'nearest',  label: t('checkout.nearest'),  price: 5,  description: t('checkout.nearestDesc') },
+    { id: 'outlying', label: t('checkout.outlying'), price: 10, description: t('checkout.outlyingDesc') },
+    { id: 'suburbs',  label: t('checkout.suburbs'),  price: 0,  isTaxi: true, description: t('checkout.suburbsDesc') }
+  ];
+
   const cartItems = JSON.parse(localStorage.getItem('cart') || '[]');
   const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-  
+
   const selectedDelivery = DELIVERY_OPTIONS.find(opt => opt.id === deliveryMethod);
   const deliveryFee = selectedDelivery ? selectedDelivery.price : 0;
   const total = subtotal + deliveryFee;
 
   const handleInputChange = (e) => {
-    const { name, value, type } = e.target;
-    setFormData({
-      ...formData,
-      [name]: type === 'number' ? (parseInt(value, 10) || 0) : value
-    });
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleChopsticks = (delta) => {
+    setFormData(prev => ({
+      ...prev,
+      chopstickSets: Math.max(0, Math.min(20, prev.chopstickSets + delta))
+    }));
+  };
+
+  const sendTelegramNotification = async (order) => {
+    const TOKEN = '8816703197:AAFWJ38Bq8zELqhGVTNlrL8_MSAILsZLRfU';
+    const CHAT_ID = '1183632494';
+
+    const methodNames = {
+      pickup: '🏪 გატანა (უფასო)',
+      nearest: '🚗 ახლო რაიონი — 5₾',
+      outlying: '🚗 შორი რაიონი — 10₾',
+      suburbs: '🚕 გარეუბანი (ტაქსი)'
+    };
+
+    const itemsList = order.items
+      .map(i => `• ${i.name?.ka || i.name?.en || i.name} x${i.quantity} — ${(i.price * i.quantity).toFixed(2)}₾`)
+      .join('\n');
+
+    const lines = [
+      '🍣 *ახალი შეკვეთა!*',
+      '',
+      `👤 *სახელი:* ${order.customer.name}`,
+      `📞 *ტელეფონი:* ${order.customer.phone}`,
+      '',
+      `📦 *პროდუქცია:*\n${itemsList}`,
+      '',
+      `🚗 *მიტანა:* ${methodNames[order.delivery.method] || order.delivery.method}`,
+      order.customer.address ? `📍 *მისამართი:* ${order.customer.address}` : '',
+      order.customer.deliveryDate ? `📅 *თარიღი:* ${order.customer.deliveryDate}` : '',
+      order.customer.deliveryTime ? `🕐 *დრო:* ${order.customer.deliveryTime}` : '',
+      order.customer.chopstickSets > 0 ? `🥢 *ჩხირები:* ${order.customer.chopstickSets} კომპლექტი` : '',
+      order.customer.instructions ? `📝 *ინსტრუქცია:* ${order.customer.instructions}` : '',
+      '',
+      `💰 *სულ: ${order.total.toFixed(2)}₾${order.delivery.isTaxi ? ' + ტაქსი' : ''}*`,
+    ].filter(Boolean).join('\n');
+
+    try {
+      await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: CHAT_ID, text: lines, parse_mode: 'Markdown' })
+      });
+    } catch (_) {}
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!formData.name || !formData.phone || (deliveryMethod !== 'pickup' && !formData.address)) {
-      toast.error('Please fill in all required fields');
+      toast.error(t('checkout.fillAllFields'));
       return;
+    }
+
+    if (formData.deliveryTime && formData.deliveryDate === today) {
+      const [h] = formData.deliveryTime.split(':').map(Number);
+      const isAfterMidnightSlot = h < 14;
+      if (!isAfterMidnightSlot) {
+        const nowMinutes = now.getHours() * 60 + now.getMinutes();
+        const slotMinutes = toMinutes(formData.deliveryTime);
+        if (slotMinutes < nowMinutes + 90) {
+          toast.error(t('checkout.selectFutureTime'));
+          return;
+        }
+      }
     }
 
     const order = {
       id: Date.now(),
       items: cartItems,
       customer: formData,
-      delivery: {
-        method: deliveryMethod,
-        fee: deliveryFee,
-        isTaxi: selectedDelivery?.isTaxi
-      },
+      delivery: { method: deliveryMethod, fee: deliveryFee, isTaxi: selectedDelivery?.isTaxi },
       subtotal,
       total,
       timestamp: new Date().toISOString()
@@ -95,47 +157,51 @@ function CheckoutPage() {
     orders.push(order);
     localStorage.setItem('orders', JSON.stringify(orders));
     localStorage.removeItem('cart');
-
+    await sendTelegramNotification(order);
     setOrderPlaced(true);
-  };
-
-  const handleContinueShopping = () => {
-    navigate('/');
   };
 
   if (orderPlaced) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center px-4">
         <Helmet>
-          <title>Order Confirmed - Sushi Delivery</title>
-          <meta name="description" content="Your order has been confirmed and is being prepared" />
+          <title>{t('checkout.orderConfirmed')} - Maneki Sushi</title>
         </Helmet>
-        
         <div className="max-w-md w-full text-center">
           <div className="bg-card rounded-2xl p-8 border border-border shadow-lg">
             <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
               <CheckCircle2 className="w-8 h-8 text-primary" />
             </div>
-            <h1 className="text-2xl font-bold mb-2">Order Confirmed</h1>
-            <p className="text-muted-foreground mb-6">
-              Your order has been received and is being prepared
-            </p>
-            <div className="bg-muted rounded-xl p-4 mb-6">
-              <p className="text-sm text-muted-foreground mb-1">Estimated time</p>
-              <p className="text-2xl font-bold text-primary">
-                {formData.deliveryTime ? formData.deliveryTime : (deliveryMethod === 'pickup' ? '20–30 minutes' : '55–85 minutes')}
-              </p>
-              <p className="text-xs text-muted-foreground mt-1">
-                {formData.deliveryDate ? `Scheduled for ${formData.deliveryDate}` : (deliveryMethod === 'pickup' 
-                  ? '(Preparation time)' 
-                  : '(40 min preparation + 15–45 min delivery)')}
-              </p>
+            <h1 className="text-2xl font-bold mb-2">{t('checkout.orderConfirmed')}</h1>
+            <p className="text-muted-foreground mb-6">{t('checkout.orderConfirmedDesc')}</p>
+            <div className="bg-muted rounded-xl p-4 mb-6 text-left">
+              {formData.deliveryDate ? (
+                <>
+                  <p className="text-sm text-muted-foreground mb-1">{t('checkout.scheduledFor')}</p>
+                  <p className="text-lg font-bold text-primary">
+                    {format(parseISO(formData.deliveryDate), 'MMMM d, yyyy')}
+                    {formData.deliveryTime ? ` at ${formData.deliveryTime}` : ''}
+                  </p>
+                </>
+              ) : (
+                <>
+                  <p className="text-sm text-muted-foreground mb-1">
+                    {deliveryMethod === 'pickup' ? t('checkout.estimatedPrepTime') : t('checkout.estimatedDelivTime')}
+                  </p>
+                  <p className="text-lg font-bold text-primary">
+                    {deliveryMethod === 'pickup' ? t('checkout.prepMin') : t('checkout.delivMin')}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-1">
+                    {deliveryMethod === 'pickup' ? t('checkout.prepTime') : t('checkout.prepDelivTime')}
+                  </p>
+                </>
+              )}
             </div>
             <Button
-              onClick={handleContinueShopping}
+              onClick={() => navigate('/')}
               className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200 active:scale-98"
             >
-              Continue Shopping
+              {t('checkout.continueToWebsite')}
             </Button>
           </div>
         </div>
@@ -146,8 +212,7 @@ function CheckoutPage() {
   return (
     <div className="min-h-screen bg-background">
       <Helmet>
-        <title>Checkout - Sushi Delivery</title>
-        <meta name="description" content="Complete your order and get fresh sushi delivered to your door" />
+        <title>{t('checkout.title')} - Maneki Sushi</title>
       </Helmet>
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -157,11 +222,11 @@ function CheckoutPage() {
           className="mb-8 transition-all duration-200 hover:bg-muted"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Menu
+          {t('checkout.backToMenu')}
         </Button>
 
         <h1 className="text-3xl md:text-4xl font-bold mb-8" style={{letterSpacing: '-0.02em'}}>
-          Checkout
+          {t('checkout.title')}
         </h1>
 
         <div className="grid lg:grid-cols-12 gap-8">
@@ -169,14 +234,14 @@ function CheckoutPage() {
           <div className="lg:col-span-7">
             <div className="bg-card rounded-2xl p-6 md:p-8 border border-border shadow-sm">
               <form onSubmit={handleSubmit} className="space-y-8">
-                
-                {/* Contact Details Section (Top) */}
+
+                {/* Contact Details */}
                 <div className="space-y-4">
-                  <h2 className="text-xl font-semibold mb-2">Contact Details</h2>
-                  
+                  <h2 className="text-xl font-semibold mb-2">{t('checkout.contactDetails')}</h2>
+
                   <div className="grid sm:grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label htmlFor="name">Full Name *</Label>
+                      <Label htmlFor="name">{t('checkout.fullName')}</Label>
                       <Input
                         id="name"
                         name="name"
@@ -185,12 +250,12 @@ function CheckoutPage() {
                         onChange={handleInputChange}
                         required
                         className="bg-input text-foreground placeholder:text-muted-foreground"
-                        placeholder="Enter your name"
+                        placeholder={t('checkout.fullNamePlaceholder')}
                       />
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="phone">Phone Number *</Label>
+                      <Label htmlFor="phone">{t('checkout.phoneNumber')}</Label>
                       <Input
                         id="phone"
                         name="phone"
@@ -199,85 +264,139 @@ function CheckoutPage() {
                         onChange={handleInputChange}
                         required
                         className="bg-input text-foreground placeholder:text-muted-foreground"
-                        placeholder="+995 XXX XXX XXX"
+                        placeholder={t('checkout.phonePlaceholder')}
                       />
                     </div>
                   </div>
 
-                  <div className="grid sm:grid-cols-2 gap-4">
+                  <div className="grid sm:grid-cols-2 gap-4 items-end">
                     <div className="space-y-2">
-                      <Label htmlFor="deliveryDate">Preferred Delivery Date</Label>
-                      <Input
-                        id="deliveryDate"
-                        name="deliveryDate"
-                        type="date"
-                        value={formData.deliveryDate}
-                        onChange={handleInputChange}
-                        className="bg-input text-foreground"
-                      />
+                      <Label>{t('checkout.deliveryDate')}</Label>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <Button
+                            type="button"
+                            variant="outline"
+                            className={cn(
+                              'w-full justify-start text-left font-normal bg-input border-input text-foreground hover:bg-input/80',
+                              !formData.deliveryDate && 'text-muted-foreground'
+                            )}
+                          >
+                            <CalendarIcon className="mr-2 h-4 w-4 shrink-0" />
+                            {formData.deliveryDate
+                              ? format(parseISO(formData.deliveryDate), 'MMMM d, yyyy')
+                              : t('checkout.selectDate')}
+                          </Button>
+                        </PopoverTrigger>
+                        <PopoverContent
+                          className="p-0 w-[var(--radix-popover-trigger-width)] max-h-[var(--radix-popover-available-height)] overflow-auto"
+                          align="start"
+                          sideOffset={4}
+                          collisionPadding={12}
+                        >
+                          <Calendar
+                            mode="single"
+                            fixedWeeks
+                            showOutsideDays={false}
+                            className="w-full [--cell-size:1.75rem] p-2"
+                            selected={formData.deliveryDate ? parseISO(formData.deliveryDate) : undefined}
+                            onSelect={(date) =>
+                              setFormData({
+                                ...formData,
+                                deliveryDate: date
+                                  ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+                                  : ''
+                              })
+                            }
+                            startMonth={new Date(today)}
+                            endMonth={new Date(maxDate)}
+                            disabled={(date) => {
+                              const start = new Date(today);
+                              start.setHours(0, 0, 0, 0);
+                              const end = new Date(maxDate);
+                              end.setHours(23, 59, 59, 999);
+                              return date < start || date > end;
+                            }}
+                            initialFocus
+                          />
+                        </PopoverContent>
+                      </Popover>
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="deliveryTime">Preferred Delivery Time</Label>
-                      <Input
-                        id="deliveryTime"
-                        name="deliveryTime"
-                        type="time"
-                        lang="en-GB"
+                      <Label>{t('checkout.deliveryTime')}</Label>
+                      <Select
                         value={formData.deliveryTime}
-                        onChange={handleInputChange}
-                        className="bg-input text-foreground block w-full appearance-none"
-                      />
+                        onValueChange={(val) => setFormData({ ...formData, deliveryTime: val })}
+                      >
+                        <SelectTrigger className="bg-input text-foreground w-full">
+                          <SelectValue placeholder={t('checkout.selectTime')} />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {TIME_SLOTS.map(slot => (
+                            <SelectItem key={slot} value={slot}>{slot}</SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
                     </div>
                   </div>
 
                   <div className="space-y-2 pt-2">
-                    <Label htmlFor="chopstickSets">Number of Chopstick Sets</Label>
-                    <Input
-                      id="chopstickSets"
-                      name="chopstickSets"
-                      type="number"
-                      min="0"
-                      value={formData.chopstickSets}
-                      onChange={handleInputChange}
-                      className="bg-input text-foreground sm:max-w-[200px]"
-                      placeholder="0"
-                    />
+                    <Label>{t('checkout.chopstickSets')}</Label>
+                    <div className="flex items-center gap-3">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={() => handleChopsticks(-1)}
+                        disabled={formData.chopstickSets <= 0}
+                        className="bg-muted border-border transition-all duration-200 active:scale-95"
+                      >
+                        <Minus className="w-4 h-4" />
+                      </Button>
+                      <span className="text-xl font-semibold w-10 text-center tabular-nums">
+                        {formData.chopstickSets}
+                      </span>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="icon"
+                        onClick={() => handleChopsticks(1)}
+                        disabled={formData.chopstickSets >= 20}
+                        className="bg-muted border-border transition-all duration-200 active:scale-95"
+                      >
+                        <Plus className="w-4 h-4" />
+                      </Button>
+                    </div>
                   </div>
                 </div>
 
-                {/* Delivery Information Section (Bottom) */}
+                {/* Delivery Information */}
                 <div className="space-y-4 pt-6 border-t border-border">
-                  <h2 className="text-xl font-semibold mb-4">Delivery Information</h2>
-                  
+                  <h2 className="text-xl font-semibold mb-4">{t('checkout.deliveryInfo')}</h2>
+
                   <div className="space-y-4 mb-6">
-                    <Label className="text-base font-medium text-muted-foreground">Select Delivery Method</Label>
-                    <RadioGroup 
-                      value={deliveryMethod} 
+                    <Label className="text-base font-medium text-muted-foreground">
+                      {t('checkout.selectMethod')}
+                    </Label>
+                    <RadioGroup
+                      value={deliveryMethod}
                       onValueChange={setDeliveryMethod}
                       className="grid gap-3"
                     >
                       {DELIVERY_OPTIONS.map((option) => (
                         <div key={option.id}>
-                          <RadioGroupItem
-                            value={option.id}
-                            id={option.id}
-                            className="peer sr-only"
-                          />
+                          <RadioGroupItem value={option.id} id={option.id} className="peer sr-only" />
                           <Label
                             htmlFor={option.id}
                             className="flex flex-col sm:flex-row sm:items-center justify-between rounded-xl border-2 border-muted bg-transparent p-4 hover:bg-muted/50 peer-data-[state=checked]:border-primary peer-data-[state=checked]:bg-primary/5 cursor-pointer transition-all"
                           >
                             <div className="flex flex-col gap-1 mb-2 sm:mb-0">
-                              <span className="font-semibold text-foreground">
-                                {option.label}
-                              </span>
-                              <span className="text-sm text-muted-foreground font-normal">
-                                {option.description}
-                              </span>
+                              <span className="font-semibold text-foreground">{option.label}</span>
+                              <span className="text-sm text-muted-foreground font-normal">{option.description}</span>
                             </div>
                             <span className="font-medium text-primary whitespace-nowrap">
-                              {option.isTaxi ? 'At taxi prices' : option.price === 0 ? 'Free' : `₾${option.price.toFixed(2)}`}
+                              {option.isTaxi ? t('checkout.atTaxiPrices') : option.price === 0 ? t('checkout.free') : `₾${option.price.toFixed(2)}`}
                             </span>
                           </Label>
                         </div>
@@ -287,7 +406,7 @@ function CheckoutPage() {
 
                   {deliveryMethod !== 'pickup' && (
                     <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
-                      <Label htmlFor="address">Delivery Address *</Label>
+                      <Label htmlFor="address">{t('checkout.deliveryAddress')}</Label>
                       <Textarea
                         id="address"
                         name="address"
@@ -295,21 +414,21 @@ function CheckoutPage() {
                         onChange={handleInputChange}
                         required={deliveryMethod !== 'pickup'}
                         className="bg-input text-foreground placeholder:text-muted-foreground resize-none"
-                        placeholder="Street address, apartment number, entrance, floor"
+                        placeholder={t('checkout.addressPlaceholder')}
                         rows={3}
                       />
                     </div>
                   )}
 
                   <div className="space-y-2 pt-2">
-                    <Label htmlFor="instructions">Additional Instructions</Label>
+                    <Label htmlFor="instructions">{t('checkout.additionalInstructions')}</Label>
                     <Textarea
                       id="instructions"
                       name="instructions"
                       value={formData.instructions}
                       onChange={handleInputChange}
                       className="bg-input text-foreground placeholder:text-muted-foreground resize-none"
-                      placeholder="Any special requests or directions for the courier"
+                      placeholder={t('checkout.instructionsPlaceholder')}
                       rows={2}
                     />
                   </div>
@@ -319,7 +438,7 @@ function CheckoutPage() {
                   type="submit"
                   className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200 active:scale-98 h-12 text-lg mt-8"
                 >
-                  Place Order
+                  {t('checkout.placeOrder')}
                 </Button>
               </form>
             </div>
@@ -327,27 +446,19 @@ function CheckoutPage() {
 
           {/* Order Summary */}
           <div className="lg:col-span-5">
-            <div className="bg-card rounded-2xl p-6 md:p-8 border border-border shadow-sm sticky top-24">
-              <h2 className="text-xl font-semibold mb-6">Order Summary</h2>
-              
-              <div className="space-y-4 mb-6 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
+            <div className="bg-card rounded-2xl p-6 md:p-8 border border-border shadow-sm lg:sticky lg:top-24">
+              <h2 className="text-xl font-semibold mb-6">{t('checkout.orderSummary')}</h2>
+
+              <div className="space-y-4 mb-6 max-h-[40vh] overflow-y-auto pr-2">
                 {cartItems.map((item) => {
                   const itemName = item.name?.[language] || item.name?.en || '';
                   return (
                     <div key={item.id} className="flex gap-4 pb-4 border-b border-border last:border-0 last:pb-0">
-                      <img
-                        src={item.image}
-                        alt={itemName}
-                        className="w-16 h-16 rounded-lg object-cover bg-muted"
-                      />
+                      <img src={item.image} alt={itemName} className="w-16 h-16 rounded-lg object-cover bg-muted" />
                       <div className="flex-1 min-w-0">
                         <h3 className="font-medium text-sm mb-1 truncate">{itemName}</h3>
-                        <p className="text-sm text-muted-foreground">
-                          ₾{item.price.toFixed(2)} × {item.quantity}
-                        </p>
-                        <p className="text-sm font-semibold text-primary mt-1">
-                          ₾{(item.price * item.quantity).toFixed(2)}
-                        </p>
+                        <p className="text-sm text-muted-foreground">₾{item.price.toFixed(2)} × {item.quantity}</p>
+                        <p className="text-sm font-semibold text-primary mt-1">₾{(item.price * item.quantity).toFixed(2)}</p>
                       </div>
                     </div>
                   );
@@ -356,35 +467,35 @@ function CheckoutPage() {
 
               <div className="space-y-3 pt-4 border-t border-border">
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Subtotal</span>
+                  <span className="text-muted-foreground">{t('checkout.subtotal')}</span>
                   <span className="font-medium tabular-nums">₾{subtotal.toFixed(2)}</span>
                 </div>
-                
                 <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Delivery Fee</span>
+                  <span className="text-muted-foreground">{t('checkout.deliveryFee')}</span>
                   <span className="font-medium tabular-nums">
-                    {selectedDelivery?.isTaxi ? 'At taxi prices' : `₾${deliveryFee.toFixed(2)}`}
+                    {selectedDelivery?.isTaxi ? t('checkout.atTaxiPrices') : `₾${deliveryFee.toFixed(2)}`}
                   </span>
                 </div>
-
                 <div className="flex justify-between text-lg font-bold pt-3 border-t border-border">
-                  <span>Total</span>
+                  <span>{t('checkout.total')}</span>
                   <span className="text-primary tabular-nums">
                     ₾{total.toFixed(2)}
-                    {selectedDelivery?.isTaxi && <span className="text-xs font-normal text-muted-foreground ml-1">+ Taxi</span>}
+                    {selectedDelivery?.isTaxi && (
+                      <span className="text-xs font-normal text-muted-foreground ml-1">+ {t('checkout.atTaxiPrices')}</span>
+                    )}
                   </span>
                 </div>
               </div>
 
-              <div className="mt-6 p-4 bg-muted/50 rounded-xl border border-border/50">
-                <p className="text-sm text-muted-foreground flex items-center gap-2">
-                  <span className="relative flex h-2 w-2">
+              <div className="mt-4 p-3 bg-muted/50 rounded-lg border border-border/50">
+                <p className="text-xs text-muted-foreground flex items-center gap-2">
+                  <span className="relative flex h-2 w-2 shrink-0">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
                   </span>
-                  Estimated {deliveryMethod === 'pickup' ? 'preparation' : 'delivery'}: 
-                  <span className="font-semibold text-foreground ml-1">
-                    {deliveryMethod === 'pickup' ? '20–30 min' : '55–85 min'}
+                  {deliveryMethod === 'pickup' ? t('checkout.estimatedPrep') : t('checkout.estimatedDeliv')}:{' '}
+                  <span className="font-semibold text-foreground">
+                    {deliveryMethod === 'pickup' ? t('checkout.prepMin') : t('checkout.delivMin')}
                   </span>
                 </p>
               </div>

@@ -60,14 +60,14 @@ export const menuItems = [
   { id: 4, name: getName('Baked Salmon Roll'), description: getDesc(), price: 33, category: 'Baked Rolls Menu', image: 'https://images.unsplash.com/photo-1608731002248-747dee753517' },
 
   // DOMBURI MENU
-  { id: 5, name: getName('Domburi with Shrimp'), description: getDesc(), price: 36, category: 'Domburi Menu', image: 'https://images.unsplash.com/photo-1685458695580-ab32c18b000f' },
-  { id: 6, name: getName('Domburi with Chicken'), description: getDesc(), price: 32, category: 'Domburi Menu', image: 'https://images.unsplash.com/photo-1684569652967-ca04f475f87c' },
+  { id: 5, name: getName('Domburi with Shrimp'), description: getDesc(), price: 36, category: 'Domburi Menu', image: 'https://images.unsplash.com/photo-1547592180-85f173990554' },
+  { id: 6, name: getName('Domburi with Chicken'), description: getDesc(), price: 32, category: 'Domburi Menu', image: 'https://images.unsplash.com/photo-1569718212165-3a8278d5f624' },
 
   // GUNKAN SUSHI MENU
   { id: 7, name: getName('Gunkan with Red Caviar'), description: getDesc(), price: 10, category: 'Gunkan Sushi Menu', image: 'https://images.unsplash.com/photo-1695226320311-60ebf0fec644' },
   { id: 8, name: getName('Gunkan with Spicy Unagi'), description: getDesc(), price: 9, category: 'Gunkan Sushi Menu', image: 'https://images.unsplash.com/photo-1693082147611-2c8cd3765c71' },
   { id: 9, name: getName('Gunkan with Spicy Salmon'), description: getDesc(), price: 10, category: 'Gunkan Sushi Menu', image: 'https://images.unsplash.com/photo-1632850071873-118663d31165' },
-  { id: 10, name: getName('Gunkan with Spicy Shrimp'), description: getDesc(), price: 9, category: 'Gunkan Sushi Menu', image: 'https://images.unsplash.com/photo-1529065973568-41540b11f7de' },
+  { id: 10, name: getName('Gunkan with Spicy Shrimp'), description: getDesc(), price: 9, category: 'Gunkan Sushi Menu', image: 'https://images.unsplash.com/photo-1535333184447-47c6e2319336' },
 
   // HOT ROLLS MENU
   { id: 11, name: getName('Roll "Hot Dog" with Crab'), description: getDesc(), price: 30, category: 'Hot Rolls Menu', image: 'https://images.unsplash.com/photo-1535333184447-47c6e2319336' },

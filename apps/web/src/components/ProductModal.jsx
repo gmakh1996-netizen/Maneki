@@ -29,21 +29,24 @@ function ProductModal({ item, isOpen, onClose, onAddToCart }) {
 
   const itemName = item.name?.[language] || item.name?.en || '';
   const itemDesc = item.description?.[language] || item.description?.en || '';
+  const imgSrc = item.image?.includes('?')
+    ? item.image
+    : `${item.image}?w=800&q=80&auto=format&fit=crop`;
   const catName = t(`categories.${getCategoryTranslationKey(item.category)}`);
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl bg-card text-card-foreground border-border rounded-2xl">
+      <DialogContent className="max-w-2xl w-[calc(100%-2rem)] bg-card text-card-foreground border-border rounded-2xl max-h-[90dvh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold">{itemName}</DialogTitle>
+          <DialogTitle className="text-xl font-bold pr-6">{itemName}</DialogTitle>
           <DialogDescription className="sr-only">{itemDesc}</DialogDescription>
         </DialogHeader>
-        
-        <div className="grid md:grid-cols-2 gap-6">
+
+        <div className="grid md:grid-cols-2 gap-4 md:gap-6">
           {/* Product Image */}
-          <div className="aspect-square rounded-xl overflow-hidden bg-muted">
+          <div className="aspect-video md:aspect-square rounded-xl overflow-hidden bg-muted">
             <img
-              src={item.image}
+              src={imgSrc}
               alt={itemName}
               className="w-full h-full object-cover"
             />
