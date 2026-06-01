@@ -308,16 +308,13 @@ function CheckoutPage() {
                           sideOffset={4}
                           collisionPadding={12}
                         >
-                          <div
-                            className="rounded-xl"
-                            style={theme === 'dark'
-                              ? { backgroundColor: '#141416', color: '#fafafa' }
-                              : { backgroundColor: '#ffffff', color: '#18181b' }}
-                          >
                           <Calendar
                             mode="single"
                             showOutsideDays={true}
-                            className="w-full [--cell-size:1.4rem] p-2 bg-transparent"
+                            className="w-full [--cell-size:1.4rem] p-2 rounded-xl"
+                            style={theme === 'dark'
+                              ? { backgroundColor: '#141416', color: '#fafafa', WebkitTransform: 'translateZ(0)', transform: 'translateZ(0)' }
+                              : { backgroundColor: '#ffffff', color: '#18181b', WebkitTransform: 'translateZ(0)', transform: 'translateZ(0)' }}
                             classNames={{
                               hidden: 'opacity-0 pointer-events-none select-none',
                               outside: 'opacity-0 pointer-events-none select-none',
@@ -343,7 +340,6 @@ function CheckoutPage() {
                             }}
                             initialFocus
                           />
-                          </div>
                         </PopoverContent>
                       </Popover>
                     </div>
