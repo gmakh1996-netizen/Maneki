@@ -40,6 +40,7 @@ function CheckoutPage() {
   const navigate = useNavigate();
   const { language, t } = useLanguage();
   const { theme } = useTheme();
+  const [calendarOpen, setCalendarOpen] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const submittingRef = useRef(false);
@@ -284,7 +285,7 @@ function CheckoutPage() {
                   <div className="grid sm:grid-cols-2 gap-4 items-end">
                     <div className="space-y-2">
                       <Label>{t('checkout.deliveryDate')}</Label>
-                      <Popover>
+                      <Popover open={calendarOpen} onOpenChange={setCalendarOpen}>
                         <PopoverTrigger asChild>
                           <Button
                             type="button"
@@ -313,16 +314,17 @@ function CheckoutPage() {
                           <Calendar
                             mode="single"
                             showOutsideDays={false}
-                            className="w-full [--cell-size:1.75rem] p-2 bg-card rounded-xl"
+                            className="w-full [--cell-size:1.75rem] p-2 pb-3"
                             selected={formData.deliveryDate ? parseISO(formData.deliveryDate) : undefined}
-                            onSelect={(date) =>
+                            onSelect={(date) => {
                               setFormData({
                                 ...formData,
                                 deliveryDate: date
                                   ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
                                   : ''
-                              })
-                            }
+                              });
+                              setCalendarOpen(false);
+                            }}
                             startMonth={new Date(today)}
                             endMonth={new Date(maxDate)}
                             disabled={(date) => {
