@@ -109,7 +109,7 @@ function HomePage() {
               fetchpriority="high"
               loading="eager"
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-transparent" />
           </div>
           
           <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-12">

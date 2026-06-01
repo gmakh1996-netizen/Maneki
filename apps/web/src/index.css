@@ -1,5 +1,13 @@
 /* Fonts are loaded via <link> in index.html for better performance */
 
+@font-face {
+  font-family: 'Wonton';
+  src: url('/fonts/Wonton.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -153,6 +161,11 @@
   /* Font Family Utilities */
   .font-playful {
     font-family: var(--font-playful);
+  }
+
+  .font-samurai {
+    font-family: 'Wonton', sans-serif;
+    letter-spacing: 0.06em;
   }
   
   /* Modern Typography Utilities */
