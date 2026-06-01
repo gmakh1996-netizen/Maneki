@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, Minus, Plus, CalendarIcon } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Minus, Plus, CalendarIcon, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -39,6 +39,7 @@ function CheckoutPage() {
   const navigate = useNavigate();
   const { language, t } = useLanguage();
   const [orderPlaced, setOrderPlaced] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [deliveryMethod, setDeliveryMethod] = useState('pickup');
   const [formData, setFormData] = useState({
     name: '',
@@ -153,12 +154,17 @@ function CheckoutPage() {
       timestamp: new Date().toISOString()
     };
 
-    const orders = JSON.parse(localStorage.getItem('orders') || '[]');
-    orders.push(order);
-    localStorage.setItem('orders', JSON.stringify(orders));
-    localStorage.removeItem('cart');
-    await sendTelegramNotification(order);
-    setOrderPlaced(true);
+    setIsLoading(true);
+    try {
+      const orders = JSON.parse(localStorage.getItem('orders') || '[]');
+      orders.push(order);
+      localStorage.setItem('orders', JSON.stringify(orders));
+      localStorage.removeItem('cart');
+      await sendTelegramNotification(order);
+      setOrderPlaced(true);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (orderPlaced) {
@@ -436,9 +442,15 @@ function CheckoutPage() {
 
                 <Button
                   type="submit"
-                  className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200 active:scale-98 h-12 text-lg mt-8"
+                  disabled={isLoading}
+                  className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200 active:scale-98 h-12 text-lg mt-8 disabled:opacity-70"
                 >
-                  {t('checkout.placeOrder')}
+                  {isLoading ? (
+                    <span className="flex items-center gap-2">
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                      {t('checkout.placeOrder')}
+                    </span>
+                  ) : t('checkout.placeOrder')}
                 </Button>
               </form>
             </div>
