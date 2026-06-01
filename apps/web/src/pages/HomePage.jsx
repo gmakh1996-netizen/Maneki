@@ -21,7 +21,9 @@ function HomePage() {
     t
   } = useLanguage();
   const [gridLayout, setGridLayout] = useState(() => {
-    return localStorage.getItem('gridLayout') || 'single';
+    const saved = localStorage.getItem('gridLayout');
+    if (saved) return saved;
+    return window.innerWidth < 640 ? 'compact' : 'single';
   });
   useEffect(() => {
     const savedCart = localStorage.getItem('cart');
@@ -89,9 +91,24 @@ function HomePage() {
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="relative min-h-[60dvh] flex items-center justify-center overflow-hidden">
+        <section className="relative min-h-[40dvh] sm:min-h-[60dvh] flex items-center justify-center overflow-hidden">
           <div className="absolute inset-0">
-            <img src="https://horizons-cdn.hostinger.com/b689a301-5c05-47d4-aff4-958d21843819/kana_sansetsu_-_frolicking_birds_in_plum_and_willow_trees-byNLk.jpg" alt="Fresh sushi platter" className="w-full h-full object-cover" />
+            {/* Mobile image */}
+            <img
+              src="https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800&q=80&auto=format&fit=crop"
+              alt="Fresh sushi platter"
+              className="sm:hidden w-full h-full object-cover object-center"
+              fetchpriority="high"
+              loading="eager"
+            />
+            {/* Desktop image */}
+            <img
+              src="https://horizons-cdn.hostinger.com/b689a301-5c05-47d4-aff4-958d21843819/kana_sansetsu_-_frolicking_birds_in_plum_and_willow_trees-byNLk.jpg"
+              alt="Fresh sushi platter"
+              className="hidden sm:block w-full h-full object-cover object-center"
+              fetchpriority="high"
+              loading="eager"
+            />
             <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-background" />
           </div>
           
@@ -139,10 +156,15 @@ function HomePage() {
         </section>
 
         {/* Restaurant Info */}
-        <section className="py-8 bg-card border-y border-border relative z-20">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section className="py-8 bg-card border-y border-border relative z-20 seigaiha-sides">
+          <div className="w-full px-4 sm:px-6 lg:px-12">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
-              <div className="flex flex-col items-center gap-3">
+              <a
+                href="https://maps.google.com/?q=Merab+Kostava+71+Tbilisi"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col items-center gap-3 hover:opacity-75 transition-opacity"
+              >
                 <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
                   <MapPin className="w-5 h-5 text-primary" />
                 </div>
@@ -152,7 +174,7 @@ function HomePage() {
                     {t('info.pickupDesc')}
                   </p>
                 </div>
-              </div>
+              </a>
               <div className="flex flex-col items-center gap-3">
                 <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
                   <Clock className="w-5 h-5 text-primary" />
@@ -164,7 +186,10 @@ function HomePage() {
                   </p>
                 </div>
               </div>
-              <div className="flex flex-col items-center gap-3">
+              <a
+                href="tel:+995598901848"
+                className="flex flex-col items-center gap-3 hover:opacity-75 transition-opacity"
+              >
                 <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
                   <Phone className="w-5 h-5 text-primary" />
                 </div>
@@ -174,14 +199,14 @@ function HomePage() {
                     {t('info.contactDesc')}
                   </p>
                 </div>
-              </div>
+              </a>
             </div>
           </div>
         </section>
 
         {/* Menu Grid */}
-        <section id="menu" className="py-16 bg-background scroll-mt-header">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <section id="menu" className="py-16 bg-background scroll-mt-header seigaiha-top">
+          <div className="w-full px-4 sm:px-6 lg:px-12">
             <div className="flex gap-8">
               {/* Main Content Area */}
               <div className="flex-1 flex flex-col min-h-[600px]">
@@ -202,9 +227,8 @@ function HomePage() {
 
                   {/* Mobile Layout Toggle */}
                   <div className="flex sm:hidden">
-                    <button onClick={toggleGridLayout} className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium rounded-xl transition-colors border ${gridLayout === 'compact' ? 'bg-primary text-primary-foreground border-primary shadow-sm' : 'bg-card text-muted-foreground border-border hover:bg-muted hover:text-foreground'}`} aria-label="Toggle grid layout">
+                    <button onClick={toggleGridLayout} className={`flex items-center justify-center w-10 h-10 rounded-xl transition-colors border ${gridLayout === 'compact' ? 'bg-primary text-primary-foreground border-primary shadow-sm' : 'bg-card text-muted-foreground border-border hover:bg-muted hover:text-foreground'}`} aria-label="Toggle grid layout">
                       <Grid2x2 className="w-4 h-4" />
-                      {t('menu.gridView')}
                     </button>
                   </div>
                 </div>
@@ -233,9 +257,9 @@ function HomePage() {
                         }}>
                               {t(`categories.${getCategoryTranslationKey(category)}`)}
                             </h2>
-                            <div className="h-px bg-border flex-1 mt-2"></div>
+                            <div className="seigaiha-line flex-1 mt-2"></div>
                           </div>
-                          <div className={`grid gap-4 sm:gap-6 ${gridLayout === 'compact' ? 'grid-cols-2' : 'grid-cols-1'} sm:grid-cols-2 lg:grid-cols-3`}>
+                          <div className={`grid gap-4 sm:gap-6 ${gridLayout === 'compact' ? 'grid-cols-2' : 'grid-cols-1'} sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5`}>
                             {categoryItems.map(item => <MenuCard key={item.id} item={item} onClick={() => handleCardClick(item)} />)}
                           </div>
                         </motion.div>;
@@ -255,8 +279,8 @@ function HomePage() {
         </div>}
 
       {/* Mobile Cart - Fixed Bottom */}
-      {cart.length > 0 && <div className="xl:hidden fixed bottom-0 left-0 right-0 z-40 bg-transparent p-4 pb-4 shadow-[0_-20px_40px_-10px_rgba(0,0,0,0.05)] pointer-events-none">
-          <div className="max-w-7xl mx-auto pointer-events-auto">
+      {cart.length > 0 && <div className="xl:hidden fixed bottom-0 left-0 right-0 z-40 p-4 pb-4">
+          <div className="max-w-7xl mx-auto">
             <Cart items={cart} onRemoveItem={handleRemoveFromCart} onUpdateQuantity={handleUpdateQuantity} />
           </div>
         </div>}
