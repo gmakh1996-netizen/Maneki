@@ -303,7 +303,7 @@ function CheckoutPage() {
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent
-                          className="p-0 w-[var(--radix-popover-trigger-width)] border border-border rounded-xl shadow-lg overflow-hidden"
+                          className="p-0 w-[var(--radix-popover-trigger-width)] border border-border rounded-xl shadow-lg"
                           align="start"
                           sideOffset={4}
                           collisionPadding={12}
@@ -317,7 +317,7 @@ function CheckoutPage() {
                           <Calendar
                             mode="single"
                             showOutsideDays={true}
-                            className="w-full [--cell-size:1.75rem] p-2 pb-2 bg-transparent"
+                            className="w-full [--cell-size:1.4rem] p-2 bg-transparent"
                             classNames={{
                               hidden: 'opacity-0 pointer-events-none select-none',
                               outside: 'opacity-0 pointer-events-none select-none',
