@@ -315,8 +315,8 @@ function CheckoutPage() {
                             classNames={{
                               hidden: 'opacity-0 pointer-events-none select-none',
                               outside: 'opacity-0 pointer-events-none select-none',
-                              months: theme === 'dark' ? '!bg-[#141416] rounded-xl' : '!bg-white rounded-xl',
-                              month: theme === 'dark' ? '!bg-[#141416]' : '!bg-white',
+                              months: theme === 'dark' ? 'relative flex flex-col gap-4 w-full !bg-[#141416] rounded-xl' : 'relative flex flex-col gap-4 w-full !bg-white rounded-xl',
+                              month: theme === 'dark' ? 'flex w-full flex-col gap-4 !bg-[#141416]' : 'flex w-full flex-col gap-4 !bg-white',
                             }}
                             selected={formData.deliveryDate ? parseISO(formData.deliveryDate) : undefined}
                             onSelect={(date) => {
