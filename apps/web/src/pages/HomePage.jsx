@@ -133,7 +133,7 @@ function HomePage() {
         {/* Restaurant Info */}
         <section className="py-8 bg-card border-y border-border relative z-20 seigaiha-sides">
           <div className="w-full px-4 sm:px-6 lg:px-12">
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+            <div className="grid grid-cols-1 md:grid-cols-5 gap-4 text-center items-center">
               <a
                 href="https://maps.google.com/?q=Merab+Kostava+71+Tbilisi"
                 target="_blank"
@@ -150,6 +150,44 @@ function HomePage() {
                   </p>
                 </div>
               </a>
+              {/* Wayō Buddhist Main Hall 金堂 */}
+              <div className="hidden md:flex items-center justify-center" aria-hidden="true">
+                <svg viewBox="0 0 100 140" width="110" height="140" xmlns="http://www.w3.org/2000/svg" fill="none">
+                  <g stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-primary" opacity="0.4">
+                    <path d="M30,24 L50,8 L70,24"/>
+                    <line x1="30" y1="24" x2="70" y2="24"/>
+                    <line x1="4" y1="50" x2="30" y2="24"/>
+                    <line x1="96" y1="50" x2="70" y2="24"/>
+                    <path d="M2,52 Q5,48 9,50 L91,50 Q95,48 98,52"/>
+                    <rect x="8" y="44" width="84" height="5"/>
+                    <rect x="21" y="41" width="7" height="4"/>
+                    <rect x="34" y="41" width="7" height="4"/>
+                    <rect x="47" y="41" width="7" height="4"/>
+                    <rect x="60" y="41" width="7" height="4"/>
+                    <rect x="72" y="41" width="7" height="4"/>
+                    <rect x="14" y="50" width="72" height="22"/>
+                    <line x1="25" y1="50" x2="25" y2="72"/>
+                    <line x1="38" y1="50" x2="38" y2="72"/>
+                    <line x1="62" y1="50" x2="62" y2="72"/>
+                    <line x1="75" y1="50" x2="75" y2="72"/>
+                    <rect x="43" y="57" width="7" height="15" rx="1"/>
+                    <rect x="50" y="57" width="7" height="15" rx="1"/>
+                    <line x1="10" y1="72" x2="90" y2="72"/>
+                    <line x1="10" y1="78" x2="90" y2="78"/>
+                    <line x1="22" y1="72" x2="22" y2="78"/><line x1="34" y1="72" x2="34" y2="78"/>
+                    <line x1="50" y1="72" x2="50" y2="78"/><line x1="66" y1="72" x2="66" y2="78"/>
+                    <line x1="78" y1="72" x2="78" y2="78"/>
+                    <line x1="22" y1="78" x2="22" y2="92"/>
+                    <line x1="50" y1="78" x2="50" y2="92"/>
+                    <line x1="78" y1="78" x2="78" y2="92"/>
+                    <rect x="8" y="92" width="84" height="10"/>
+                    <line x1="5" y1="102" x2="95" y2="102"/>
+                    <line x1="3" y1="109" x2="97" y2="109"/>
+                    <line x1="1" y1="116" x2="99" y2="116"/>
+                  </g>
+                </svg>
+              </div>
+
               <div className="flex flex-col items-center gap-3">
                 <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
                   <Clock className="w-5 h-5 text-primary" />
@@ -161,6 +199,46 @@ function HomePage() {
                   </p>
                 </div>
               </div>
+              {/* Wayō Buddhist Three-Story Pagoda 三重塔 */}
+              <div className="hidden md:flex items-center justify-center" aria-hidden="true">
+                <svg viewBox="0 0 100 140" width="110" height="140" xmlns="http://www.w3.org/2000/svg" fill="none">
+                  <g stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-primary" opacity="0.4">
+                    <line x1="50" y1="3" x2="50" y2="16"/>
+                    <circle cx="50" cy="7" r="2.5"/>
+                    <line x1="32" y1="26" x2="50" y2="15"/>
+                    <line x1="68" y1="26" x2="50" y2="15"/>
+                    <path d="M30,27 Q32,25 34,27 L66,27 Q68,25 70,27"/>
+                    <rect x="33" y="22" width="34" height="5"/>
+                    <rect x="38" y="27" width="24" height="10"/>
+                    <line x1="50" y1="27" x2="50" y2="37"/>
+                    <line x1="20" y1="50" x2="38" y2="37"/>
+                    <line x1="80" y1="50" x2="62" y2="37"/>
+                    <path d="M18,51 Q20,49 22,51 L78,51 Q80,49 82,51"/>
+                    <rect x="22" y="46" width="56" height="5"/>
+                    <rect x="35" y="43" width="7" height="4"/>
+                    <rect x="58" y="43" width="7" height="4"/>
+                    <rect x="28" y="51" width="44" height="13"/>
+                    <line x1="40" y1="51" x2="40" y2="64"/>
+                    <line x1="60" y1="51" x2="60" y2="64"/>
+                    <line x1="8" y1="78" x2="28" y2="64"/>
+                    <line x1="92" y1="78" x2="72" y2="64"/>
+                    <path d="M6,79 Q8,77 10,79 L90,79 Q92,77 94,79"/>
+                    <rect x="10" y="73" width="80" height="6"/>
+                    <rect x="22" y="70" width="7" height="4"/>
+                    <rect x="46" y="70" width="7" height="4"/>
+                    <rect x="70" y="70" width="7" height="4"/>
+                    <rect x="16" y="79" width="68" height="15"/>
+                    <line x1="30" y1="79" x2="30" y2="94"/>
+                    <line x1="50" y1="79" x2="50" y2="94"/>
+                    <line x1="70" y1="79" x2="70" y2="94"/>
+                    <rect x="10" y="94" width="80" height="10"/>
+                    <line x1="6" y1="104" x2="94" y2="104"/>
+                    <line x1="4" y1="111" x2="96" y2="111"/>
+                    <line x1="2" y1="118" x2="98" y2="118"/>
+                  </g>
+                </svg>
+              </div>
+
               <a
                 href="tel:+995598901848"
                 className="flex flex-col items-center gap-3 hover:opacity-75 transition-opacity"
