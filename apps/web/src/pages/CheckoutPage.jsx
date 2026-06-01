@@ -288,7 +288,7 @@ function CheckoutPage() {
                             type="button"
                             variant="outline"
                             className={cn(
-                              'w-full justify-start text-left font-normal bg-input border-input text-foreground hover:bg-input/80 pl-3',
+                              'w-full justify-start text-left font-normal bg-input border-input text-foreground hover:bg-input/80 !pl-3',
                               !formData.deliveryDate && 'text-muted-foreground'
                             )}
                           >
