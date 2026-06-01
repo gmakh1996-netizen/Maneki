@@ -303,14 +303,17 @@ function CheckoutPage() {
                           </Button>
                         </PopoverTrigger>
                         <PopoverContent
-                          className="p-0 w-[var(--radix-popover-trigger-width)] bg-card border border-border rounded-xl shadow-lg"
-                          style={theme === 'dark'
-                            ? { backgroundColor: '#141416', color: '#fafafa' }
-                            : { backgroundColor: '#ffffff', color: '#18181b' }}
+                          className="p-0 w-[var(--radix-popover-trigger-width)] border border-border rounded-xl shadow-lg overflow-hidden"
                           align="start"
                           sideOffset={4}
                           collisionPadding={12}
                         >
+                          <div
+                            className="rounded-xl overflow-hidden"
+                            style={theme === 'dark'
+                              ? { backgroundColor: '#141416', color: '#fafafa' }
+                              : { backgroundColor: '#ffffff', color: '#18181b' }}
+                          >
                           <Calendar
                             mode="single"
                             showOutsideDays={true}
@@ -340,6 +343,7 @@ function CheckoutPage() {
                             }}
                             initialFocus
                           />
+                          </div>
                         </PopoverContent>
                       </Popover>
                     </div>
