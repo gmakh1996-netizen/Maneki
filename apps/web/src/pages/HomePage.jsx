@@ -122,7 +122,8 @@ function HomePage() {
           }} transition={{
             duration: 0.6
           }} className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6 leading-tight whitespace-pre-line" style={{
-            letterSpacing: '-0.02em'
+            letterSpacing: '-0.02em',
+            minHeight: '3.2em',
           }}>
               {t('hero.title')}
             </motion.h1>
