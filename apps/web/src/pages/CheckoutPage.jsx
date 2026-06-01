@@ -16,6 +16,7 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { useLanguage } from '../hooks/useLanguage';
 import { useTheme } from '../hooks/useTheme';
+import SimpleCalendar from '../components/SimpleCalendar';
 
 // Working hours: 14:00–23:30 then 00:00–02:00 (crosses midnight)
 const TIME_SLOTS = (() => {
@@ -285,61 +286,20 @@ function CheckoutPage() {
                   <div className="grid sm:grid-cols-2 gap-4 items-end">
                     <div className="space-y-2">
                       <Label>{t('checkout.deliveryDate')}</Label>
-                      {/* Inline calendar — no Portal, iOS Safari safe */}
-                      <div className="relative">
-                        <Button
-                          type="button"
-                          variant="outline"
-                          style={{ paddingLeft: '0.75rem' }}
-                          className={cn(
-                            'w-full justify-start text-left font-normal bg-input border-input text-foreground hover:bg-input/80',
-                            !formData.deliveryDate && 'text-muted-foreground'
-                          )}
-                          onClick={() => setCalendarOpen(v => !v)}
-                        >
-                          <CalendarIcon className="mr-1 h-4 w-4 shrink-0" />
-                          {formData.deliveryDate
-                            ? format(parseISO(formData.deliveryDate), 'MMMM d, yyyy')
-                            : t('checkout.selectDate')}
-                        </Button>
-
-                        {calendarOpen && (
-                          <div
-                            className="absolute top-full left-0 right-0 z-50 mt-1 rounded-xl border border-border shadow-lg overflow-hidden"
-                            style={{ backgroundColor: theme === 'dark' ? '#141416' : '#ffffff' }}
-                          >
-                            <Calendar
-                              mode="single"
-                              showOutsideDays={true}
-                              className="w-full [--cell-size:1.4rem] p-2"
-                              style={{ backgroundColor: theme === 'dark' ? '#141416' : '#ffffff', color: theme === 'dark' ? '#fafafa' : '#18181b' }}
-                              classNames={{
-                                hidden: 'opacity-0 pointer-events-none select-none',
-                                outside: 'opacity-0 pointer-events-none select-none',
-                              }}
-                              selected={formData.deliveryDate ? parseISO(formData.deliveryDate) : undefined}
-                              onSelect={(date) => {
-                                setFormData({
-                                  ...formData,
-                                  deliveryDate: date
-                                    ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
-                                    : ''
-                                });
-                                setCalendarOpen(false);
-                              }}
-                              startMonth={new Date(today)}
-                              endMonth={new Date(maxDate)}
-                              disabled={(date) => {
-                                const start = new Date(today);
-                                start.setHours(0, 0, 0, 0);
-                                const end = new Date(maxDate);
-                                end.setHours(23, 59, 59, 999);
-                                return date < start || date > end;
-                              }}
-                            />
-                          </div>
-                        )}
-                      </div>
+                      {/* Custom inline calendar — pure divs, iOS Safari safe */}
+                      <SimpleCalendar
+                        value={formData.deliveryDate}
+                        onChange={(dateStr) => {
+                          setFormData({ ...formData, deliveryDate: dateStr });
+                          setCalendarOpen(false);
+                        }}
+                        open={calendarOpen}
+                        onToggle={() => setCalendarOpen(v => !v)}
+                        minDate={today}
+                        maxDate={maxDate}
+                        theme={theme}
+                        placeholder={t('checkout.selectDate')}
+                      />
                     </div>
 
                     <div className="space-y-2">
