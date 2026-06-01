@@ -340,10 +340,10 @@ function CheckoutPage() {
                         onValueChange={(val) => setFormData({ ...formData, deliveryTime: val })}
                       >
                         <SelectTrigger className="bg-input text-foreground w-full">
-                          <span className="flex items-center gap-2">
+                          <div className="flex items-center gap-2">
                             <Clock className="h-4 w-4 shrink-0 text-muted-foreground" />
                             <SelectValue placeholder={t('checkout.selectTime')} />
-                          </span>
+                          </div>
                         </SelectTrigger>
                         <SelectContent>
                           {TIME_SLOTS.map(slot => (
