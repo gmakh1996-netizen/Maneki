@@ -292,7 +292,7 @@ function CheckoutPage() {
                               !formData.deliveryDate && 'text-muted-foreground'
                             )}
                           >
-                            <CalendarIcon className="mr-2 h-4 w-4 shrink-0" />
+                            <CalendarIcon className="mr-1 h-4 w-4 shrink-0" />
                             {formData.deliveryDate
                               ? format(parseISO(formData.deliveryDate), 'MMMM d, yyyy')
                               : t('checkout.selectDate')}
