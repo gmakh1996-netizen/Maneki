@@ -311,8 +311,8 @@ function CheckoutPage() {
                           <div
                             className="rounded-xl"
                             style={theme === 'dark'
-                              ? { backgroundColor: '#141416', color: '#fafafa' }
-                              : { backgroundColor: '#ffffff', color: '#18181b' }}
+                              ? { backgroundColor: '#141416', color: '#fafafa', maxHeight: '70vh', overflowY: 'auto' }
+                              : { backgroundColor: '#ffffff', color: '#18181b', maxHeight: '70vh', overflowY: 'auto' }}
                           >
                           <Calendar
                             mode="single"
