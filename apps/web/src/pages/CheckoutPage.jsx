@@ -312,12 +312,11 @@ function CheckoutPage() {
                             mode="single"
                             showOutsideDays={true}
                             className="w-full [--cell-size:1.4rem] p-2 rounded-xl"
-                            style={theme === 'dark'
-                              ? { backgroundColor: '#141416', color: '#fafafa', WebkitTransform: 'translateZ(0)', transform: 'translateZ(0)' }
-                              : { backgroundColor: '#ffffff', color: '#18181b', WebkitTransform: 'translateZ(0)', transform: 'translateZ(0)' }}
                             classNames={{
                               hidden: 'opacity-0 pointer-events-none select-none',
                               outside: 'opacity-0 pointer-events-none select-none',
+                              months: theme === 'dark' ? '!bg-[#141416] rounded-xl' : '!bg-white rounded-xl',
+                              month: theme === 'dark' ? '!bg-[#141416]' : '!bg-white',
                             }}
                             selected={formData.deliveryDate ? parseISO(formData.deliveryDate) : undefined}
                             onSelect={(date) => {
