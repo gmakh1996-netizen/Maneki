@@ -313,9 +313,12 @@ function CheckoutPage() {
                         >
                           <Calendar
                             mode="single"
-                            showOutsideDays={false}
+                            showOutsideDays={true}
                             className="w-full [--cell-size:1.75rem] p-2 pb-3"
-                            classNames={{ hidden: 'opacity-0 pointer-events-none' }}
+                            classNames={{
+                              hidden: 'opacity-0 pointer-events-none',
+                              outside: 'opacity-0 pointer-events-none',
+                            }}
                             selected={formData.deliveryDate ? parseISO(formData.deliveryDate) : undefined}
                             onSelect={(date) => {
                               setFormData({
