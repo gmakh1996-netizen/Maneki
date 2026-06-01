@@ -9,7 +9,8 @@
 		<script>
 			(function() {
 				try {
-					var theme = localStorage.getItem('theme') || 'dark';
+					var hour = new Date().getHours();
+					var theme = (hour >= 6 && hour < 21) ? 'light' : 'dark';
 					document.documentElement.className = theme;
 					document.documentElement.style.colorScheme = theme;
 				} catch(e) {}
