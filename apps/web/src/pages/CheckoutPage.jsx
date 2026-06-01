@@ -2,7 +2,7 @@
 import React, { useState, useRef } from 'react';
 import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, CheckCircle2, Minus, Plus, CalendarIcon, Loader2 } from 'lucide-react';
+import { ArrowLeft, CheckCircle2, Minus, Plus, CalendarIcon, Clock, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -340,6 +340,7 @@ function CheckoutPage() {
                         onValueChange={(val) => setFormData({ ...formData, deliveryTime: val })}
                       >
                         <SelectTrigger className="bg-input text-foreground w-full">
+                          <Clock className="mr-2 h-4 w-4 shrink-0 text-muted-foreground" />
                           <SelectValue placeholder={t('checkout.selectTime')} />
                         </SelectTrigger>
                         <SelectContent>
