@@ -15,6 +15,7 @@ import { format, parseISO } from 'date-fns';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { useLanguage } from '../hooks/useLanguage';
+import { useTheme } from '../hooks/useTheme';
 
 // Working hours: 14:00–23:30 then 00:00–02:00 (crosses midnight)
 const TIME_SLOTS = (() => {
@@ -38,6 +39,7 @@ function toMinutes(time) {
 function CheckoutPage() {
   const navigate = useNavigate();
   const { language, t } = useLanguage();
+  const { theme } = useTheme();
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const submittingRef = useRef(false);
@@ -301,6 +303,9 @@ function CheckoutPage() {
                         </PopoverTrigger>
                         <PopoverContent
                           className="p-0 w-[var(--radix-popover-trigger-width)] bg-card border border-border rounded-xl shadow-lg"
+                          style={theme === 'dark'
+                            ? { backgroundColor: '#141416', color: '#fafafa' }
+                            : { backgroundColor: '#ffffff', color: '#18181b' }}
                           align="start"
                           sideOffset={4}
                           collisionPadding={12}
