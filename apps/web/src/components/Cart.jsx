@@ -34,7 +34,7 @@ function Cart({ items, onRemoveItem, onUpdateQuantity }) {
   };
 
   return (
-    <div className="bg-card rounded-2xl border border-border shadow-sm flex flex-col overflow-hidden max-h-[calc(100vh-11rem)] overscroll-contain">
+    <div className="bg-card rounded-2xl border border-border shadow-sm flex flex-col overflow-hidden max-h-[calc(100vh-15rem)] overscroll-contain">
       {/* Header / Toggle */}
       <div 
         className="p-4 flex items-center justify-between cursor-pointer hover:bg-muted/40 transition-colors bg-card z-10"
@@ -72,7 +72,7 @@ function Cart({ items, onRemoveItem, onUpdateQuantity }) {
             <div className="p-5 pt-0 border-t border-border flex flex-col min-h-0">
               <div
                 className="flex-1 -mx-5 px-5 overflow-y-auto overscroll-contain"
-                style={{ maxHeight: '45vh', WebkitOverflowScrolling: 'touch' }}
+                style={{ maxHeight: '35vh', WebkitOverflowScrolling: 'touch' }}
               >
                 <div className="space-y-4 pt-4">
                   {items.map((item) => {
