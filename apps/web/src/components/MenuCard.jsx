@@ -3,7 +3,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '../hooks/useLanguage';
 
-function MenuCard({ item, onClick, promoLabel }) {
+function MenuCard({ item, onClick, promoLabel, discountedPrice }) {
   const { language, t } = useLanguage();
   
   const itemName = item.name?.[language] || item.name?.en || '';
@@ -50,9 +50,18 @@ function MenuCard({ item, onClick, promoLabel }) {
 
 
         {/* Price Badge */}
-        <div className="absolute bottom-3 right-3 bg-primary text-primary-foreground px-3 py-1.5 rounded-lg font-bold text-sm shadow-lg">
-          {item.price.toFixed(2)} {t('product.currency')}
-        </div>
+        {discountedPrice != null ? (
+          <div className="absolute bottom-3 right-3 flex flex-col items-end gap-0.5">
+            <span className="text-white/60 text-xs line-through leading-none">{item.price.toFixed(2)} {t('product.currency')}</span>
+            <div className="bg-sky-500 text-white px-3 py-1.5 rounded-lg font-bold text-sm shadow-lg">
+              {discountedPrice.toFixed(2)} {t('product.currency')}
+            </div>
+          </div>
+        ) : (
+          <div className="absolute bottom-3 right-3 bg-primary text-primary-foreground px-3 py-1.5 rounded-lg font-bold text-sm shadow-lg">
+            {item.price.toFixed(2)} {t('product.currency')}
+          </div>
+        )}
       </div>
     </motion.div>
   );

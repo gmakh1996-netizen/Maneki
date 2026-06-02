@@ -105,20 +105,27 @@ function HomePage() {
   const PROMO_CAT = 'Discount';
   const promoProductNames = [...new Set(activePromos.flatMap(p => p.applicable_products || []))];
 
-  const getBestDiscount = (itemName) => {
+  const getBestPromo = (itemName) => {
     const matching = activePromos.filter(p => p.applicable_products?.includes(itemName));
     if (!matching.length) return null;
-    const best = matching.reduce((b, p) => {
+    return matching.reduce((b, p) => {
       const val = p.discount_type === 'percent' ? p.discount_value : 0;
       const bVal = b?.discount_type === 'percent' ? b.discount_value : 0;
       return val > bVal ? p : b;
     }, matching[0]);
-    return best.discount_type === 'percent' ? `-${best.discount_value}%` : `-₾${best.discount_value}`;
   };
 
-  const getPromoCode = (itemName) => {
-    const matching = activePromos.filter(p => p.applicable_products?.includes(itemName));
-    return matching.length ? matching[0].code : null;
+  const getBestDiscount = (itemName) => {
+    const p = getBestPromo(itemName);
+    if (!p) return null;
+    return p.discount_type === 'percent' ? `-${p.discount_value}%` : `-₾${p.discount_value}`;
+  };
+
+  const calcDiscountedPrice = (price, itemName) => {
+    const p = getBestPromo(itemName);
+    if (!p) return null;
+    if (p.discount_type === 'percent') return Math.max(0, price * (1 - p.discount_value / 100));
+    return Math.max(0, price - p.discount_value);
   };
 
   const promoItems = promoProductNames.length > 0
@@ -411,6 +418,7 @@ function HomePage() {
                                 item={item}
                                 onClick={() => handleCardClick(item)}
                                 promoLabel={isPromoCategory ? getBestDiscount(item.name?.en || item.name) : null}
+                                discountedPrice={isPromoCategory ? calcDiscountedPrice(item.price, item.name?.en || item.name) : null}
                               />
                             ))}
                           </div>

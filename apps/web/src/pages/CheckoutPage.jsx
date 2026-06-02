@@ -1,5 +1,5 @@
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
@@ -51,6 +51,25 @@ function CheckoutPage() {
   const [promoApplied, setPromoApplied] = useState(null); // { code, discount_type, discount_value }
   const [promoError, setPromoError] = useState('');
   const [promoLoading, setPromoLoading] = useState(false);
+
+  // Auto-apply promo if cart items match active promo products
+  useEffect(() => {
+    const autoApply = async () => {
+      const items = JSON.parse(localStorage.getItem('cart') || '[]');
+      if (!items.length) return;
+      const { data } = await supabase.from('promo_codes')
+        .select('*').eq('is_active', true).not('applicable_products', 'is', null);
+      if (!data) return;
+      const matched = data.find(p => {
+        if (p.valid_from && new Date(p.valid_from) > new Date()) return false;
+        if (p.expires_at && new Date(p.expires_at) < new Date()) return false;
+        if (p.max_uses && p.uses_count >= p.max_uses) return false;
+        return items.some(i => p.applicable_products?.includes(i.name?.en || i.name));
+      });
+      if (matched) { setPromoApplied(matched); setPromoCode(matched.code); }
+    };
+    autoApply();
+  }, []);
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
