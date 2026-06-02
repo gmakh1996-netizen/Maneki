@@ -357,7 +357,7 @@ function HomePage() {
                     <SelectContent>
                       <SelectItem value="ALL">{t('menu.allProducts')}</SelectItem>
                       {allCategories.map(category => <SelectItem key={category} value={category}>
-                          {category === PROMO_CAT ? 'Promotion' : t(`categories.${getCategoryTranslationKey(category)}`)}
+                          {category === PROMO_CAT ? (language === 'ka' ? 'Promotion' : language === 'ru' ? 'Акции' : 'Promotion') : t(`categories.${getCategoryTranslationKey(category)}`)}
                         </SelectItem>)}
                     </SelectContent>
                   </Select>
@@ -395,7 +395,7 @@ function HomePage() {
                             <h2 className="text-3xl font-bold text-foreground" style={{
                           letterSpacing: '-0.02em'
                         }}>
-                              {category === PROMO_CAT ? 'Promotion' : t(`categories.${getCategoryTranslationKey(category)}`)}
+                              {category === PROMO_CAT ? (language === 'ka' ? 'Promotion' : language === 'ru' ? 'Акции' : 'Promotion') : t(`categories.${getCategoryTranslationKey(category)}`)}
                             </h2>
                             <div className="seigaiha-line flex-1 mt-2"></div>
                           </div>
