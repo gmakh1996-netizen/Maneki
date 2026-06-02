@@ -7,9 +7,12 @@ function MenuCard({ item, onClick }) {
   const { language, t } = useLanguage();
   
   const itemName = item.name?.[language] || item.name?.en || '';
-  const imgSrc = item.image?.includes('?')
+  const isLocal = item.image?.startsWith('/');
+  const imgSrc = isLocal
     ? item.image
-    : `${item.image}?w=600&q=75&auto=format&fit=crop`;
+    : item.image?.includes('?')
+      ? item.image
+      : `${item.image}?w=600&q=75&auto=format&fit=crop`;
 
   return (
     <motion.div
