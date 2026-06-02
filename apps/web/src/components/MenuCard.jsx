@@ -41,25 +41,44 @@ function MenuCard({ item, onClick, promoLabel, discountedPrice }) {
         />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
-        {/* Item name */}
-        <div className={`absolute left-2 right-2 ${discountedPrice != null ? 'bottom-14' : 'bottom-10'}`}>
-          <h3 className="text-white font-semibold leading-tight drop-shadow-lg line-clamp-2" style={{fontSize:'11px'}}>
+        {/* Item name — mobile: small/compact, desktop: original */}
+        <div className={`absolute left-2 sm:left-3 right-2 sm:right-3 ${discountedPrice != null ? 'bottom-14 sm:bottom-16' : 'bottom-10 sm:bottom-12'}`}>
+          <h3 className="text-white font-semibold leading-tight drop-shadow-lg line-clamp-2 sm:text-base sm:line-clamp-none group-hover:text-primary-foreground transition-colors"
+            style={{fontSize:'11px'}}
+          >
             {itemName}
           </h3>
         </div>
 
-        {/* Price area */}
+        {/* Price area — mobile: compact, desktop: original */}
         {discountedPrice != null ? (
-          <div className="absolute bottom-2 right-2 flex flex-col items-end" style={{gap:'1px'}}>
-            <span className="text-white/70 line-through" style={{fontSize:'9px'}}>{item.price.toFixed(2)} {t('product.currency')}</span>
-            <div className="bg-sky-500 text-white rounded font-bold shadow" style={{fontSize:'11px',padding:'2px 6px'}}>
-              {discountedPrice.toFixed(2)} {t('product.currency')}
+          <>
+            {/* Mobile */}
+            <div className="sm:hidden absolute bottom-2 right-2 flex flex-col items-end" style={{gap:'1px'}}>
+              <span className="text-white/70 line-through" style={{fontSize:'9px'}}>{item.price.toFixed(2)} {t('product.currency')}</span>
+              <div className="bg-sky-500 text-white rounded font-bold shadow" style={{fontSize:'11px',padding:'2px 6px'}}>
+                {discountedPrice.toFixed(2)} {t('product.currency')}
+              </div>
             </div>
-          </div>
+            {/* Desktop */}
+            <div className="hidden sm:flex absolute bottom-3 right-3 flex-col items-end gap-0.5">
+              <span className="text-white/60 text-xs line-through leading-none">{item.price.toFixed(2)} {t('product.currency')}</span>
+              <div className="bg-sky-500 text-white px-3 py-1.5 rounded-lg font-bold text-sm shadow-lg">
+                {discountedPrice.toFixed(2)} {t('product.currency')}
+              </div>
+            </div>
+          </>
         ) : (
-          <div className="absolute bottom-2 right-2 bg-primary text-primary-foreground rounded-lg font-bold shadow-lg" style={{fontSize:'12px',padding:'4px 10px'}}>
-            {item.price.toFixed(2)} {t('product.currency')}
-          </div>
+          <>
+            {/* Mobile */}
+            <div className="sm:hidden absolute bottom-2 right-2 bg-primary text-primary-foreground rounded-lg font-bold shadow-lg" style={{fontSize:'12px',padding:'4px 10px'}}>
+              {item.price.toFixed(2)} {t('product.currency')}
+            </div>
+            {/* Desktop */}
+            <div className="hidden sm:block absolute bottom-3 right-3 bg-primary text-primary-foreground px-3 py-1.5 rounded-lg font-bold text-sm shadow-lg">
+              {item.price.toFixed(2)} {t('product.currency')}
+            </div>
+          </>
         )}
       </div>
     </motion.div>
