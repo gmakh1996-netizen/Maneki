@@ -303,8 +303,38 @@ function CheckoutPage() {
                 </>
               )}
             </div>
+            {/* Keepz QR Payment */}
+            <div className="mt-6 rounded-2xl overflow-hidden border border-border shadow-lg">
+              <div className="bg-[#1a1250] p-5 flex flex-col items-center gap-3">
+                <p className="text-white font-bold text-sm tracking-wide opacity-80">
+                  {language === 'ka' ? 'QR კოდით გადახდა' : language === 'ru' ? 'Оплата по QR' : 'Pay by QR code'}
+                </p>
+                <div className="bg-white p-3 rounded-xl shadow-lg">
+                  <img
+                    src={`https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://tiny.keepz.me/udfvtrrv`}
+                    alt="Keepz QR"
+                    width={180} height={180}
+                    className="block"
+                  />
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="text-[#7b61ff] text-lg">✦</span>
+                  <span className="text-white font-bold text-lg tracking-wide">keepz</span>
+                </div>
+                <div className="flex items-center justify-center gap-3 flex-wrap opacity-90">
+                  <span className="text-white text-xs font-bold">🍎 Pay</span>
+                  <span className="text-white text-xs font-bold">G Pay</span>
+                  <span className="text-white text-xs font-bold tracking-widest">VISA</span>
+                  <span className="text-xl">💳</span>
+                  <span className="text-orange-400 text-xs font-bold">₿</span>
+                </div>
+                <a href="https://tiny.keepz.me/udfvtrrv" target="_blank" rel="noopener noreferrer"
+                  className="text-[#a0f0a0] text-xs underline">keepz.me</a>
+              </div>
+            </div>
+
             {/* Payment Info */}
-            <div className="mt-6 text-left space-y-4">
+            <div className="mt-4 text-left space-y-4">
               {[
                 { bank: 'TBS', iban: 'GE34TB7237345064300076' },
                 { bank: 'BOG', iban: 'GE61BG0000000101112512' },
