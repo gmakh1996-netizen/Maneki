@@ -21,53 +21,47 @@ function MenuCard({ item, onClick, promoLabel, discountedPrice }) {
       transition={{ duration: 0.3 }}
       onClick={onClick}
       className="group relative rounded-2xl cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl bg-card border border-border"
-      style={{ overflow: 'hidden' }}
+      style={{ overflow: promoLabel ? 'visible' : 'hidden' }}
     >
-      <div className="aspect-[4/3] relative overflow-hidden rounded-t-2xl bg-muted min-h-0">
+      {/* Discount badge — top-left, 1/4 outside */}
+      {promoLabel && (
+        <div className="absolute top-2 left-0 z-10 -translate-x-1/4">
+          <div className="bg-red-600 text-white px-2 py-0.5 rounded-md font-bold text-xs shadow-lg" style={{whiteSpace:'nowrap'}}>
+            {promoLabel}
+          </div>
+        </div>
+      )}
+
+      <div className="aspect-[4/3] relative overflow-hidden rounded-2xl bg-muted min-h-0">
         <img
           src={imgSrc}
           alt={itemName}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
           loading="lazy"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
-        {/* Discount badge — inside top-left */}
-        {promoLabel && (
-          <div className="absolute top-2 left-2 z-10">
-            <div className="bg-red-600 text-white px-2 py-0.5 rounded-md font-bold text-xs shadow-lg">
-              {promoLabel}
-            </div>
-          </div>
-        )}
-
-        {/* Normal price badge (no discount) */}
-        {!discountedPrice && (
-          <>
-            <div className="absolute bottom-10 left-3 right-3">
-              <h3 className="text-white font-semibold text-base leading-tight drop-shadow-lg group-hover:text-primary-foreground transition-colors">
-                {itemName}
-              </h3>
-            </div>
-            <div className="absolute bottom-3 right-3 bg-primary text-primary-foreground px-3 py-1.5 rounded-lg font-bold text-sm shadow-lg">
-              {item.price.toFixed(2)} {t('product.currency')}
-            </div>
-          </>
-        )}
-      </div>
-
-      {/* Discount card — name + prices below image */}
-      {discountedPrice != null && (
-        <div className="px-3 py-2 flex items-center justify-between gap-1 bg-card rounded-b-2xl">
-          <h3 className="text-foreground font-semibold text-xs leading-tight flex-1 line-clamp-2">
+        {/* Item name */}
+        <div className={`absolute left-2 right-2 ${discountedPrice != null ? 'bottom-14' : 'bottom-10'}`}>
+          <h3 className="text-white font-semibold leading-tight drop-shadow-lg line-clamp-2" style={{fontSize:'11px'}}>
             {itemName}
           </h3>
-          <div className="flex flex-col items-end shrink-0">
-            <span className="text-muted-foreground text-xs line-through leading-none">{item.price.toFixed(2)} {t('product.currency')}</span>
-            <span className="text-sky-500 font-bold text-sm leading-tight">{discountedPrice.toFixed(2)} {t('product.currency')}</span>
-          </div>
         </div>
-      )}
+
+        {/* Price area */}
+        {discountedPrice != null ? (
+          <div className="absolute bottom-2 right-2 flex flex-col items-end" style={{gap:'1px'}}>
+            <span className="text-white/70 line-through" style={{fontSize:'9px'}}>{item.price.toFixed(2)} {t('product.currency')}</span>
+            <div className="bg-sky-500 text-white rounded font-bold shadow" style={{fontSize:'11px',padding:'2px 6px'}}>
+              {discountedPrice.toFixed(2)} {t('product.currency')}
+            </div>
+          </div>
+        ) : (
+          <div className="absolute bottom-2 right-2 bg-primary text-primary-foreground rounded-lg font-bold shadow-lg" style={{fontSize:'12px',padding:'4px 10px'}}>
+            {item.price.toFixed(2)} {t('product.currency')}
+          </div>
+        )}
+      </div>
     </motion.div>
   );
 }
