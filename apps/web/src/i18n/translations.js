@@ -12,7 +12,7 @@ export const translations = {
       pickup: "Pickup Location",
       pickupDesc: "Tbilisi, m. Technical University\nMerab Kostava 71",
       deliveryTime: "Delivery Time",
-      deliveryTimeDesc: "Ready in 40 min\nDelivery 15–45 min",
+      deliveryTimeDesc: "Ready in 25–40 min\nDelivery 15–45 min",
       contactUs: "Contact Us",
       contactDesc: "+995 598 901 848\nOpen 14:00–02:00"
     },
@@ -128,7 +128,7 @@ export const translations = {
       pickup: "გატანის ადგილი",
       pickupDesc: "თბილისი, ტექნიკური უნივერსიტეტი\nმერაბ კოსტავას 71",
       deliveryTime: "მიტანის დრო",
-      deliveryTimeDesc: "მზადდება 40 წთ\nმიტანა 15–45 წთ",
+      deliveryTimeDesc: "მზადდება 25–40 წთ\nმიტანა 15–45 წთ",
       contactUs: "დაგვიკავშირდით",
       contactDesc: "+995 598 901 848\nღიაა 14:00–02:00"
     },
@@ -244,7 +244,7 @@ export const translations = {
       pickup: "Самовывоз",
       pickupDesc: "Тбилиси, м. Технический Университет\nМераб Костава 71",
       deliveryTime: "Время доставки",
-      deliveryTimeDesc: "Готовность 40 мин\nДоставка 15–45 мин",
+      deliveryTimeDesc: "Готовность 25–40 мин\nДоставка 15–45 мин",
       contactUs: "Связаться с нами",
       contactDesc: "+995 598 901 848\nОткрыто 14:00–02:00"
     },
