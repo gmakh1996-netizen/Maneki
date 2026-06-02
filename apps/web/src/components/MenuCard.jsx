@@ -40,8 +40,11 @@ function MenuCard({ item, onClick, promoLabel }) {
 
         {/* Promo badge */}
         {promoLabel && (
-          <div className="absolute top-3 left-3 bg-red-500 text-white px-2.5 py-1 rounded-full text-xs font-bold shadow-lg animate-pulse">
-            🔥 {promoLabel}
+          <div className="absolute bottom-14 left-3 flex items-center gap-1.5">
+            <div className="bg-gradient-to-r from-red-600 to-orange-500 text-white px-3 py-1 rounded-full shadow-lg flex items-center gap-1.5" style={{fontSize:'13px', fontWeight:700, letterSpacing:'0.02em'}}>
+              <span style={{fontSize:'15px'}}>🔥</span>
+              <span>{promoLabel}</span>
+            </div>
           </div>
         )}
 

@@ -340,8 +340,8 @@ function HomePage() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="ALL">{t('menu.allProducts')}</SelectItem>
-                      {categories.map(category => <SelectItem key={category} value={category}>
-                          {t(`categories.${getCategoryTranslationKey(category)}`)}
+                      {allCategories.map(category => <SelectItem key={category} value={category}>
+                          {category === PROMO_CAT ? 'Discount' : t(`categories.${getCategoryTranslationKey(category)}`)}
                         </SelectItem>)}
                     </SelectContent>
                   </Select>
@@ -379,7 +379,7 @@ function HomePage() {
                             <h2 className="text-3xl font-bold text-foreground" style={{
                           letterSpacing: '-0.02em'
                         }}>
-                              {t(`categories.${getCategoryTranslationKey(category)}`)}
+                              {category === PROMO_CAT ? '🔥 Discount' : t(`categories.${getCategoryTranslationKey(category)}`)}
                             </h2>
                             <div className="seigaiha-line flex-1 mt-2"></div>
                           </div>

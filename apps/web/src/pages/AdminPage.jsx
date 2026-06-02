@@ -164,6 +164,9 @@ export default function AdminPage() {
   // Edit promo
   const [editingPromo, setEditingPromo] = useState(null);
   const [editMaxUses, setEditMaxUses] = useState('');
+  const [editPromoProducts, setEditPromoProducts] = useState(null); // promo id being edited for products
+  const [editPromoSelectedProducts, setEditPromoSelectedProducts] = useState([]);
+  const [editPromoProductCat, setEditPromoProductCat] = useState(null);
 
   // Edit order
   const [editingOrderId, setEditingOrderId] = useState(null);
@@ -310,6 +313,13 @@ export default function AdminPage() {
     await supabase.from('promo_codes').update({ max_uses: val }).eq('id', id);
     setPromos(prev => prev.map(p => p.id === id ? { ...p, max_uses: val } : p));
     setEditingPromo(null);
+  };
+
+  const savePromoProducts = async (id) => {
+    const val = editPromoSelectedProducts.length > 0 ? editPromoSelectedProducts : null;
+    await supabase.from('promo_codes').update({ applicable_products: val }).eq('id', id);
+    setPromos(prev => prev.map(p => p.id === id ? { ...p, applicable_products: val } : p));
+    setEditPromoProducts(null);
   };
 
   // Filter orders by date
@@ -726,16 +736,61 @@ export default function AdminPage() {
                       </button>
                     </div>
                   </div>
+                  {/* Edit max uses */}
                   {editingPromo === promo.id ? (
                     <div className="flex gap-2 items-center">
                       <input type="number" value={editMaxUses} onChange={e => setEditMaxUses(e.target.value)}
-                        placeholder="∞" className="h-8 w-28 rounded-md border border-input bg-background px-2 text-sm focus:outline-none" />
+                        placeholder="∞" className="h-8 w-28 rounded-md border border-input bg-background px-2 text-base sm:text-sm focus:outline-none" />
                       <button onClick={() => saveMaxUses(promo.id)} className="h-8 px-3 bg-primary text-white rounded-md text-xs">{t.save}</button>
                       <button onClick={() => setEditingPromo(null)} className="h-8 px-3 bg-muted rounded-md text-xs">✕</button>
                     </div>
                   ) : (
-                    <button onClick={() => { setEditingPromo(promo.id); setEditMaxUses(promo.max_uses ?? ''); }}
+                    <button onClick={() => { setEditingPromo(promo.id); setEditMaxUses(promo.max_uses ?? ''); setEditPromoProducts(null); }}
                       className="text-xs text-primary hover:underline">✏ {t.editMaxUses}</button>
+                  )}
+
+                  {/* Edit applicable products */}
+                  {editPromoProducts === promo.id ? (
+                    <div className="border border-primary/30 rounded-xl overflow-hidden mt-1">
+                      <div className="flex items-center justify-between px-3 py-2 bg-primary/10">
+                        <span className="text-xs font-semibold">{lang==='ka' ? 'პროდუქტების რედაქტირება' : 'Edit products'}</span>
+                        <div className="flex gap-2">
+                          <button onClick={() => savePromoProducts(promo.id)} className="h-7 px-3 bg-primary text-white rounded-md text-xs">{t.save}</button>
+                          <button onClick={() => setEditPromoProducts(null)} className="h-7 px-3 bg-muted rounded-md text-xs">✕</button>
+                        </div>
+                      </div>
+                      <div className="p-2 max-h-52 overflow-y-auto space-y-1">
+                        <button type="button" onClick={() => setEditPromoSelectedProducts([])}
+                          className="w-full text-xs text-red-500 text-left px-2 py-1 hover:bg-red-500/10 rounded">
+                          ✕ {lang==='ka' ? 'ყველას გაუქმება' : 'Clear all'}
+                        </button>
+                        {Object.entries(PRODUCTS_BY_CAT).map(([cat, prods]) => (
+                          <div key={cat}>
+                            <p className="text-xs font-semibold text-muted-foreground px-2 py-1">{cat}</p>
+                            {prods.map((p, i) => (
+                              <label key={i} className="flex items-center gap-2 px-2 py-1 rounded hover:bg-muted cursor-pointer">
+                                <input type="checkbox"
+                                  checked={editPromoSelectedProducts.includes(p.name)}
+                                  onChange={e => setEditPromoSelectedProducts(prev =>
+                                    e.target.checked ? [...prev, p.name] : prev.filter(n => n !== p.name)
+                                  )} />
+                                <span className="text-sm flex-1">{p.name}</span>
+                                <span className="text-xs text-muted-foreground">₾{p.price}</span>
+                              </label>
+                            ))}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  ) : (
+                    <button onClick={() => {
+                      setEditPromoProducts(promo.id);
+                      setEditPromoSelectedProducts(promo.applicable_products || []);
+                      setEditPromoProductCat(null);
+                      setEditingPromo(null);
+                    }} className="text-xs text-primary hover:underline">
+                      🎯 {lang==='ka' ? 'პროდუქტების რედაქტირება' : lang==='ru' ? 'Редакт. продукты' : 'Edit products'} ({promo.applicable_products?.length ?? lang==='ka' ? 'ყველა' : 'all'})
+                    </button>
                   )}
                 </div>
               );
