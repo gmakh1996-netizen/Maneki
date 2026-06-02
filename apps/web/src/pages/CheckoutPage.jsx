@@ -1,5 +1,6 @@
 
 import React, { useState, useRef } from 'react';
+import { supabase } from '../lib/supabase';
 import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
 import { ArrowLeft, CheckCircle2, Minus, Plus, CalendarIcon, Clock, Loader2 } from 'lucide-react';
@@ -163,9 +164,30 @@ function CheckoutPage() {
     submittingRef.current = true;
     setIsLoading(true);
     try {
-      const orders = JSON.parse(localStorage.getItem('orders') || '[]');
-      orders.push(order);
-      localStorage.setItem('orders', JSON.stringify(orders));
+      // Supabase-ში შეკვეთის შენახვა
+      await supabase.from('orders').insert({
+        customer_name: formData.name,
+        phone: formData.phone,
+        address: formData.address || null,
+        delivery_type: deliveryMethod,
+        delivery_date: formData.deliveryDate || null,
+        delivery_time: formData.deliveryTime || null,
+        items: cartItems.map(i => ({
+          id: i.id,
+          name: i.name?.en || i.name,
+          quantity: i.quantity,
+          price: i.price
+        })),
+        subtotal,
+        delivery_fee: deliveryFee,
+        discount: 0,
+        total,
+        promo_code: null,
+        chopstick_sets: formData.chopstickSets || 0,
+        notes: formData.instructions || null,
+        status: 'new'
+      });
+
       localStorage.removeItem('cart');
       await sendTelegramNotification(order);
       setOrderPlaced(true);
