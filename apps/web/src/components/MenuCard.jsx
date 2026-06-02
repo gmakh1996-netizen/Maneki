@@ -42,9 +42,8 @@ function MenuCard({ item, onClick, promoLabel, discountedPrice }) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
 
         {/* Item name — mobile: small/compact, desktop: original */}
-        <div className={`absolute left-2 sm:left-3 right-2 sm:right-3 ${discountedPrice != null ? 'bottom-14 sm:bottom-16' : 'bottom-10 sm:bottom-12'}`}>
-          <h3 className="text-white font-semibold leading-tight drop-shadow-lg line-clamp-2 sm:text-3xl sm:font-bold sm:line-clamp-none group-hover:text-primary-foreground transition-colors"
-            style={{fontSize:'11px'}}
+        <div className={`absolute left-2 sm:left-3 right-2 sm:right-3 ${discountedPrice != null ? 'bottom-14 sm:bottom-20' : 'bottom-10 sm:bottom-16'}`}>
+          <h3 className="text-white font-semibold leading-tight drop-shadow-lg line-clamp-2 text-[11px] sm:text-xl sm:font-bold sm:line-clamp-none group-hover:text-primary-foreground transition-colors"
           >
             {itemName}
           </h3>
