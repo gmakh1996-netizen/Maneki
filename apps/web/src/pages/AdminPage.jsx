@@ -3,19 +3,38 @@ import { supabase } from '../lib/supabase';
 import SimpleCalendar from '../components/SimpleCalendar';
 import { menuItems } from '../data/menuData';
 
-// Unique products — prefer primary categories over filter categories
 const FILTER_CATS = new Set(['No Spicy Sushi Menu', 'No Raw Fish Menu', 'Roll Menu (Full List)']);
 
+const CAT_OVERRIDE = {
+  '"Alaska" Shrimp Roll':        'Roll Menu',
+  'Alaska Shrimp Roll':          'Roll Menu',
+  'Combo Shrimp':                'Special Rolls Menu',
+  'Donburi with Shrimps':        'Domburi Menu',
+  'Domburi with Shrimps':        'Domburi Menu',
+  'Chicken Roll':                'Roll Menu',
+  'Hot Roll Salmon':             'Hot Rolls Menu',
+  'California Roll with Salmon': 'Roll Menu',
+  'California Roll with Crab':   'Roll Menu',
+  'Shrimp Tempura Roll':         'Roll Menu',
+  'Unagi Roll':                  'Roll Menu',
+  'Roll "Snow Crab"':            'Roll Menu',
+  'Cheesy Fried Salmon':         'Special Rolls Menu',
+  'Rainbow Roll':                'Roll Menu',
+  'Roll Canada':                 'Roll Menu',
+  'Salmon Roll':                 'Roll Menu',
+  'Vegetarian Roll':             'Roll Menu',
+};
+
 const UNIQUE_PRODUCTS = (() => {
-  // First pass: collect all appearances per product name
   const byName = {};
   menuItems.forEach(item => {
     const name = item.name?.en || item.name;
     if (!byName[name]) byName[name] = [];
     byName[name].push({ name, price: item.price, category: item.category });
   });
-  // Pick best category: prefer non-filter categories
   return Object.values(byName).map(appearances => {
+    const name = appearances[0].name;
+    if (CAT_OVERRIDE[name]) return { ...appearances[0], category: CAT_OVERRIDE[name] };
     const primary = appearances.find(a => !FILTER_CATS.has(a.category));
     return primary || appearances[0];
   });
