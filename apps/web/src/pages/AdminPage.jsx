@@ -2,6 +2,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase';
 import SimpleCalendar from '../components/SimpleCalendar';
 
+// Global audio — ყოველ closure-ში მუშაობს
+let _audio = null;
+const getAudio = () => {
+  if (!_audio) { _audio = new Audio('/beep.wav'); _audio.preload = 'auto'; }
+  return _audio;
+};
+const beep = () => { try { const a = getAudio(); a.currentTime = 0; a.play(); } catch(_){} };
+
 
 const ADMIN_PASSWORD = 'maneki2024';
 
@@ -44,13 +52,6 @@ export default function AdminPage() {
     if (tab === 'promos') fetchPromos();
   }, [authed, tab]);
 
-  // ხმის გამოყენება
-  const playSound = () => {
-    if (audioRef.current) {
-      audioRef.current.currentTime = 0;
-      audioRef.current.play().catch(() => {});
-    }
-  };
 
   // Realtime + polling fallback
   useEffect(() => {
@@ -64,7 +65,7 @@ export default function AdminPage() {
         const order = payload.new;
         if (lastOrderIdRef.current === order.id) return;
         lastOrderIdRef.current = order.id;
-        playSound();
+        beep();
         setNewOrderAlert(order);
         setOrders(prev => prev.find(o => o.id === order.id) ? prev : [order, ...prev]);
         if (Notification.permission === 'granted') {
@@ -91,7 +92,7 @@ export default function AdminPage() {
         newOnes.forEach(order => {
           if (lastOrderIdRef.current === order.id) return;
           lastOrderIdRef.current = order.id;
-          playSound();
+          beep();
           setNewOrderAlert(order);
           if (Notification.permission === 'granted') {
             new Notification('🍣 ახალი შეკვეთა — Maneki Sushi', {
@@ -169,13 +170,7 @@ export default function AdminPage() {
           <div className="flex items-center gap-2">
             {/* ხმის ჩართვა */}
             <button
-              onClick={() => {
-                if (audioRef.current) {
-                  audioRef.current.volume = 0.8;
-                  audioRef.current.currentTime = 0;
-                  audioRef.current.play().then(() => setSoundEnabled(true)).catch(() => {});
-                }
-              }}
+              onClick={() => { getAudio().volume = 0.8; beep(); setSoundEnabled(true); }}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors ${soundEnabled ? 'bg-green-500/10 border-green-500/30 text-green-600' : 'bg-muted border-border text-muted-foreground hover:text-foreground'}`}
             >
               {soundEnabled ? '🔔 ხმა ჩართულია' : '🔕 ხმის ჩართვა'}
