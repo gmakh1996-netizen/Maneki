@@ -167,6 +167,7 @@ export default function AdminPage() {
   const [editingOrderId, setEditingOrderId] = useState(null);
   const [editItems, setEditItems] = useState([]);
   const [openCat, setOpenCat] = useState(null);
+  const [dialog, setDialog] = useState(null); // { message, onConfirm }
 
   const theme = window.document.documentElement.classList.contains('dark') ? 'dark' : 'light';
 
@@ -229,7 +230,9 @@ export default function AdminPage() {
   };
 
   const deleteOrder = async (id) => {
-    if (!window.confirm(t.confirmDelete)) return;
+    const confirmed = await new Promise(res => setDialog({ message: t.confirmDelete, onYes: () => res(true), onNo: () => res(false) }));
+    setDialog(null);
+    if (!confirmed) return;
     await supabase.from('orders').delete().eq('id', id);
     setOrders(prev => prev.filter(o => o.id !== id));
   };
@@ -255,7 +258,9 @@ export default function AdminPage() {
   };
 
   const deletePromo = async (id) => {
-    if (!window.confirm(t.confirmDeletePromo)) return;
+    const confirmed = await new Promise(res => setDialog({ message: t.confirmDeletePromo, onYes: () => res(true), onNo: () => res(false) }));
+    setDialog(null);
+    if (!confirmed) return;
     await supabase.from('promo_codes').delete().eq('id', id);
     setPromos(prev => prev.filter(p => p.id !== id));
   };
@@ -267,7 +272,9 @@ export default function AdminPage() {
   };
 
   const addEditItem = (product) => {
-    if (!window.confirm(`${product.name} — ₾${product.price}\n\nდაემატოს შეკვეთას?`)) return;
+    const confirmed = await new Promise(res => setDialog({ message: `${product.name} — ₾${product.price}\n\nდაემატოს შეკვეთას?`, onYes: () => res(true), onNo: () => res(false) }));
+    setDialog(null);
+    if (!confirmed) return;
     setEditItems(prev => {
       const ex = prev.find(i => i.name === product.name);
       if (ex) return prev.map(i => i.name === product.name ? { ...i, quantity: i.quantity + 1 } : i);
@@ -366,6 +373,25 @@ export default function AdminPage() {
       </div>
 
       <div className="max-w-4xl mx-auto px-4 py-6 space-y-4">
+        {/* Custom confirm dialog */}
+        {dialog && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+            <div className="bg-card border border-border rounded-2xl p-6 w-full max-w-sm shadow-xl space-y-4">
+              <p className="text-sm font-medium text-center whitespace-pre-line">{dialog.message}</p>
+              <div className="flex gap-3">
+                <button onClick={() => { dialog.onNo(); }}
+                  className="flex-1 h-10 rounded-lg border border-border bg-muted text-sm font-medium hover:bg-border">
+                  არა
+                </button>
+                <button onClick={() => { dialog.onYes(); }}
+                  className="flex-1 h-10 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90">
+                  კი
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* New order alert */}
         {newOrderAlert && (
           <div className="p-4 bg-primary text-white rounded-xl flex items-center justify-between shadow-lg">
