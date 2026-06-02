@@ -301,9 +301,9 @@ function CheckoutPage() {
 
         <div className="grid lg:grid-cols-12 gap-8">
           {/* Order Form */}
-          <div className="lg:col-span-7 lg:order-1 order-2">
+          <div className="lg:col-span-7">
             <div className="bg-card rounded-2xl p-6 md:p-8 border border-border shadow-sm">
-              <form onSubmit={handleSubmit} className="space-y-8">
+              <form id="checkout-form" onSubmit={handleSubmit} className="space-y-8">
 
                 {/* Contact Details */}
                 <div className="space-y-4">
@@ -500,24 +500,12 @@ function CheckoutPage() {
                   )}
                 </div>
 
-                <Button
-                  type="submit"
-                  disabled={isLoading}
-                  className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200 active:scale-98 h-12 text-lg mt-4 disabled:opacity-70"
-                >
-                  {isLoading ? (
-                    <span className="flex items-center gap-2">
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                      {t('checkout.placeOrder')}
-                    </span>
-                  ) : t('checkout.placeOrder')}
-                </Button>
               </form>
             </div>
           </div>
 
           {/* Order Summary */}
-          <div className="lg:col-span-5 lg:order-2 order-1">
+          <div className="lg:col-span-5">
             <div className="bg-card rounded-2xl p-6 md:p-8 border border-border shadow-sm lg:sticky lg:top-24">
               <h2 className="text-xl font-semibold mb-6">{t('checkout.orderSummary')}</h2>
 
@@ -579,6 +567,23 @@ function CheckoutPage() {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Place Order — სულ ბოლოში */}
+        <div className="mt-6">
+          <Button
+            type="submit"
+            form="checkout-form"
+            disabled={isLoading}
+            className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200 active:scale-98 h-14 text-lg disabled:opacity-70"
+          >
+            {isLoading ? (
+              <span className="flex items-center gap-2">
+                <Loader2 className="w-5 h-5 animate-spin" />
+                {t('checkout.placeOrder')}
+              </span>
+            ) : t('checkout.placeOrder')}
+          </Button>
         </div>
       </div>
     </div>
