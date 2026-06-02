@@ -323,7 +323,7 @@ export default function AdminPage() {
   const completedRevenue = filteredOrders.filter(o => o.status === 'completed').reduce((s, o) => s + Number(o.total), 0);
   const completedCount = filteredOrders.filter(o => o.status === 'completed').length;
 
-  const inp = 'w-full h-10 rounded-lg border border-input bg-background px-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring';
+  const inp = 'w-full h-10 rounded-lg border border-input bg-background px-3 text-base sm:text-sm focus:outline-none focus:ring-1 focus:ring-ring';
 
   if (!authed) return (
     <div className="min-h-screen bg-background flex items-center justify-center p-4">
