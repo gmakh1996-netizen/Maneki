@@ -303,9 +303,44 @@ function CheckoutPage() {
                 </>
               )}
             </div>
+            {/* Payment Info */}
+            <div className="mt-6 text-left space-y-4">
+              {[
+                { bank: 'TBS', iban: 'GE34TB7237345064300076' },
+                { bank: 'BOG', iban: 'GE61BG0000000101112512' },
+              ].map(({ bank, iban }) => (
+                <div key={bank} className="bg-muted/50 rounded-xl p-4 border border-border text-sm space-y-2">
+                  <p className="font-bold text-base">{bank}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="font-mono text-xs text-muted-foreground flex-1">{iban}</p>
+                    <button
+                      type="button"
+                      onClick={() => navigator.clipboard.writeText(iban).then(() => {
+                        const el = document.getElementById(`copy-${bank}`);
+                        if (el) { el.textContent = '✓'; setTimeout(() => { el.textContent = 'Copy'; }, 1500); }
+                      })}
+                      className="shrink-0 px-2 py-0.5 rounded-md bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20"
+                    >
+                      <span id={`copy-${bank}`}>Copy</span>
+                    </button>
+                  </div>
+                  <p className="text-muted-foreground text-xs">Shota Esebua</p>
+                </div>
+              ))}
+              <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 text-xs text-amber-700 dark:text-amber-400 space-y-2">
+                <p>⚠️ Transfer payments from Credo, Basis Bank and foreign banks are accepted only through an online terminal:</p>
+                <a href="https://tiny.keepz.me/udfvtrrv" target="_blank" rel="noopener noreferrer"
+                  className="font-bold underline break-all">https://tiny.keepz.me/udfvtrrv</a>
+              </div>
+              <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 text-xs text-foreground space-y-2">
+                <p>✅ We begin preparing the order only after payment has been received into our account.</p>
+                <p>📞 After you have made an order, we will call you within 10 minutes. If something goes wrong and there is no call, write to us on Instagram or call <strong>598901848</strong></p>
+              </div>
+            </div>
+
             <Button
               onClick={() => navigate('/')}
-              className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200 active:scale-98"
+              className="w-full bg-primary text-primary-foreground hover:bg-primary/90 transition-all duration-200 active:scale-98 mt-6"
             >
               {t('checkout.continueToWebsite')}
             </Button>
