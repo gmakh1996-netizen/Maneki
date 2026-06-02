@@ -1,6 +1,25 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase';
 import SimpleCalendar from '../components/SimpleCalendar';
+import { menuItems } from '../data/menuData';
+
+// Unique products (deduplicated by EN name), grouped by category
+const UNIQUE_PRODUCTS = (() => {
+  const seen = new Set();
+  const result = [];
+  menuItems.forEach(item => {
+    const name = item.name?.en || item.name;
+    if (!seen.has(name)) { seen.add(name); result.push({ name, price: item.price, category: item.category }); }
+  });
+  return result;
+})();
+
+const PRODUCTS_BY_CAT = UNIQUE_PRODUCTS.reduce((acc, p) => {
+  const cat = p.category.replace(' Menu', '').replace(' (Full List)', '');
+  if (!acc[cat]) acc[cat] = [];
+  acc[cat].push(p);
+  return acc;
+}, {});
 
 let _audio = null;
 const getAudio = () => {
@@ -31,6 +50,7 @@ const T = {
     wrongPass: 'Wrong password', noOrders: 'No orders yet', loading: 'Loading...',
     deleteOrder: 'Delete', confirmDelete: 'Delete this order?', confirmDeletePromo: 'Delete promo code?',
     editMaxUses: 'Edit limit', save: 'Save', today: 'Today', yesterday: 'Yesterday',
+    editOrder: 'Edit', cancelEdit: 'Cancel', saveOrder: 'Save order', addProducts: 'Add products', currentItems: 'Current items',
   },
   ka: {
     title: 'ადმინ პანელი — Maneki Sushi', logout: 'გასვლა',
@@ -51,6 +71,7 @@ const T = {
     wrongPass: 'არასწორი პაროლი', noOrders: 'შეკვეთები არ არის', loading: 'იტვირთება...',
     deleteOrder: 'წაშლა', confirmDelete: 'შეკვეთა წაიშალოს?', confirmDeletePromo: 'პრომოკოდი წაიშალოს?',
     editMaxUses: 'ლიმიტის ცვლილება', save: 'შენახვა', today: 'დღეს', yesterday: 'გუშინ',
+    editOrder: 'რედაქტირება', cancelEdit: 'გაუქმება', saveOrder: 'შეკვეთის შენახვა', addProducts: 'პროდუქტის დამატება', currentItems: 'მიმდინარე პროდუქტები',
   },
   ru: {
     title: 'Админ Панель — Maneki Sushi', logout: 'Выйти',
@@ -71,6 +92,7 @@ const T = {
     wrongPass: 'Неверный пароль', noOrders: 'Заказов нет', loading: 'Загрузка...',
     deleteOrder: 'Удалить', confirmDelete: 'Удалить заказ?', confirmDeletePromo: 'Удалить промокод?',
     editMaxUses: 'Изменить лимит', save: 'Сохранить', today: 'Сегодня', yesterday: 'Вчера',
+    editOrder: 'Редактировать', cancelEdit: 'Отмена', saveOrder: 'Сохранить заказ', addProducts: 'Добавить продукты', currentItems: 'Текущие позиции',
   }
 };
 
@@ -114,6 +136,11 @@ export default function AdminPage() {
   // Edit promo
   const [editingPromo, setEditingPromo] = useState(null);
   const [editMaxUses, setEditMaxUses] = useState('');
+
+  // Edit order
+  const [editingOrderId, setEditingOrderId] = useState(null);
+  const [editItems, setEditItems] = useState([]);
+  const [openCat, setOpenCat] = useState(null);
 
   const theme = window.document.documentElement.classList.contains('dark') ? 'dark' : 'light';
 
@@ -205,6 +232,39 @@ export default function AdminPage() {
     if (!window.confirm(t.confirmDeletePromo)) return;
     await supabase.from('promo_codes').delete().eq('id', id);
     setPromos(prev => prev.filter(p => p.id !== id));
+  };
+
+  const startEditOrder = (order) => {
+    setEditingOrderId(order.id);
+    setEditItems((order.items || []).map(i => ({ name: i.name?.en || i.name || i.name, price: i.price, quantity: i.quantity })));
+    setOpenCat(null);
+  };
+
+  const addEditItem = (product) => {
+    setEditItems(prev => {
+      const ex = prev.find(i => i.name === product.name);
+      if (ex) return prev.map(i => i.name === product.name ? { ...i, quantity: i.quantity + 1 } : i);
+      return [...prev, { name: product.name, price: product.price, quantity: 1 }];
+    });
+  };
+
+  const changeEditQty = (name, delta) => {
+    setEditItems(prev => prev.map(i => i.name === name ? { ...i, quantity: Math.max(1, i.quantity + delta) } : i));
+  };
+
+  const removeEditItem = (name) => {
+    setEditItems(prev => prev.filter(i => i.name !== name));
+  };
+
+  const saveEditOrder = async (order) => {
+    const newSubtotal = editItems.reduce((s, i) => s + i.price * i.quantity, 0);
+    const deliveryFee = Number(order.delivery_fee) || 0;
+    const discount = Number(order.discount) || 0;
+    const newTotal = Math.max(0, newSubtotal + deliveryFee - discount);
+    const items = editItems.map(i => ({ name: i.name, price: i.price, quantity: i.quantity }));
+    await supabase.from('orders').update({ items, subtotal: newSubtotal, total: newTotal }).eq('id', order.id);
+    setOrders(prev => prev.map(o => o.id === order.id ? { ...o, items, subtotal: newSubtotal, total: newTotal } : o));
+    setEditingOrderId(null);
   };
 
   const saveMaxUses = async (id) => {
@@ -372,17 +432,85 @@ export default function AdminPage() {
                   <div className="text-right shrink-0 flex flex-col items-end gap-1">
                     <p className="font-bold text-primary">₾{Number(order.total).toFixed(2)}</p>
                     {order.promo_code && <p className="text-xs text-green-600">🎟 {order.promo_code}</p>}
+                    <button onClick={() => editingOrderId === order.id ? setEditingOrderId(null) : startEditOrder(order)}
+                      className="text-xs text-primary border border-primary/30 px-2 py-0.5 rounded-md hover:bg-primary/10">
+                      ✏ {editingOrderId === order.id ? t.cancelEdit : t.editOrder}
+                    </button>
                     <button onClick={() => deleteOrder(order.id)}
                       className="text-xs text-red-500 border border-red-500/30 px-2 py-0.5 rounded-md hover:bg-red-500/10">
                       🗑 {t.deleteOrder}
                     </button>
                   </div>
                 </div>
-                <div className="text-xs text-muted-foreground space-y-0.5">
-                  {(order.items || []).map((item, i) => (
-                    <p key={i}>• {item.name} ×{item.quantity} — ₾{(item.price * item.quantity).toFixed(2)}</p>
-                  ))}
-                </div>
+
+                {/* Items list (normal view) */}
+                {editingOrderId !== order.id && (
+                  <div className="text-xs text-muted-foreground space-y-0.5">
+                    {(order.items || []).map((item, i) => (
+                      <p key={i}>• {item.name?.en || item.name} ×{item.quantity} — ₾{(item.price * item.quantity).toFixed(2)}</p>
+                    ))}
+                  </div>
+                )}
+
+                {/* Edit panel */}
+                {editingOrderId === order.id && (
+                  <div className="border border-primary/30 rounded-xl p-3 space-y-3 bg-muted/30">
+                    {/* Current items */}
+                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{t.currentItems}</p>
+                    <div className="space-y-2">
+                      {editItems.map((item, i) => (
+                        <div key={i} className="flex items-center gap-2">
+                          <span className="flex-1 text-sm truncate">{item.name}</span>
+                          <span className="text-xs text-muted-foreground">₾{item.price}</span>
+                          <div className="flex items-center gap-1">
+                            <button onClick={() => changeEditQty(item.name, -1)}
+                              className="w-6 h-6 rounded bg-muted text-sm flex items-center justify-center hover:bg-border">−</button>
+                            <span className="w-5 text-center text-sm">{item.quantity}</span>
+                            <button onClick={() => changeEditQty(item.name, 1)}
+                              className="w-6 h-6 rounded bg-muted text-sm flex items-center justify-center hover:bg-border">+</button>
+                          </div>
+                          <button onClick={() => removeEditItem(item.name)}
+                            className="text-red-500 text-xs hover:text-red-600">✕</button>
+                        </div>
+                      ))}
+                    </div>
+                    <p className="text-xs font-semibold text-primary">
+                      ჯამი: ₾{editItems.reduce((s, i) => s + i.price * i.quantity, 0).toFixed(2)}
+                    </p>
+
+                    {/* Product picker */}
+                    <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide">{t.addProducts}</p>
+                    <div className="space-y-1 max-h-64 overflow-y-auto">
+                      {Object.entries(PRODUCTS_BY_CAT).map(([cat, products]) => (
+                        <div key={cat}>
+                          <button onClick={() => setOpenCat(openCat === cat ? null : cat)}
+                            className="w-full text-left px-2 py-1.5 rounded-lg bg-muted hover:bg-border text-xs font-semibold flex justify-between items-center">
+                            <span>{cat}</span>
+                            <span>{openCat === cat ? '▲' : '▼'}</span>
+                          </button>
+                          {openCat === cat && (
+                            <div className="mt-1 space-y-1 pl-2">
+                              {products.map((p, j) => (
+                                <button key={j} onClick={() => addEditItem(p)}
+                                  className="w-full text-left px-2 py-1 rounded-md text-xs hover:bg-primary/10 flex justify-between">
+                                  <span>{p.name}</span>
+                                  <span className="text-primary font-medium">₾{p.price}</span>
+                                </button>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Save */}
+                    <button onClick={() => saveEditOrder(order)}
+                      className="w-full h-9 bg-primary text-white rounded-lg text-sm font-medium">
+                      💾 {t.saveOrder}
+                    </button>
+                  </div>
+                )}
+
                 {/* Only 2 statuses */}
                 <div className="flex gap-2">
                   {[['new', 'bg-blue-500', t.new], ['completed', 'bg-emerald-600', t.completed]].map(([key, color, label]) => (
