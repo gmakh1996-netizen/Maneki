@@ -75,7 +75,7 @@ const T = {
     discount: 'discount', used: 'used', password: 'Password', login: 'Login',
     wrongPass: 'Wrong password', noOrders: 'No orders yet', loading: 'Loading...',
     deleteOrder: 'Delete', confirmDelete: 'Delete this order?', confirmDeletePromo: 'Delete promo code?',
-    editMaxUses: 'Edit limit', save: 'Save', today: 'Today', yesterday: 'Yesterday',
+    editMaxUses: 'Edit limit', editCode: 'Rename', save: 'Save', today: 'Today', yesterday: 'Yesterday',
     editOrder: 'Edit', cancelEdit: 'Cancel', saveOrder: 'Save order', addProducts: 'Add products', currentItems: 'Current items',
   },
   ka: {
@@ -96,7 +96,7 @@ const T = {
     discount: 'ფასდ.', used: 'გამოყ.', password: 'პაროლი', login: 'შესვლა',
     wrongPass: 'არასწორი პაროლი', noOrders: 'შეკვეთები არ არის', loading: 'იტვირთება...',
     deleteOrder: 'წაშლა', confirmDelete: 'შეკვეთა წაიშალოს?', confirmDeletePromo: 'პრომოკოდი წაიშალოს?',
-    editMaxUses: 'ლიმიტის ცვლილება', save: 'შენახვა', today: 'დღეს', yesterday: 'გუშინ',
+    editMaxUses: 'ლიმიტის ცვლილება', editCode: 'სახელის ცვლა', save: 'შენახვა', today: 'დღეს', yesterday: 'გუშინ',
     editOrder: 'რედაქტირება', cancelEdit: 'გაუქმება', saveOrder: 'შეკვეთის შენახვა', addProducts: 'პროდუქტის დამატება', currentItems: 'მიმდინარე პროდუქტები',
   },
   ru: {
@@ -117,7 +117,7 @@ const T = {
     discount: 'скидка', used: 'исп.', password: 'Пароль', login: 'Войти',
     wrongPass: 'Неверный пароль', noOrders: 'Заказов нет', loading: 'Загрузка...',
     deleteOrder: 'Удалить', confirmDelete: 'Удалить заказ?', confirmDeletePromo: 'Удалить промокод?',
-    editMaxUses: 'Изменить лимит', save: 'Сохранить', today: 'Сегодня', yesterday: 'Вчера',
+    editMaxUses: 'Изменить лимит', editCode: 'Переименовать', save: 'Сохранить', today: 'Сегодня', yesterday: 'Вчера',
     editOrder: 'Редактировать', cancelEdit: 'Отмена', saveOrder: 'Сохранить заказ', addProducts: 'Добавить продукты', currentItems: 'Текущие позиции',
   }
 };
@@ -164,6 +164,8 @@ export default function AdminPage() {
   // Edit promo
   const [editingPromo, setEditingPromo] = useState(null);
   const [editMaxUses, setEditMaxUses] = useState('');
+  const [editingPromoCode, setEditingPromoCode] = useState(null);
+  const [editPromoCodeValue, setEditPromoCodeValue] = useState('');
   const [editPromoProducts, setEditPromoProducts] = useState(null); // promo id being edited for products
   const [editPromoSelectedProducts, setEditPromoSelectedProducts] = useState([]);
   const [editPromoProductCat, setEditPromoProductCat] = useState(null);
@@ -306,6 +308,14 @@ export default function AdminPage() {
     await supabase.from('orders').update({ items, subtotal: newSubtotal, total: newTotal }).eq('id', order.id);
     setOrders(prev => prev.map(o => o.id === order.id ? { ...o, items, subtotal: newSubtotal, total: newTotal } : o));
     setEditingOrderId(null);
+  };
+
+  const savePromoCodeName = async (id) => {
+    const code = editPromoCodeValue.trim().toUpperCase();
+    if (!code) return;
+    await supabase.from('promo_codes').update({ code }).eq('id', id);
+    setPromos(prev => prev.map(p => p.id === id ? { ...p, code } : p));
+    setEditingPromoCode(null);
   };
 
   const saveMaxUses = async (id) => {
@@ -709,7 +719,25 @@ export default function AdminPage() {
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <p className="font-bold">{promo.code}</p>
+                        {editingPromoCode === promo.id ? (
+                          <div className="flex items-center gap-2">
+                            <input
+                              value={editPromoCodeValue}
+                              onChange={e => setEditPromoCodeValue(e.target.value.toUpperCase())}
+                              className="h-8 w-36 rounded-md border border-input bg-background px-2 text-base sm:text-sm font-bold focus:outline-none focus:ring-1 focus:ring-ring"
+                              autoFocus
+                              onKeyDown={e => e.key === 'Enter' && savePromoCodeName(promo.id)}
+                            />
+                            <button onClick={() => savePromoCodeName(promo.id)} className="h-8 px-3 bg-primary text-white rounded-md text-xs">{t.save}</button>
+                            <button onClick={() => setEditingPromoCode(null)} className="h-8 px-2 bg-muted rounded-md text-xs">✕</button>
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-2">
+                            <p className="font-bold">{promo.code}</p>
+                            <button onClick={() => { setEditingPromoCode(promo.id); setEditPromoCodeValue(promo.code); setEditingPromo(null); setEditPromoProducts(null); }}
+                              className="text-xs text-muted-foreground hover:text-primary">✏</button>
+                          </div>
+                        )}
                         {isExpired ? <span className="px-2 py-0.5 rounded-full text-xs bg-red-500/15 text-red-500">{t.expiredStatus}</span>
                           : notStarted ? <span className="px-2 py-0.5 rounded-full text-xs bg-yellow-500/15 text-yellow-500">{t.notStarted}</span>
                           : isReallyActive ? <span className="px-2 py-0.5 rounded-full text-xs bg-green-500/15 text-green-600 flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>{t.activeStatus}</span>
