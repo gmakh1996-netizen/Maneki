@@ -1,5 +1,6 @@
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
+import QRCode from 'qrcode';
 import { supabase } from '../lib/supabase';
 import { Helmet } from 'react-helmet';
 import { useNavigate } from 'react-router-dom';
@@ -44,6 +45,11 @@ function CheckoutPage() {
   const { theme } = useTheme();
   const [calendarOpen, setCalendarOpen] = useState(false);
   const [orderPlaced, setOrderPlaced] = useState(false);
+  const [qrDataUrl, setQrDataUrl] = useState('');
+  useEffect(() => {
+    QRCode.toDataURL('https://tiny.keepz.me/udfvtrrv', { width: 200, margin: 1 })
+      .then(url => setQrDataUrl(url)).catch(() => {});
+  }, []);
   const [isLoading, setIsLoading] = useState(false);
   const submittingRef = useRef(false);
   const [deliveryMethod, setDeliveryMethod] = useState('');
@@ -336,8 +342,10 @@ function CheckoutPage() {
                     {language === 'ka' ? 'QR კოდით გადახდა' : language === 'ru' ? 'Оплата по QR' : 'Pay by QR code'}
                   </p>
                   <div className="bg-white p-3 rounded-xl shadow-lg">
-                    <img src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=https://tiny.keepz.me/udfvtrrv"
-                      alt="Keepz QR" width={180} height={180} className="block" />
+                    {qrDataUrl
+                      ? <img src={qrDataUrl} alt="Keepz QR" width={180} height={180} className="block" />
+                      : <div style={{width:180,height:180}} className="bg-gray-100 animate-pulse rounded" />
+                    }
                   </div>
                   <div className="flex items-center gap-1.5">
                     <span className="text-[#7b61ff] text-lg">✦</span>
