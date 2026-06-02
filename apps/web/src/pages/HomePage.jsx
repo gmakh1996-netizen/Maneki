@@ -81,7 +81,7 @@ function HomePage() {
   const toggleGridLayout = () => {
     setGridLayout(prev => prev === 'single' ? 'compact' : 'single');
   };
-  const [activePromo, setActivePromo] = useState(null);
+  const [activePromos, setActivePromos] = useState([]);
 
   useEffect(() => {
     const fetchPromo = async () => {
@@ -89,21 +89,37 @@ function HomePage() {
       const { data } = await supabase.from('promo_codes')
         .select('*')
         .eq('is_active', true)
-        .not('applicable_products', 'is', null)
-        .or(`valid_from.is.null,valid_from.lte.${now}`)
-        .or(`expires_at.is.null,expires_at.gte.${now}`)
-        .limit(1)
-        .maybeSingle();
-      setActivePromo(data || null);
+        .not('applicable_products', 'is', null);
+      if (!data) return;
+      const filtered = data.filter(p => {
+        if (p.valid_from && new Date(p.valid_from) > new Date()) return false;
+        if (p.expires_at && new Date(p.expires_at) < new Date()) return false;
+        return p.applicable_products?.length > 0;
+      });
+      setActivePromos(filtered);
     };
     fetchPromo();
   }, []);
 
-  const PROMO_CAT = 'Promotion';
-  const promoItems = activePromo?.applicable_products?.length > 0
+  // Merge all promo products + find best discount per product
+  const PROMO_CAT = 'Discount';
+  const promoProductNames = [...new Set(activePromos.flatMap(p => p.applicable_products || []))];
+
+  const getBestDiscount = (itemName) => {
+    const matching = activePromos.filter(p => p.applicable_products?.includes(itemName));
+    if (!matching.length) return null;
+    const best = matching.reduce((b, p) => {
+      const val = p.discount_type === 'percent' ? p.discount_value : 0;
+      const bVal = b?.discount_type === 'percent' ? b.discount_value : 0;
+      return val > bVal ? p : b;
+    }, matching[0]);
+    return best.discount_type === 'percent' ? `-${best.discount_value}%` : `-₾${best.discount_value}`;
+  };
+
+  const promoItems = promoProductNames.length > 0
     ? menuItems.filter(i => {
         const name = i.name?.en || i.name;
-        return activePromo.applicable_products.includes(name);
+        return promoProductNames.includes(name);
       }).filter((item, idx, arr) => arr.findIndex(x => (x.name?.en||x.name) === (item.name?.en||item.name)) === idx)
     : [];
 
@@ -389,11 +405,7 @@ function HomePage() {
                                 key={item.id}
                                 item={item}
                                 onClick={() => handleCardClick(item)}
-                                promoLabel={isPromoCategory && activePromo ? (
-                                  activePromo.discount_type === 'percent'
-                                    ? `-${activePromo.discount_value}%`
-                                    : `-₾${activePromo.discount_value}`
-                                ) : null}
+                                promoLabel={isPromoCategory ? getBestDiscount(item.name?.en || item.name) : null}
                               />
                             ))}
                           </div>
