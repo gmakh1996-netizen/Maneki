@@ -105,7 +105,7 @@ export default function AdminPage() {
 
   const fetchPromos = async () => {
     setLoading(true);
-    const { data, error } = await supabase.from('promo_codes').select('*').order('created_at', { ascending: false });
+    const { data, error } = await supabase.from('promo_codes').select('*').order('id', { ascending: false });
     if (error) console.error('promo fetch error:', error);
     setPromos(data || []);
     setLoading(false);
