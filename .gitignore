@@ -7,3 +7,9 @@ yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
 .vercel
+
+# Original uncompressed images (use /images/webp/ instead)
+apps/web/public/images/*.jpg
+apps/web/public/images/*.jpeg
+apps/web/public/images/*.png
+apps/web/public/images/*.JPG
