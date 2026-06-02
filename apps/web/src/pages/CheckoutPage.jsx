@@ -418,7 +418,7 @@ function CheckoutPage() {
           {t('checkout.title')}
         </h1>
 
-        <div className="grid lg:grid-cols-12 gap-8">
+        <div className="grid lg:grid-cols-12 gap-8 w-full min-w-0">
           {/* Order Form */}
           <div className="lg:col-span-7">
             <div className="bg-card rounded-2xl p-6 md:p-8 border border-border shadow-sm">
@@ -438,7 +438,7 @@ function CheckoutPage() {
                         value={formData.name}
                         onChange={handleInputChange}
                         required
-                        className="bg-input text-foreground placeholder:text-muted-foreground"
+                        className="bg-input text-foreground placeholder:text-muted-foreground w-full min-w-0"
                         placeholder={t('checkout.fullNamePlaceholder')}
                       />
                     </div>
@@ -452,7 +452,7 @@ function CheckoutPage() {
                         value={formData.phone}
                         onChange={handleInputChange}
                         required
-                        className="bg-input text-foreground placeholder:text-muted-foreground"
+                        className="bg-input text-foreground placeholder:text-muted-foreground w-full min-w-0"
                         placeholder={t('checkout.phonePlaceholder')}
                       />
                     </div>
