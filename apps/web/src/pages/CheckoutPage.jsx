@@ -283,7 +283,7 @@ function CheckoutPage() {
                     </div>
                   </div>
 
-                  <div className="grid sm:grid-cols-2 gap-4 items-end">
+                  <div className="grid sm:grid-cols-2 gap-4 items-start">
                     <div className="space-y-2">
                       <Label>{t('checkout.deliveryDate')}</Label>
                       {/* Custom inline calendar — pure divs, iOS Safari safe */}

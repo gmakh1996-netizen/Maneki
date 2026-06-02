@@ -48,8 +48,8 @@ function SimpleCalendar({ value, onChange, open, onToggle, minDate, maxDate, the
         type="button"
         onClick={onToggle}
         style={{
-          width: '100%', display: 'flex', alignItems: 'center', gap: '6px',
-          padding: '8px 12px', borderRadius: '8px', border: `1px solid ${border}`,
+          width: '100%', display: 'flex', alignItems: 'center', gap: '8px',
+          height: '36px', padding: '0 12px', borderRadius: '10px', border: `1px solid ${border}`,
           backgroundColor: theme === 'dark' ? 'hsl(240 4% 18%)' : 'hsl(240 6% 85%)',
           color: value ? color : muted, cursor: 'pointer', fontSize: '14px',
           textAlign: 'left',
