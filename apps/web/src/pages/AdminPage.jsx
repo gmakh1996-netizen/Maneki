@@ -1,6 +1,26 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase';
 import SimpleCalendar from '../components/SimpleCalendar';
+
+// ხმა Web Audio API-ით (ფაილი არ სჭირდება)
+function playNotificationSound() {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const times = [0, 0.18, 0.36];
+    times.forEach(t => {
+      const o = ctx.createOscillator();
+      const g = ctx.createGain();
+      o.connect(g); g.connect(ctx.destination);
+      o.frequency.value = 880;
+      o.type = 'sine';
+      g.gain.setValueAtTime(0, ctx.currentTime + t);
+      g.gain.linearRampToValueAtTime(0.4, ctx.currentTime + t + 0.02);
+      g.gain.linearRampToValueAtTime(0, ctx.currentTime + t + 0.15);
+      o.start(ctx.currentTime + t);
+      o.stop(ctx.currentTime + t + 0.15);
+    });
+  } catch (_) {}
+}
 
 const ADMIN_PASSWORD = 'maneki2024';
 
@@ -19,6 +39,8 @@ export default function AdminPage() {
   const [orders, setOrders] = useState([]);
   const [promos, setPromos] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [newOrderAlert, setNewOrderAlert] = useState(null);
+  const isFirstLoad = useRef(true);
 
   // New promo form
   const [newPromo, setNewPromo] = useState({ code: '', discount_type: 'percent', discount_value: '', max_uses: '', valid_from: '', expires_at: '' });
@@ -36,6 +58,43 @@ export default function AdminPage() {
     if (tab === 'orders') fetchOrders();
     if (tab === 'promos') fetchPromos();
   }, [authed, tab]);
+
+  // Realtime subscription + push permission
+  useEffect(() => {
+    if (!authed) return;
+
+    // Browser/push notification permission + SW registration
+    if (Notification.permission === 'default') Notification.requestPermission();
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    }
+
+    const channel = supabase
+      .channel('orders-realtime')
+      .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, payload => {
+        if (isFirstLoad.current) return;
+        const order = payload.new;
+        playNotificationSound();
+        setNewOrderAlert(order);
+        setOrders(prev => [order, ...prev]);
+
+        // Browser / phone notification
+        if (Notification.permission === 'granted') {
+          new Notification('🍣 ახალი შეკვეთა — Maneki Sushi', {
+            body: `${order.customer_name} · ₾${Number(order.total).toFixed(2)}`,
+            icon: '/favicon.ico',
+            badge: '/favicon.ico',
+            vibrate: [200, 100, 200],
+            tag: 'new-order',
+          });
+        }
+        setTimeout(() => setNewOrderAlert(null), 8000);
+      })
+      .subscribe();
+
+    const t = setTimeout(() => { isFirstLoad.current = false; }, 2000);
+    return () => { supabase.removeChannel(channel); clearTimeout(t); };
+  }, [authed]);
 
   const fetchOrders = async () => {
     setLoading(true);
@@ -96,6 +155,17 @@ export default function AdminPage() {
           <button onClick={() => { sessionStorage.removeItem('admin'); setAuthed(false); }}
             className="text-sm text-muted-foreground hover:text-foreground">გასვლა</button>
         </div>
+
+        {/* New order alert banner */}
+        {newOrderAlert && (
+          <div className="mb-4 p-4 bg-primary text-white rounded-xl flex items-center justify-between animate-pulse shadow-lg">
+            <div>
+              <p className="font-bold text-lg">🍣 ახალი შეკვეთა!</p>
+              <p className="text-sm opacity-90">{newOrderAlert.customer_name} · {newOrderAlert.phone} · ₾{Number(newOrderAlert.total).toFixed(2)}</p>
+            </div>
+            <button onClick={() => setNewOrderAlert(null)} className="text-white/70 hover:text-white text-xl">✕</button>
+          </div>
+        )}
 
         {/* Tabs */}
         <div className="flex gap-2 mb-6">
