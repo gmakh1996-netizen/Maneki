@@ -78,35 +78,7 @@ export default function AdminPage() {
       })
       .subscribe();
 
-    // Polling fallback — ყოველ 15 წამში
-    const poll = setInterval(async () => {
-      const { data } = await supabase
-        .from('orders')
-        .select('*')
-        .order('created_at', { ascending: false })
-        .limit(50);
-      if (!data) return;
-      setOrders(prev => {
-        if (!prev.length) return data;
-        const newOnes = data.filter(o => !prev.find(p => p.id === o.id));
-        newOnes.forEach(order => {
-          if (lastOrderIdRef.current === order.id) return;
-          lastOrderIdRef.current = order.id;
-          beep();
-          setNewOrderAlert(order);
-          if (Notification.permission === 'granted') {
-            new Notification('🍣 ახალი შეკვეთა — Maneki Sushi', {
-              body: `${order.customer_name} · ${order.phone} · ₾${Number(order.total).toFixed(2)}`,
-              icon: '/favicon.ico', tag: 'new-order', requireInteraction: true,
-            });
-          }
-          setTimeout(() => setNewOrderAlert(null), 8000);
-        });
-        return newOnes.length ? [...newOnes, ...prev] : prev;
-      });
-    }, 15000);
-
-    return () => { supabase.removeChannel(channel); clearInterval(poll); };
+    return () => { supabase.removeChannel(channel); };
   }, [authed]);
 
   const fetchOrders = async () => {
