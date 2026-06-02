@@ -317,24 +317,38 @@ function CheckoutPage() {
                       type="button"
                       onClick={() => navigator.clipboard.writeText(iban).then(() => {
                         const el = document.getElementById(`copy-${bank}`);
-                        if (el) { el.textContent = '✓'; setTimeout(() => { el.textContent = 'Copy'; }, 1500); }
+                        const copied = language === 'ka' ? 'დაკოპ.' : language === 'ru' ? 'Скопир.' : '✓';
+                        const orig = language === 'ka' ? 'კოპირება' : language === 'ru' ? 'Копировать' : 'Copy';
+                        if (el) { el.textContent = copied; setTimeout(() => { el.textContent = orig; }, 1500); }
                       })}
                       className="shrink-0 px-2 py-0.5 rounded-md bg-primary/10 text-primary text-xs font-medium hover:bg-primary/20"
                     >
-                      <span id={`copy-${bank}`}>Copy</span>
+                      <span id={`copy-${bank}`}>{language === 'ka' ? 'კოპირება' : language === 'ru' ? 'Копировать' : 'Copy'}</span>
                     </button>
                   </div>
                   <p className="text-muted-foreground text-xs">Shota Esebua</p>
                 </div>
               ))}
               <div className="bg-amber-500/10 border border-amber-500/30 rounded-xl p-4 text-xs text-amber-700 dark:text-amber-400 space-y-2">
-                <p>⚠️ Transfer payments from Credo, Basis Bank and foreign banks are accepted only through an online terminal:</p>
+                <p>⚠️ {language === 'ka'
+                  ? 'Credo, Basis Bank-იდან და საზღვარგარეთის ბანკებიდან გადარიცხვა მხოლოდ ონლაინ ტერმინალით:'
+                  : language === 'ru'
+                  ? 'Переводы из Credo, Basis Bank и иностранных банков принимаются только через онлайн-терминал:'
+                  : 'Transfer payments from Credo, Basis Bank and foreign banks are accepted only through an online terminal:'}</p>
                 <a href="https://tiny.keepz.me/udfvtrrv" target="_blank" rel="noopener noreferrer"
                   className="font-bold underline break-all">https://tiny.keepz.me/udfvtrrv</a>
               </div>
               <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 text-xs text-foreground space-y-2">
-                <p>✅ We begin preparing the order only after payment has been received into our account.</p>
-                <p>📞 After you have made an order, we will call you within 10 minutes. If something goes wrong and there is no call, write to us on Instagram or call <strong>598901848</strong></p>
+                <p>✅ {language === 'ka'
+                  ? 'შეკვეთის მომზადებას ვიწყებთ მხოლოდ გადახდის მიღების შემდეგ.'
+                  : language === 'ru'
+                  ? 'Мы начинаем готовить заказ только после получения оплаты на наш счёт.'
+                  : 'We begin preparing the order only after payment has been received into our account.'}</p>
+                <p>📞 {language === 'ka'
+                  ? <>შეკვეთის განთავსებიდან 10 წუთში დაგირეკავთ. თუ ზარი არ შემოვიდა, მოგვწერეთ Instagram-ზე ან დარეკეთ <strong>598901848</strong></>
+                  : language === 'ru'
+                  ? <>После оформления заказа мы позвоним вам в течение 10 минут. Если звонка нет — напишите нам в Instagram или позвоните <strong>598901848</strong></>
+                  : <>After you have made an order, we will call you within 10 minutes. If something goes wrong and there is no call, write to us on Instagram or call <strong>598901848</strong></>}</p>
               </div>
             </div>
 
