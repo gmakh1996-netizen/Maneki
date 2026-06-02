@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
+import SimpleCalendar from '../components/SimpleCalendar';
 
 const ADMIN_PASSWORD = 'maneki2024';
 
@@ -21,6 +22,8 @@ export default function AdminPage() {
 
   // New promo form
   const [newPromo, setNewPromo] = useState({ code: '', discount_type: 'percent', discount_value: '', max_uses: '', expires_at: '' });
+  const [calendarOpen, setCalendarOpen] = useState(false);
+  const theme = window.document.documentElement.classList.contains('dark') ? 'dark' : 'light';
 
   const login = () => {
     if (pass === ADMIN_PASSWORD) { sessionStorage.setItem('admin', '1'); setAuthed(true); }
@@ -162,8 +165,16 @@ export default function AdminPage() {
                 <input type="number" value={newPromo.max_uses} onChange={e => setNewPromo(p => ({...p, max_uses: e.target.value}))}
                   placeholder="მაქს. გამოყენება (ცარ.=∞)"
                   className="h-9 rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring" />
-                <input type="date" value={newPromo.expires_at} onChange={e => setNewPromo(p => ({...p, expires_at: e.target.value}))}
-                  className="h-9 rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring" />
+                <SimpleCalendar
+                  value={newPromo.expires_at}
+                  onChange={date => { setNewPromo(p => ({...p, expires_at: date})); setCalendarOpen(false); }}
+                  open={calendarOpen}
+                  onToggle={() => setCalendarOpen(v => !v)}
+                  minDate={new Date().toISOString().split('T')[0]}
+                  maxDate="2099-12-31"
+                  theme={theme}
+                  placeholder="ვადის გასვლა (სურვ.)"
+                />
                 <button onClick={addPromo} className="h-9 bg-primary text-white rounded-md text-sm font-medium">დამატება</button>
               </div>
             </div>
