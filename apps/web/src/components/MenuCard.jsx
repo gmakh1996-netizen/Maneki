@@ -3,7 +3,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '../hooks/useLanguage';
 
-function MenuCard({ item, onClick, promoLabel, promoCode }) {
+function MenuCard({ item, onClick, promoLabel }) {
   const { language, t } = useLanguage();
   
   const itemName = item.name?.[language] || item.name?.en || '';
@@ -48,13 +48,6 @@ function MenuCard({ item, onClick, promoLabel, promoCode }) {
           </h3>
         </div>
 
-
-        {/* Promo Code Badge — bottom-3 left-3, inside image */}
-        {promoCode && (
-          <div className="absolute bottom-3 left-3 bg-sky-400 text-white px-2 py-1 rounded-md font-bold text-xs shadow-lg" style={{whiteSpace:'nowrap'}}>
-            {promoCode}
-          </div>
-        )}
 
         {/* Price Badge */}
         <div className="absolute bottom-3 right-3 bg-primary text-primary-foreground px-3 py-1.5 rounded-lg font-bold text-sm shadow-lg">

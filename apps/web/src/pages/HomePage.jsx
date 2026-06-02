@@ -411,7 +411,6 @@ function HomePage() {
                                 item={item}
                                 onClick={() => handleCardClick(item)}
                                 promoLabel={isPromoCategory ? getBestDiscount(item.name?.en || item.name) : null}
-                                promoCode={isPromoCategory ? getPromoCode(item.name?.en || item.name) : null}
                               />
                             ))}
                           </div>
