@@ -271,7 +271,7 @@ export default function AdminPage() {
     setOpenCat(null);
   };
 
-  const addEditItem = (product) => {
+  const addEditItem = async (product) => {
     const confirmed = await new Promise(res => setDialog({ message: `${product.name} — ₾${product.price}\n\nდაემატოს შეკვეთას?`, onYes: () => res(true), onNo: () => res(false) }));
     setDialog(null);
     if (!confirmed) return;
