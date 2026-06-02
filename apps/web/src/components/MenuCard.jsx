@@ -3,7 +3,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { useLanguage } from '../hooks/useLanguage';
 
-function MenuCard({ item, onClick }) {
+function MenuCard({ item, onClick, promoLabel }) {
   const { language, t } = useLanguage();
   
   const itemName = item.name?.[language] || item.name?.en || '';
@@ -37,6 +37,13 @@ function MenuCard({ item, onClick }) {
             {itemName}
           </h3>
         </div>
+
+        {/* Promo badge */}
+        {promoLabel && (
+          <div className="absolute top-3 left-3 bg-red-500 text-white px-2.5 py-1 rounded-full text-xs font-bold shadow-lg animate-pulse">
+            🔥 {promoLabel}
+          </div>
+        )}
 
         {/* Price Badge */}
         <div className="absolute bottom-3 right-3 bg-primary text-primary-foreground px-3 py-1.5 rounded-lg font-bold text-sm shadow-lg">

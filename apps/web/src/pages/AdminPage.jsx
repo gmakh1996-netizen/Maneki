@@ -156,6 +156,8 @@ export default function AdminPage() {
 
   // Promo form
   const [newPromo, setNewPromo] = useState({ code: '', discount_type: 'percent', discount_value: '', max_uses: '', valid_from: '', expires_at: '' });
+  const [selectedProducts, setSelectedProducts] = useState([]); // for promo
+  const [promoProductOpen, setPromoProductOpen] = useState(null);
   const [calendarFromOpen, setCalendarFromOpen] = useState(false);
   const [calendarToOpen, setCalendarToOpen] = useState(false);
 
@@ -247,8 +249,10 @@ export default function AdminPage() {
       valid_from: newPromo.valid_from ? new Date(newPromo.valid_from + 'T00:00:00').toISOString() : null,
       expires_at: newPromo.expires_at ? new Date(newPromo.expires_at + 'T23:59:59').toISOString() : null,
       is_active: true,
+      applicable_products: selectedProducts.length > 0 ? selectedProducts : null,
     });
     setNewPromo({ code: '', discount_type: 'percent', discount_value: '', max_uses: '', valid_from: '', expires_at: '' });
+    setSelectedProducts([]);
     fetchPromos();
   };
 
@@ -618,6 +622,46 @@ export default function AdminPage() {
                     theme={theme} placeholder={t.toPh} />
                 </div>
               </div>
+              {/* Product selector */}
+              <div className="border border-border rounded-xl overflow-hidden">
+                <button type="button"
+                  onClick={() => setPromoProductOpen(v => v === 'sel' ? null : 'sel')}
+                  className="w-full flex justify-between items-center px-4 py-2.5 bg-muted text-sm font-medium hover:bg-border">
+                  <span>
+                    {selectedProducts.length === 0
+                      ? (lang==='ka' ? 'ყველა პროდუქტზე (არჩევა სურვ.)' : lang==='ru' ? 'Все продукты (выбор необяз.)' : 'All products (select to limit)')
+                      : (lang==='ka' ? `მონიშნულია: ${selectedProducts.length}` : lang==='ru' ? `Выбрано: ${selectedProducts.length}` : `Selected: ${selectedProducts.length}`)}
+                  </span>
+                  <span>{promoProductOpen === 'sel' ? '▲' : '▼'}</span>
+                </button>
+                {promoProductOpen === 'sel' && (
+                  <div className="max-h-56 overflow-y-auto p-2 space-y-1">
+                    {selectedProducts.length > 0 && (
+                      <button type="button" onClick={() => setSelectedProducts([])}
+                        className="w-full text-xs text-red-500 text-left px-2 py-1 hover:bg-red-500/10 rounded">
+                        ✕ {lang==='ka' ? 'ყველას გაუქმება' : lang==='ru' ? 'Сбросить всё' : 'Clear all'}
+                      </button>
+                    )}
+                    {Object.entries(PRODUCTS_BY_CAT).map(([cat, prods]) => (
+                      <div key={cat}>
+                        <p className="text-xs font-semibold text-muted-foreground px-2 py-1">{cat}</p>
+                        {prods.map((p, i) => (
+                          <label key={i} className="flex items-center gap-2 px-2 py-1 rounded hover:bg-muted cursor-pointer">
+                            <input type="checkbox"
+                              checked={selectedProducts.includes(p.name)}
+                              onChange={e => setSelectedProducts(prev =>
+                                e.target.checked ? [...prev, p.name] : prev.filter(n => n !== p.name)
+                              )} />
+                            <span className="text-sm flex-1">{p.name}</span>
+                            <span className="text-xs text-muted-foreground">₾{p.price}</span>
+                          </label>
+                        ))}
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               <button onClick={addPromo} className="h-10 px-6 bg-primary text-white rounded-lg text-sm font-medium">{t.add}</button>
             </div>
 
@@ -667,6 +711,9 @@ export default function AdminPage() {
                         {!promo.max_uses && promo.uses_count > 0 && ` · ${promo.uses_count} ${t.used}`}
                         {(promo.valid_from||promo.expires_at) && ` · ${promo.valid_from ? new Date(promo.valid_from).toLocaleDateString() : '∞'} → ${promo.expires_at ? new Date(promo.expires_at).toLocaleDateString() : '∞'}`}
                       </p>
+                      {promo.applicable_products?.length > 0 && (
+                        <p className="text-xs text-primary mt-0.5">🎯 {promo.applicable_products.length} {lang==='ka' ? 'პროდუქტი' : lang==='ru' ? 'продукта' : 'products'}: {promo.applicable_products.slice(0,2).join(', ')}{promo.applicable_products.length > 2 ? `...` : ''}</p>
+                      )}
                     </div>
                     <div className="flex flex-col gap-1 shrink-0">
                       <button onClick={() => togglePromo(promo.id, promo.is_active)}

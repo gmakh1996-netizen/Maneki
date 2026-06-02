@@ -77,10 +77,15 @@ function CheckoutPage() {
 
   const selectedDelivery = DELIVERY_OPTIONS.find(opt => opt.id === deliveryMethod);
   const deliveryFee = selectedDelivery ? selectedDelivery.price : 0;
+  // If promo has specific products, only apply discount to matching items
+  const applicableSubtotal = promoApplied?.applicable_products?.length > 0
+    ? cartItems.filter(i => promoApplied.applicable_products.includes(i.name?.en || i.name))
+               .reduce((s, i) => s + i.price * i.quantity, 0)
+    : subtotal;
   const discount = promoApplied
     ? promoApplied.discount_type === 'percent'
-      ? Math.round(subtotal * promoApplied.discount_value / 100 * 100) / 100
-      : promoApplied.discount_value
+      ? Math.round(applicableSubtotal * promoApplied.discount_value / 100 * 100) / 100
+      : Math.min(promoApplied.discount_value, applicableSubtotal)
     : 0;
   const total = Math.max(0, subtotal + deliveryFee - discount);
 
@@ -101,6 +106,10 @@ function CheckoutPage() {
     if (data.valid_from && new Date(data.valid_from) > now) { setPromoError('პრომოკოდი ჯერ არ არის აქტიური'); return; }
     if (data.expires_at && new Date(data.expires_at) < now) { setPromoError('პრომოკოდი ვადაგასულია'); return; }
     if (data.max_uses && data.uses_count >= data.max_uses) { setPromoError('პრომოკოდი ამოწურულია'); return; }
+    if (data.applicable_products?.length > 0) {
+      const hasMatch = cartItems.some(i => data.applicable_products.includes(i.name?.en || i.name));
+      if (!hasMatch) { setPromoError('კოდი ამ პროდუქტებზე არ ვრცელდება'); return; }
+    }
     setPromoApplied(data);
   };
 

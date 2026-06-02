@@ -11,6 +11,7 @@ import Cart from '@/components/Cart.jsx';
 import Footer from '@/components/Footer.jsx';
 import { menuItems, categories, getCategoryTranslationKey } from '@/data/menuData';
 import { useLanguage } from '../hooks/useLanguage';
+import { supabase } from '../lib/supabase';
 function HomePage() {
   const [cart, setCart] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -80,7 +81,37 @@ function HomePage() {
   const toggleGridLayout = () => {
     setGridLayout(prev => prev === 'single' ? 'compact' : 'single');
   };
-  const displayCategories = activeCategory === 'ALL' ? categories : [activeCategory];
+  const [activePromo, setActivePromo] = useState(null);
+
+  useEffect(() => {
+    const fetchPromo = async () => {
+      const now = new Date().toISOString();
+      const { data } = await supabase.from('promo_codes')
+        .select('*')
+        .eq('is_active', true)
+        .not('applicable_products', 'is', null)
+        .or(`valid_from.is.null,valid_from.lte.${now}`)
+        .or(`expires_at.is.null,expires_at.gte.${now}`)
+        .limit(1)
+        .maybeSingle();
+      setActivePromo(data || null);
+    };
+    fetchPromo();
+  }, []);
+
+  const PROMO_CAT = 'Promotion';
+  const promoItems = activePromo?.applicable_products?.length > 0
+    ? menuItems.filter(i => {
+        const name = i.name?.en || i.name;
+        return activePromo.applicable_products.includes(name);
+      }).filter((item, idx, arr) => arr.findIndex(x => (x.name?.en||x.name) === (item.name?.en||item.name)) === idx)
+    : [];
+
+  const allCategories = promoItems.length > 0
+    ? [PROMO_CAT, ...categories]
+    : categories;
+
+  const displayCategories = activeCategory === 'ALL' ? allCategories : [activeCategory];
 
   const BTN_STYLES = [
     { before:{ background:'transparent', color:'#fff', border:'2px solid #fff', borderRadius:'100px' }, after:{ background:'#fff', color:'#1a1a1a', border:'2px solid #fff', borderRadius:'100px', boxShadow:'0 6px 30px rgba(255,255,255,0.35)' } },
@@ -327,7 +358,10 @@ function HomePage() {
                 <div className="flex-1">
                   <AnimatePresence mode="popLayout">
                     {displayCategories.map(category => {
-                    const categoryItems = menuItems.filter(item => item.category === category);
+                    const isPromoCategory = category === PROMO_CAT;
+                    const categoryItems = isPromoCategory
+                      ? promoItems
+                      : menuItems.filter(item => item.category === category);
                     if (categoryItems.length === 0) return null;
                     return <motion.div key={category} initial={{
                       opacity: 0,
@@ -350,7 +384,18 @@ function HomePage() {
                             <div className="seigaiha-line flex-1 mt-2"></div>
                           </div>
                           <div className={`grid gap-4 sm:gap-6 ${gridLayout === 'compact' ? 'grid-cols-2' : 'grid-cols-1'} sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5`}>
-                            {categoryItems.map(item => <MenuCard key={item.id} item={item} onClick={() => handleCardClick(item)} />)}
+                            {categoryItems.map(item => (
+                              <MenuCard
+                                key={item.id}
+                                item={item}
+                                onClick={() => handleCardClick(item)}
+                                promoLabel={isPromoCategory && activePromo ? (
+                                  activePromo.discount_type === 'percent'
+                                    ? `-${activePromo.discount_value}%`
+                                    : `-₾${activePromo.discount_value}`
+                                ) : null}
+                              />
+                            ))}
                           </div>
                         </motion.div>;
                   })}
