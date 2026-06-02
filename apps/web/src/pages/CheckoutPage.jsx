@@ -126,14 +126,14 @@ function CheckoutPage() {
       .eq('is_active', true)
       .single();
     setPromoLoading(false);
-    if (error || !data) { setPromoError('პრომოკოდი არასწორია'); return; }
+    if (error || !data) { setPromoError(t('checkout.promoInvalid')); return; }
     const now = new Date();
-    if (data.valid_from && new Date(data.valid_from) > now) { setPromoError('პრომოკოდი ჯერ არ არის აქტიური'); return; }
-    if (data.expires_at && new Date(data.expires_at) < now) { setPromoError('პრომოკოდი ვადაგასულია'); return; }
-    if (data.max_uses && data.uses_count >= data.max_uses) { setPromoError('პრომოკოდი ამოწურულია'); return; }
+    if (data.valid_from && new Date(data.valid_from) > now) { setPromoError(t('checkout.promoNotActive')); return; }
+    if (data.expires_at && new Date(data.expires_at) < now) { setPromoError(t('checkout.promoExpired')); return; }
+    if (data.max_uses && data.uses_count >= data.max_uses) { setPromoError(t('checkout.promoExhausted')); return; }
     if (data.applicable_products?.length > 0) {
       const hasMatch = cartItems.some(i => data.applicable_products.includes(i.name?.en || i.name));
-      if (!hasMatch) { setPromoError('კოდი ამ პროდუქტებზე არ ვრცელდება'); return; }
+      if (!hasMatch) { setPromoError(t('checkout.promoNotApplicable')); return; }
     }
     setPromoApplied(data);
   };
@@ -598,16 +598,16 @@ function CheckoutPage() {
 
               {/* Promo Code */}
               <div className="pt-4 border-t border-border">
-                <p className="text-sm font-medium mb-2">🎟 პრომოკოდი</p>
+                <p className="text-sm font-medium mb-2">🎟 {t('checkout.promoTitle')}</p>
                 <div className="flex gap-2">
                   <input type="text" value={promoCode}
                     onChange={e => { setPromoCode(e.target.value.toUpperCase()); setPromoError(''); setPromoApplied(null); }}
-                    placeholder="კოდი"
-                    className="flex-1 h-9 rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring" />
+                    placeholder={t('checkout.promoPlaceholder')}
+                    className="flex-1 h-9 rounded-md border border-input bg-background px-3 text-base sm:text-sm focus:outline-none focus:ring-1 focus:ring-ring" />
                   <button type="button" onClick={applyPromoCode}
                     disabled={promoLoading || !promoCode.trim()}
                     className="px-4 h-9 rounded-md bg-primary text-white text-sm font-medium disabled:opacity-50">
-                    {promoLoading ? '...' : 'გამოყენება'}
+                    {promoLoading ? '...' : t('checkout.promoApply')}
                   </button>
                 </div>
                 {promoError && <p className="text-xs text-destructive mt-1">{promoError}</p>}
