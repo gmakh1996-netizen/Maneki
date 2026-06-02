@@ -229,12 +229,12 @@ export default function AdminPage() {
     setOrders(prev => prev.map(o => o.id === id ? { ...o, status } : o));
   };
 
-  const deleteOrder = async (id) => {
-    const confirmed = await new Promise(res => setDialog({ message: t.confirmDelete, onYes: () => res(true), onNo: () => res(false) }));
-    setDialog(null);
-    if (!confirmed) return;
-    await supabase.from('orders').delete().eq('id', id);
-    setOrders(prev => prev.filter(o => o.id !== id));
+  const deleteOrder = (id) => {
+    setDialog({ message: t.confirmDelete, onYes: async () => {
+      setDialog(null);
+      await supabase.from('orders').delete().eq('id', id);
+      setOrders(prev => prev.filter(o => o.id !== id));
+    }, onNo: () => setDialog(null) });
   };
 
   const addPromo = async () => {
@@ -257,12 +257,12 @@ export default function AdminPage() {
     fetchPromos();
   };
 
-  const deletePromo = async (id) => {
-    const confirmed = await new Promise(res => setDialog({ message: t.confirmDeletePromo, onYes: () => res(true), onNo: () => res(false) }));
-    setDialog(null);
-    if (!confirmed) return;
-    await supabase.from('promo_codes').delete().eq('id', id);
-    setPromos(prev => prev.filter(p => p.id !== id));
+  const deletePromo = (id) => {
+    setDialog({ message: t.confirmDeletePromo, onYes: async () => {
+      setDialog(null);
+      await supabase.from('promo_codes').delete().eq('id', id);
+      setPromos(prev => prev.filter(p => p.id !== id));
+    }, onNo: () => setDialog(null) });
   };
 
   const startEditOrder = (order) => {
@@ -271,15 +271,15 @@ export default function AdminPage() {
     setOpenCat(null);
   };
 
-  const addEditItem = async (product) => {
-    const confirmed = await new Promise(res => setDialog({ message: `${product.name} — ₾${product.price}\n\nდაემატოს შეკვეთას?`, onYes: () => res(true), onNo: () => res(false) }));
-    setDialog(null);
-    if (!confirmed) return;
-    setEditItems(prev => {
-      const ex = prev.find(i => i.name === product.name);
-      if (ex) return prev.map(i => i.name === product.name ? { ...i, quantity: i.quantity + 1 } : i);
-      return [...prev, { name: product.name, price: product.price, quantity: 1 }];
-    });
+  const addEditItem = (product) => {
+    setDialog({ message: `${product.name} — ₾${product.price}\n\nდაემატოს შეკვეთას?`, onYes: () => {
+      setDialog(null);
+      setEditItems(prev => {
+        const ex = prev.find(i => i.name === product.name);
+        if (ex) return prev.map(i => i.name === product.name ? { ...i, quantity: i.quantity + 1 } : i);
+        return [...prev, { name: product.name, price: product.price, quantity: 1 }];
+      });
+    }, onNo: () => setDialog(null) });
   };
 
   const changeEditQty = (name, delta) => {
