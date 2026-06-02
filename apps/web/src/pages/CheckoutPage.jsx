@@ -46,7 +46,7 @@ function CheckoutPage() {
   const [orderPlaced, setOrderPlaced] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const submittingRef = useRef(false);
-  const [deliveryMethod, setDeliveryMethod] = useState('pickup');
+  const [deliveryMethod, setDeliveryMethod] = useState('');
   const [promoCode, setPromoCode] = useState('');
   const [promoApplied, setPromoApplied] = useState(null); // { code, discount_type, discount_value }
   const [promoError, setPromoError] = useState('');
@@ -189,7 +189,15 @@ function CheckoutPage() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.name || !formData.phone || (deliveryMethod !== 'pickup' && !formData.address)) {
+    if (!formData.name || !formData.phone) {
+      toast.error(t('checkout.fillAllFields'));
+      return;
+    }
+    if (!deliveryMethod) {
+      toast.error(t('checkout.selectDeliveryMethod'));
+      return;
+    }
+    if (deliveryMethod !== 'pickup' && !formData.address) {
       toast.error(t('checkout.fillAllFields'));
       return;
     }
