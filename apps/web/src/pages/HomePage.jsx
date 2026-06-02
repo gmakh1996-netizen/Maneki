@@ -81,6 +81,35 @@ function HomePage() {
     setGridLayout(prev => prev === 'single' ? 'compact' : 'single');
   };
   const displayCategories = activeCategory === 'ALL' ? categories : [activeCategory];
+
+  const BTN_STYLES = [
+    { background:'transparent', color:'#fff', border:'2px solid #fff', borderRadius:'100px' },
+    { background:'transparent', color:'#fff', border:'2px solid #fff', borderRadius:'10px' },
+    { background:'rgba(255,255,255,0.2)', color:'#fff', border:'1.5px solid rgba(255,255,255,0.5)', borderRadius:'100px' },
+    { background:'rgba(255,255,255,0.2)', color:'#fff', border:'1.5px solid rgba(255,255,255,0.5)', borderRadius:'12px' },
+    { background:'rgba(255,255,255,0.25)', color:'#fff', border:'none', borderRadius:'100px' },
+    { background:'transparent', color:'#fff', border:'2px solid #fff', borderRadius:'100px', boxShadow:'0 0 0 4px rgba(255,255,255,0.15)' },
+    { background:'rgba(255,255,255,0.18)', color:'#fff', border:'1.5px solid rgba(255,255,255,0.6)', borderRadius:'100px' },
+    { background:'#fff', color:'#1a1a1a', border:'none', borderRadius:'100px' },
+    { background:'transparent', color:'#fff', border:'2px solid rgba(255,255,255,0.8)', borderRadius:'100px' },
+    { background:'rgba(255,255,255,0.22)', color:'#fff', border:'1.5px solid rgba(255,255,255,0.55)', borderRadius:'100px' },
+    { background:'transparent', color:'#fff', border:'2px solid #fff', borderRadius:'6px' },
+    { background:'rgba(255,255,255,0.3)', color:'#fff', border:'1px solid rgba(255,255,255,0.6)', borderRadius:'14px' },
+    { background:'rgba(255,255,255,0.08)', color:'#fff', border:'2px solid rgba(255,255,255,0.7)', borderRadius:'100px', boxShadow:'inset 0 0 20px rgba(255,255,255,0.08)' },
+    { background:'rgba(255,255,255,0.15)', color:'#fff', border:'1.5px solid rgba(255,255,255,0.45)', borderRadius:'100px', padding:'13px 64px' },
+    { background:'rgba(255,255,255,0.22)', color:'#fff', border:'2px solid rgba(255,255,255,0.55)', borderRadius:'100px' },
+    { background:'transparent', color:'#fff', border:'2.5px solid #fff', borderRadius:'4px' },
+    { background:'rgba(255,255,255,0.14)', color:'rgba(255,255,255,0.9)', border:'1.5px solid rgba(255,255,255,0.4)', borderRadius:'16px' },
+    { background:'transparent', color:'#fff', border:'1.5px solid rgba(255,255,255,0.6)', borderRadius:'100px', boxShadow:'0 0 0 5px rgba(255,255,255,0.1)' },
+    { background:'rgba(255,255,255,0.28)', color:'#fff', border:'2px solid rgba(255,255,255,0.7)', borderRadius:'100px' },
+    { background:'rgba(255,255,255,0.2)', color:'#fff', border:'none', borderRadius:'100px', boxShadow:'0 0 0 3px rgba(255,255,255,0.3)' },
+  ];
+
+  const [btnIdx, setBtnIdx] = React.useState(0);
+  React.useEffect(() => {
+    const t = setInterval(() => setBtnIdx(i => (i + 1) % BTN_STYLES.length), 3000);
+    return () => clearInterval(t);
+  }, []);
   return <div className="min-h-screen bg-background flex flex-col">
       <Helmet>
         <title>Sushi Delivery - Fresh Japanese Cuisine</title>
@@ -123,7 +152,7 @@ function HomePage() {
             duration: 0.6,
             delay: 0.4
           }}>
-              <Button onClick={scrollToMenu} size="lg" className="hero-btn text-lg px-8 py-6 active:scale-98">
+              <Button onClick={scrollToMenu} size="lg" className="hero-btn text-lg px-8 py-6 active:scale-98" style={{ transition:'all 0.6s ease', ...BTN_STYLES[btnIdx] }}>
                 {t('hero.orderNow')}
               </Button>
             </motion.div>

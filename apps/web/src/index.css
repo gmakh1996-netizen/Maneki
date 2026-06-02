@@ -181,23 +181,6 @@
     letter-spacing: 0.05em;
   }
 
-  /* Hero button — variant 17 (desktop) */
-  .hero-btn {
-    background: rgba(255,255,255,0.14) !important;
-    color: rgba(255,255,255,0.9) !important;
-    border: 1.5px solid rgba(255,255,255,0.4) !important;
-    border-radius: 16px !important;
-    transition: all 0.25s ease !important;
-    backdrop-filter: blur(8px) !important;
-  }
-  .hero-btn:hover {
-    background: #fff !important;
-    color: #1a1a1a !important;
-    border: 1.5px solid #fff !important;
-    transform: translateY(-2px) !important;
-    box-shadow: 0 10px 30px rgba(255,255,255,0.3) !important;
-  }
-
   /* Mobile hero button — orange */
   @media (max-width: 639px) {
     .hero-btn {
@@ -205,15 +188,6 @@
       color: #ffffff !important;
       border: none !important;
       border-radius: 100px !important;
-      backdrop-filter: none !important;
-      transform: none !important;
-      box-shadow: none !important;
-    }
-    .hero-btn:hover {
-      background: hsl(var(--primary)) !important;
-      color: #ffffff !important;
-      transform: none !important;
-      box-shadow: none !important;
     }
   }
 
