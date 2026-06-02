@@ -280,12 +280,12 @@ function CheckoutPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background overflow-x-hidden">
       <Helmet>
         <title>{t('checkout.title')} - Maneki Sushi</title>
       </Helmet>
 
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+      <div className="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <Button
           variant="ghost"
           onClick={() => navigate('/')}
