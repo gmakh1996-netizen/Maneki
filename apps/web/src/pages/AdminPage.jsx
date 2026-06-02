@@ -2,24 +2,39 @@ import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase';
 import SimpleCalendar from '../components/SimpleCalendar';
 
-// ხმა Web Audio API-ით (ფაილი არ სჭირდება)
+// AudioContext — ერთი გლობალური, user gesture-ით unlock
+let audioCtx = null;
+
+function unlockAudio() {
+  if (audioCtx) return;
+  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  // "silent" ბუფერი — unlock-ისთვის
+  const buf = audioCtx.createBuffer(1, 1, 22050);
+  const src = audioCtx.createBufferSource();
+  src.buffer = buf;
+  src.connect(audioCtx.destination);
+  src.start(0);
+}
+
 function playNotificationSound() {
   try {
-    const ctx = new (window.AudioContext || window.webkitAudioContext)();
-    const times = [0, 0.18, 0.36];
-    times.forEach(t => {
+    const ctx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
+    if (!audioCtx) audioCtx = ctx;
+    const notes = [660, 880, 1100];
+    notes.forEach((freq, i) => {
+      const t = i * 0.2;
       const o = ctx.createOscillator();
       const g = ctx.createGain();
       o.connect(g); g.connect(ctx.destination);
-      o.frequency.value = 880;
+      o.frequency.value = freq;
       o.type = 'sine';
       g.gain.setValueAtTime(0, ctx.currentTime + t);
-      g.gain.linearRampToValueAtTime(0.4, ctx.currentTime + t + 0.02);
-      g.gain.linearRampToValueAtTime(0, ctx.currentTime + t + 0.15);
+      g.gain.linearRampToValueAtTime(0.5, ctx.currentTime + t + 0.03);
+      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + t + 0.3);
       o.start(ctx.currentTime + t);
-      o.stop(ctx.currentTime + t + 0.15);
+      o.stop(ctx.currentTime + t + 0.3);
     });
-  } catch (_) {}
+  } catch (e) { console.warn('sound error:', e); }
 }
 
 const ADMIN_PASSWORD = 'maneki2024';
@@ -40,6 +55,8 @@ export default function AdminPage() {
   const [promos, setPromos] = useState([]);
   const [loading, setLoading] = useState(false);
   const [newOrderAlert, setNewOrderAlert] = useState(null);
+  const [soundEnabled, setSoundEnabled] = useState(false);
+  const [notifPermission, setNotifPermission] = useState(Notification.permission);
   const isFirstLoad = useRef(true);
 
   // New promo form
@@ -63,8 +80,7 @@ export default function AdminPage() {
   useEffect(() => {
     if (!authed) return;
 
-    // Browser/push notification permission + SW registration
-    if (Notification.permission === 'default') Notification.requestPermission();
+    // SW registration
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('/sw.js').catch(() => {});
     }
@@ -81,11 +97,10 @@ export default function AdminPage() {
         // Browser / phone notification
         if (Notification.permission === 'granted') {
           new Notification('🍣 ახალი შეკვეთა — Maneki Sushi', {
-            body: `${order.customer_name} · ₾${Number(order.total).toFixed(2)}`,
+            body: `${order.customer_name} · ${order.phone} · ₾${Number(order.total).toFixed(2)}`,
             icon: '/favicon.ico',
-            badge: '/favicon.ico',
-            vibrate: [200, 100, 200],
             tag: 'new-order',
+            requireInteraction: true,
           });
         }
         setTimeout(() => setNewOrderAlert(null), 8000);
@@ -151,10 +166,38 @@ export default function AdminPage() {
   return (
     <div className="min-h-screen bg-background">
       <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-6">
+        <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
           <h1 className="text-2xl font-bold">Admin Panel — Maneki Sushi</h1>
-          <button onClick={() => { sessionStorage.removeItem('admin'); setAuthed(false); }}
-            className="text-sm text-muted-foreground hover:text-foreground">გასვლა</button>
+          <div className="flex items-center gap-2">
+            {/* ხმის ჩართვა */}
+            <button
+              onClick={() => {
+                unlockAudio();
+                setSoundEnabled(true);
+                playNotificationSound();
+              }}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors ${soundEnabled ? 'bg-green-500/10 border-green-500/30 text-green-600' : 'bg-muted border-border text-muted-foreground hover:text-foreground'}`}
+            >
+              {soundEnabled ? '🔔 ხმა ჩართულია' : '🔕 ხმის ჩართვა'}
+            </button>
+            {/* Notification permission */}
+            {notifPermission !== 'granted' && (
+              <button
+                onClick={() => Notification.requestPermission().then(p => setNotifPermission(p))}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium border bg-primary/10 border-primary/30 text-primary hover:bg-primary/20"
+              >
+                📱 Notification
+              </button>
+            )}
+            {notifPermission === 'granted' && (
+              <span className="text-xs text-green-600 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block"></span>
+                Notification ჩართულია
+              </span>
+            )}
+            <button onClick={() => { sessionStorage.removeItem('admin'); setAuthed(false); }}
+              className="text-sm text-muted-foreground hover:text-foreground">გასვლა</button>
+          </div>
         </div>
 
         {/* New order alert banner */}
