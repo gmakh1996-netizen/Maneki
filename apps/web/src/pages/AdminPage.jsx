@@ -2,26 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase';
 import SimpleCalendar from '../components/SimpleCalendar';
 
-// Audio element — pre-loaded after user gesture
-let beepAudio = null;
-
-function unlockAudio() {
-  if (beepAudio) return;
-  beepAudio = new Audio('/beep.wav');
-  beepAudio.volume = 0.8;
-  // Pre-load & silent play to unlock
-  beepAudio.load();
-  const silent = beepAudio.cloneNode();
-  silent.volume = 0;
-  silent.play().catch(() => {});
-}
-
-function playNotificationSound() {
-  if (beepAudio) {
-    beepAudio.currentTime = 0;
-    beepAudio.play().catch(() => {});
-  }
-}
 
 const ADMIN_PASSWORD = 'maneki2024';
 
@@ -44,6 +24,8 @@ export default function AdminPage() {
   const [soundEnabled, setSoundEnabled] = useState(false);
   const [notifPermission, setNotifPermission] = useState(Notification.permission);
   const isFirstLoad = useRef(true);
+  const audioRef = useRef(null);
+  const lastOrderIdRef = useRef(null);
 
   // New promo form
   const [newPromo, setNewPromo] = useState({ code: '', discount_type: 'percent', discount_value: '', max_uses: '', valid_from: '', expires_at: '' });
@@ -62,39 +44,68 @@ export default function AdminPage() {
     if (tab === 'promos') fetchPromos();
   }, [authed, tab]);
 
-  // Realtime subscription + push permission
+  // ხმის გამოყენება
+  const playSound = () => {
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0;
+      audioRef.current.play().catch(() => {});
+    }
+  };
+
+  // Realtime + polling fallback
   useEffect(() => {
     if (!authed) return;
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js').catch(() => {});
 
-    // SW registration
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.register('/sw.js').catch(() => {});
-    }
-
+    // Realtime
     const channel = supabase
       .channel('orders-realtime')
       .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'orders' }, payload => {
-        if (isFirstLoad.current) return;
         const order = payload.new;
-        playNotificationSound();
+        if (lastOrderIdRef.current === order.id) return;
+        lastOrderIdRef.current = order.id;
+        playSound();
         setNewOrderAlert(order);
-        setOrders(prev => [order, ...prev]);
-
-        // Browser / phone notification
+        setOrders(prev => prev.find(o => o.id === order.id) ? prev : [order, ...prev]);
         if (Notification.permission === 'granted') {
           new Notification('🍣 ახალი შეკვეთა — Maneki Sushi', {
             body: `${order.customer_name} · ${order.phone} · ₾${Number(order.total).toFixed(2)}`,
-            icon: '/favicon.ico',
-            tag: 'new-order',
-            requireInteraction: true,
+            icon: '/favicon.ico', tag: 'new-order', requireInteraction: true,
           });
         }
         setTimeout(() => setNewOrderAlert(null), 8000);
       })
       .subscribe();
 
-    const t = setTimeout(() => { isFirstLoad.current = false; }, 2000);
-    return () => { supabase.removeChannel(channel); clearTimeout(t); };
+    // Polling fallback — ყოველ 15 წამში
+    const poll = setInterval(async () => {
+      const { data } = await supabase
+        .from('orders')
+        .select('*')
+        .order('created_at', { ascending: false })
+        .limit(50);
+      if (!data) return;
+      setOrders(prev => {
+        if (!prev.length) return data;
+        const newOnes = data.filter(o => !prev.find(p => p.id === o.id));
+        newOnes.forEach(order => {
+          if (lastOrderIdRef.current === order.id) return;
+          lastOrderIdRef.current = order.id;
+          playSound();
+          setNewOrderAlert(order);
+          if (Notification.permission === 'granted') {
+            new Notification('🍣 ახალი შეკვეთა — Maneki Sushi', {
+              body: `${order.customer_name} · ${order.phone} · ₾${Number(order.total).toFixed(2)}`,
+              icon: '/favicon.ico', tag: 'new-order', requireInteraction: true,
+            });
+          }
+          setTimeout(() => setNewOrderAlert(null), 8000);
+        });
+        return newOnes.length ? [...newOnes, ...prev] : prev;
+      });
+    }, 15000);
+
+    return () => { supabase.removeChannel(channel); clearInterval(poll); };
   }, [authed]);
 
   const fetchOrders = async () => {
@@ -151,6 +162,7 @@ export default function AdminPage() {
 
   return (
     <div className="min-h-screen bg-background">
+      <audio ref={audioRef} src="/beep.wav" preload="auto" />
       <div className="max-w-6xl mx-auto px-4 py-8">
         <div className="flex items-center justify-between mb-4 flex-wrap gap-3">
           <h1 className="text-2xl font-bold">Admin Panel — Maneki Sushi</h1>
@@ -158,9 +170,11 @@ export default function AdminPage() {
             {/* ხმის ჩართვა */}
             <button
               onClick={() => {
-                unlockAudio();
-                setSoundEnabled(true);
-                playNotificationSound();
+                if (audioRef.current) {
+                  audioRef.current.volume = 0.8;
+                  audioRef.current.currentTime = 0;
+                  audioRef.current.play().then(() => setSoundEnabled(true)).catch(() => {});
+                }
               }}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium border transition-colors ${soundEnabled ? 'bg-green-500/10 border-green-500/30 text-green-600' : 'bg-muted border-border text-muted-foreground hover:text-foreground'}`}
             >
