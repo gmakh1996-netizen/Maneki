@@ -21,22 +21,13 @@ function MenuCard({ item, onClick, promoLabel, promoCode }) {
       transition={{ duration: 0.3 }}
       onClick={onClick}
       className="group relative rounded-2xl cursor-pointer transition-all duration-300 hover:-translate-y-1 hover:shadow-xl bg-card border border-border"
-      style={{ overflow: (promoLabel || promoCode) ? 'visible' : 'hidden' }}
+      style={{ overflow: promoLabel ? 'visible' : 'hidden' }}
     >
       {/* Discount badge — top-left, 1/4 outside */}
       {promoLabel && (
         <div className="absolute top-3 left-0 z-10 -translate-x-1/4">
           <div className="bg-red-600 text-white px-3 py-1.5 rounded-lg font-bold text-sm shadow-lg" style={{whiteSpace:'nowrap'}}>
             {promoLabel}
-          </div>
-        </div>
-      )}
-
-      {/* Promo code badge — bottom-3 left, same 1/4 outside as discount badge */}
-      {promoCode && (
-        <div className="absolute bottom-3 left-0 z-10 -translate-x-1/4">
-          <div className="bg-sky-400 text-white px-2 py-1 rounded-md font-bold text-xs shadow-lg" style={{whiteSpace:'nowrap'}}>
-            {promoCode}
           </div>
         </div>
       )}
@@ -57,6 +48,13 @@ function MenuCard({ item, onClick, promoLabel, promoCode }) {
           </h3>
         </div>
 
+
+        {/* Promo Code Badge — bottom-3 left-3, inside image */}
+        {promoCode && (
+          <div className="absolute bottom-3 left-3 bg-sky-400 text-white px-2 py-1 rounded-md font-bold text-xs shadow-lg" style={{whiteSpace:'nowrap'}}>
+            {promoCode}
+          </div>
+        )}
 
         {/* Price Badge */}
         <div className="absolute bottom-3 right-3 bg-primary text-primary-foreground px-3 py-1.5 rounded-lg font-bold text-sm shadow-lg">
