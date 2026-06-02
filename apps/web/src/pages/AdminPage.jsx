@@ -21,8 +21,9 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false);
 
   // New promo form
-  const [newPromo, setNewPromo] = useState({ code: '', discount_type: 'percent', discount_value: '', max_uses: '', expires_at: '' });
-  const [calendarOpen, setCalendarOpen] = useState(false);
+  const [newPromo, setNewPromo] = useState({ code: '', discount_type: 'percent', discount_value: '', max_uses: '', valid_from: '', expires_at: '' });
+  const [calendarFromOpen, setCalendarFromOpen] = useState(false);
+  const [calendarToOpen, setCalendarToOpen] = useState(false);
   const theme = window.document.documentElement.classList.contains('dark') ? 'dark' : 'light';
 
   const login = () => {
@@ -62,10 +63,11 @@ export default function AdminPage() {
       discount_type: newPromo.discount_type,
       discount_value: Number(newPromo.discount_value),
       max_uses: newPromo.max_uses ? Number(newPromo.max_uses) : null,
-      expires_at: newPromo.expires_at || null,
+      valid_from: newPromo.valid_from ? new Date(newPromo.valid_from + 'T00:00:00').toISOString() : null,
+      expires_at: newPromo.expires_at ? new Date(newPromo.expires_at + 'T23:59:59').toISOString() : null,
       is_active: true,
     });
-    setNewPromo({ code: '', discount_type: 'percent', discount_value: '', max_uses: '', expires_at: '' });
+    setNewPromo({ code: '', discount_type: 'percent', discount_value: '', max_uses: '', valid_from: '', expires_at: '' });
     fetchPromos();
   };
 
@@ -165,16 +167,32 @@ export default function AdminPage() {
                 <input type="number" value={newPromo.max_uses} onChange={e => setNewPromo(p => ({...p, max_uses: e.target.value}))}
                   placeholder="მაქს. გამოყენება (ცარ.=∞)"
                   className="h-9 rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring" />
-                <SimpleCalendar
-                  value={newPromo.expires_at}
-                  onChange={date => { setNewPromo(p => ({...p, expires_at: date})); setCalendarOpen(false); }}
-                  open={calendarOpen}
-                  onToggle={() => setCalendarOpen(v => !v)}
-                  minDate={new Date().toISOString().split('T')[0]}
-                  maxDate="2099-12-31"
-                  theme={theme}
-                  placeholder="ვადის გასვლა (სურვ.)"
-                />
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">დასაწყისი</p>
+                  <SimpleCalendar
+                    value={newPromo.valid_from}
+                    onChange={date => { setNewPromo(p => ({...p, valid_from: date})); setCalendarFromOpen(false); }}
+                    open={calendarFromOpen}
+                    onToggle={() => { setCalendarFromOpen(v => !v); setCalendarToOpen(false); }}
+                    minDate={new Date().toISOString().split('T')[0]}
+                    maxDate="2099-12-31"
+                    theme={theme}
+                    placeholder="საიდან (სურვ.)"
+                  />
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">დასასრული</p>
+                  <SimpleCalendar
+                    value={newPromo.expires_at}
+                    onChange={date => { setNewPromo(p => ({...p, expires_at: date})); setCalendarToOpen(false); }}
+                    open={calendarToOpen}
+                    onToggle={() => { setCalendarToOpen(v => !v); setCalendarFromOpen(false); }}
+                    minDate={newPromo.valid_from || new Date().toISOString().split('T')[0]}
+                    maxDate="2099-12-31"
+                    theme={theme}
+                    placeholder="სამდე (სურვ.)"
+                  />
+                </div>
                 <button onClick={addPromo} className="h-9 bg-primary text-white rounded-md text-sm font-medium">დამატება</button>
               </div>
             </div>
@@ -186,8 +204,8 @@ export default function AdminPage() {
                   <p className="font-bold text-lg">{promo.code}</p>
                   <p className="text-sm text-muted-foreground">
                     {promo.discount_type === 'percent' ? `${promo.discount_value}% ფასდაკლება` : `₾${promo.discount_value} ფასდაკლება`}
-                    {promo.max_uses && ` · ${promo.uses_count}/${promo.max_uses} გამოყენებული`}
-                    {promo.expires_at && ` · ვადა: ${new Date(promo.expires_at).toLocaleDateString('ka-GE')}`}
+                    {promo.max_uses && ` · ${promo.uses_count}/${promo.max_uses} გამოყ.`}
+                    {(promo.valid_from || promo.expires_at) && ` · ${promo.valid_from ? new Date(promo.valid_from).toLocaleDateString('ka-GE') : '∞'} → ${promo.expires_at ? new Date(promo.expires_at).toLocaleDateString('ka-GE') : '∞'}`}
                   </p>
                 </div>
                 <button onClick={() => togglePromo(promo.id, promo.is_active)}

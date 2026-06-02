@@ -97,7 +97,9 @@ function CheckoutPage() {
       .single();
     setPromoLoading(false);
     if (error || !data) { setPromoError('პრომოკოდი არასწორია'); return; }
-    if (data.expires_at && new Date(data.expires_at) < new Date()) { setPromoError('პრომოკოდი ვადაგასულია'); return; }
+    const now = new Date();
+    if (data.valid_from && new Date(data.valid_from) > now) { setPromoError('პრომოკოდი ჯერ არ არის აქტიური'); return; }
+    if (data.expires_at && new Date(data.expires_at) < now) { setPromoError('პრომოკოდი ვადაგასულია'); return; }
     if (data.max_uses && data.uses_count >= data.max_uses) { setPromoError('პრომოკოდი ამოწურულია'); return; }
     setPromoApplied(data);
   };
