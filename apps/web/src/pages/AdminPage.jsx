@@ -153,7 +153,9 @@ export default function AdminPage() {
             {/* Add new */}
             <div className="bg-card border border-border rounded-xl p-4 space-y-3">
               <h2 className="font-semibold">ახალი პრომოკოდი</h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+
+              {/* Row 1: კოდი, ტიპი, მნიშვნელობა */}
+              <div className="grid grid-cols-3 gap-3">
                 <input value={newPromo.code} onChange={e => setNewPromo(p => ({...p, code: e.target.value.toUpperCase()}))}
                   placeholder="კოდი (მაგ. MANEKI10)" className="h-9 rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring" />
                 <select value={newPromo.discount_type} onChange={e => setNewPromo(p => ({...p, discount_type: e.target.value}))}
@@ -162,11 +164,18 @@ export default function AdminPage() {
                   <option value="fixed">ფიქსირებული (₾)</option>
                 </select>
                 <input type="number" value={newPromo.discount_value} onChange={e => setNewPromo(p => ({...p, discount_value: e.target.value}))}
-                  placeholder={newPromo.discount_type === 'percent' ? 'მაგ. 10' : 'მაგ. 5'}
+                  placeholder={newPromo.discount_type === 'percent' ? 'ფასდ. % (მაგ. 10)' : 'ფასდ. ₾ (მაგ. 5)'}
                   className="h-9 rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring" />
-                <input type="number" value={newPromo.max_uses} onChange={e => setNewPromo(p => ({...p, max_uses: e.target.value}))}
-                  placeholder="მაქს. გამოყენება (ცარ.=∞)"
-                  className="h-9 rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring" />
+              </div>
+
+              {/* Row 2: გამოყენება, დასაწყისი, დასასრული */}
+              <div className="grid grid-cols-3 gap-3">
+                <div>
+                  <p className="text-xs text-muted-foreground mb-1">მაქს. გამოყენება (ცარ.=∞)</p>
+                  <input type="number" value={newPromo.max_uses} onChange={e => setNewPromo(p => ({...p, max_uses: e.target.value}))}
+                    placeholder="მაგ. 100"
+                    className="w-full h-9 rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring" />
+                </div>
                 <div>
                   <p className="text-xs text-muted-foreground mb-1">დასაწყისი</p>
                   <SimpleCalendar
@@ -193,8 +202,10 @@ export default function AdminPage() {
                     placeholder="სამდე (სურვ.)"
                   />
                 </div>
-                <button onClick={addPromo} className="h-9 bg-primary text-white rounded-md text-sm font-medium">დამატება</button>
               </div>
+
+              {/* Row 3: დამატება */}
+              <button onClick={addPromo} className="h-9 px-6 bg-primary text-white rounded-md text-sm font-medium">+ დამატება</button>
             </div>
 
             {/* List */}
