@@ -42,18 +42,25 @@ function MenuCard({ item, onClick, promoLabel, discountedPrice }) {
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-80 group-hover:opacity-100 transition-opacity" />
 
         {/* Item Name */}
-        <div className="absolute bottom-12 left-3 right-3">
-          <h3 className="text-white font-semibold text-base leading-tight drop-shadow-lg group-hover:text-primary-foreground transition-colors">
-            {itemName}
-          </h3>
-        </div>
-
+        {discountedPrice != null ? (
+          <div className="absolute bottom-3 left-3" style={{right:'80px'}}>
+            <h3 className="text-white font-semibold text-xs leading-tight drop-shadow-lg line-clamp-3">
+              {itemName}
+            </h3>
+          </div>
+        ) : (
+          <div className="absolute bottom-12 left-3 right-3">
+            <h3 className="text-white font-semibold text-base leading-tight drop-shadow-lg group-hover:text-primary-foreground transition-colors">
+              {itemName}
+            </h3>
+          </div>
+        )}
 
         {/* Price Badge */}
         {discountedPrice != null ? (
           <div className="absolute bottom-3 right-3 flex flex-col items-end gap-0.5">
-            <span className="text-white/60 text-xs line-through leading-none">{item.price.toFixed(2)} {t('product.currency')}</span>
-            <div className="bg-sky-500 text-white px-3 py-1.5 rounded-lg font-bold text-sm shadow-lg">
+            <span className="text-white/70 text-xs line-through leading-none">{item.price.toFixed(2)} {t('product.currency')}</span>
+            <div className="bg-sky-500 text-white px-2.5 py-1 rounded-lg font-bold text-sm shadow-lg">
               {discountedPrice.toFixed(2)} {t('product.currency')}
             </div>
           </div>
