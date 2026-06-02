@@ -278,23 +278,67 @@ export default function AdminPage() {
               <button onClick={addPromo} className="h-9 px-6 bg-primary text-white rounded-md text-sm font-medium">+ დამატება</button>
             </div>
 
-            {/* List */}
-            {loading ? <p className="text-center py-8 text-muted-foreground">იტვირთება...</p> : promos.map(promo => (
-              <div key={promo.id} className={`bg-card border rounded-xl p-4 flex items-center justify-between gap-4 ${!promo.is_active ? 'opacity-50 border-border' : 'border-primary/40'}`}>
-                <div>
-                  <p className="font-bold text-lg">{promo.code}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {promo.discount_type === 'percent' ? `${promo.discount_value}% ფასდაკლება` : `₾${promo.discount_value} ფასდაკლება`}
-                    {promo.max_uses && ` · ${promo.uses_count}/${promo.max_uses} გამოყ.`}
-                    {(promo.valid_from || promo.expires_at) && ` · ${promo.valid_from ? new Date(promo.valid_from).toLocaleDateString('ka-GE') : '∞'} → ${promo.expires_at ? new Date(promo.expires_at).toLocaleDateString('ka-GE') : '∞'}`}
-                  </p>
+            {/* Stats */}
+            {!loading && promos.length > 0 && (() => {
+              const now = new Date();
+              const active = promos.filter(p => p.is_active && (!p.expires_at || new Date(p.expires_at) > now) && (!p.valid_from || new Date(p.valid_from) <= now));
+              const expired = promos.filter(p => p.expires_at && new Date(p.expires_at) < now);
+              return (
+                <div className="flex gap-3">
+                  <div className="bg-green-500/10 border border-green-500/30 rounded-xl px-4 py-3 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-green-500 inline-block"></span>
+                    <span className="text-sm font-medium text-green-600">აქტიური: {active.length}</span>
+                  </div>
+                  <div className="bg-card border border-border rounded-xl px-4 py-3 flex items-center gap-2">
+                    <span className="text-sm text-muted-foreground">სულ: {promos.length}</span>
+                  </div>
+                  {expired.length > 0 && (
+                    <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-red-500 inline-block"></span>
+                      <span className="text-sm font-medium text-red-500">ვადაგასული: {expired.length}</span>
+                    </div>
+                  )}
                 </div>
-                <button onClick={() => togglePromo(promo.id, promo.is_active)}
-                  className={`px-4 py-1.5 rounded-lg text-sm font-medium ${promo.is_active ? 'bg-red-500/10 text-red-500 hover:bg-red-500/20' : 'bg-green-500/10 text-green-600 hover:bg-green-500/20'}`}>
-                  {promo.is_active ? 'გათიშვა' : 'ჩართვა'}
-                </button>
-              </div>
-            ))}
+              );
+            })()}
+
+            {/* List */}
+            {loading ? <p className="text-center py-8 text-muted-foreground">იტვირთება...</p> : promos.map(promo => {
+              const now = new Date();
+              const isExpired = promo.expires_at && new Date(promo.expires_at) < now;
+              const notStarted = promo.valid_from && new Date(promo.valid_from) > now;
+              const isReallyActive = promo.is_active && !isExpired && !notStarted;
+              return (
+                <div key={promo.id} className={`bg-card border rounded-xl p-4 flex items-center justify-between gap-4 ${isReallyActive ? 'border-green-500/30' : 'border-border opacity-60'}`}>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <p className="font-bold text-lg">{promo.code}</p>
+                      {isExpired ? (
+                        <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-red-500/15 text-red-500 border border-red-500/25">ვადაგასული</span>
+                      ) : notStarted ? (
+                        <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-yellow-500/15 text-yellow-500 border border-yellow-500/25">ჯერ არ დაწყებულა</span>
+                      ) : isReallyActive ? (
+                        <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-green-500/15 text-green-600 border border-green-500/25 flex items-center gap-1">
+                          <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block animate-pulse"></span>
+                          აქტიურია
+                        </span>
+                      ) : (
+                        <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-muted text-muted-foreground">გათიშული</span>
+                      )}
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      {promo.discount_type === 'percent' ? `${promo.discount_value}% ფასდაკლება` : `₾${promo.discount_value} ფასდაკლება`}
+                      {promo.max_uses && ` · ${promo.uses_count}/${promo.max_uses} გამოყ.`}
+                      {(promo.valid_from || promo.expires_at) && ` · ${promo.valid_from ? new Date(promo.valid_from).toLocaleDateString('ka-GE') : '∞'} → ${promo.expires_at ? new Date(promo.expires_at).toLocaleDateString('ka-GE') : '∞'}`}
+                    </p>
+                  </div>
+                  <button onClick={() => togglePromo(promo.id, promo.is_active)}
+                    className={`px-4 py-1.5 rounded-lg text-sm font-medium shrink-0 ${promo.is_active ? 'bg-red-500/10 text-red-500 hover:bg-red-500/20' : 'bg-green-500/10 text-green-600 hover:bg-green-500/20'}`}>
+                    {promo.is_active ? 'გათიშვა' : 'ჩართვა'}
+                  </button>
+                </div>
+              );
+            })}
           </div>
         )}
       </div>
