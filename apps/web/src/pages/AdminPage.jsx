@@ -267,6 +267,7 @@ export default function AdminPage() {
   };
 
   const addEditItem = (product) => {
+    if (!window.confirm(`${product.name} — ₾${product.price}\n\nდაემატოს შეკვეთას?`)) return;
     setEditItems(prev => {
       const ex = prev.find(i => i.name === product.name);
       if (ex) return prev.map(i => i.name === product.name ? { ...i, quantity: i.quantity + 1 } : i);
