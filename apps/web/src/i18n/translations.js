@@ -68,7 +68,7 @@ export const translations = {
       title: "Checkout",
       backToMenu: "Back to Menu",
       contactDetails: "Contact Details",
-      fullName: "Full Name *",
+      fullName: "Name *",
       fullNamePlaceholder: "Enter your name",
       phoneNumber: "Phone Number *",
       phonePlaceholder: "+995 XXX XXX XXX",
