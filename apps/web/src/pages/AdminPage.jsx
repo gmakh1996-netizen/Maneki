@@ -2,39 +2,25 @@ import React, { useState, useEffect, useRef } from 'react';
 import { supabase } from '../lib/supabase';
 import SimpleCalendar from '../components/SimpleCalendar';
 
-// AudioContext — ერთი გლობალური, user gesture-ით unlock
-let audioCtx = null;
+// Audio element — pre-loaded after user gesture
+let beepAudio = null;
 
 function unlockAudio() {
-  if (audioCtx) return;
-  audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-  // "silent" ბუფერი — unlock-ისთვის
-  const buf = audioCtx.createBuffer(1, 1, 22050);
-  const src = audioCtx.createBufferSource();
-  src.buffer = buf;
-  src.connect(audioCtx.destination);
-  src.start(0);
+  if (beepAudio) return;
+  beepAudio = new Audio('/beep.wav');
+  beepAudio.volume = 0.8;
+  // Pre-load & silent play to unlock
+  beepAudio.load();
+  const silent = beepAudio.cloneNode();
+  silent.volume = 0;
+  silent.play().catch(() => {});
 }
 
 function playNotificationSound() {
-  try {
-    const ctx = audioCtx || new (window.AudioContext || window.webkitAudioContext)();
-    if (!audioCtx) audioCtx = ctx;
-    const notes = [660, 880, 1100];
-    notes.forEach((freq, i) => {
-      const t = i * 0.2;
-      const o = ctx.createOscillator();
-      const g = ctx.createGain();
-      o.connect(g); g.connect(ctx.destination);
-      o.frequency.value = freq;
-      o.type = 'sine';
-      g.gain.setValueAtTime(0, ctx.currentTime + t);
-      g.gain.linearRampToValueAtTime(0.5, ctx.currentTime + t + 0.03);
-      g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + t + 0.3);
-      o.start(ctx.currentTime + t);
-      o.stop(ctx.currentTime + t + 0.3);
-    });
-  } catch (e) { console.warn('sound error:', e); }
+  if (beepAudio) {
+    beepAudio.currentTime = 0;
+    beepAudio.play().catch(() => {});
+  }
 }
 
 const ADMIN_PASSWORD = 'maneki2024';
