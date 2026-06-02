@@ -9,7 +9,7 @@
 		<script>
 			(function() {
 				try {
-					var hour = new Date().getHours();
+					var hour = parseInt(new Date().toLocaleString('en-US', { timeZone: 'Asia/Tbilisi', hour: 'numeric', hour12: false }), 10);
 					var theme = (hour >= 6 && hour < 21) ? 'light' : 'dark';
 					document.documentElement.className = theme;
 					document.documentElement.style.colorScheme = theme;

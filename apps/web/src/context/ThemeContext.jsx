@@ -4,7 +4,7 @@ import React, { createContext, useState, useEffect } from 'react';
 export const ThemeContext = createContext();
 
 const getTimeBasedTheme = () => {
-  const hour = new Date().getHours();
+  const hour = parseInt(new Date().toLocaleString('en-US', { timeZone: 'Asia/Tbilisi', hour: 'numeric', hour12: false }), 10);
   return hour >= 6 && hour < 21 ? 'light' : 'dark';
 };
 
