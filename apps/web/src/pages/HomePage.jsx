@@ -83,31 +83,32 @@ function HomePage() {
   const displayCategories = activeCategory === 'ALL' ? categories : [activeCategory];
 
   const BTN_STYLES = [
-    { background:'transparent', color:'#fff', border:'2px solid #fff', borderRadius:'100px' },
-    { background:'transparent', color:'#fff', border:'2px solid #fff', borderRadius:'10px' },
-    { background:'rgba(255,255,255,0.2)', color:'#fff', border:'1.5px solid rgba(255,255,255,0.5)', borderRadius:'100px' },
-    { background:'rgba(255,255,255,0.2)', color:'#fff', border:'1.5px solid rgba(255,255,255,0.5)', borderRadius:'12px' },
-    { background:'rgba(255,255,255,0.25)', color:'#fff', border:'none', borderRadius:'100px' },
-    { background:'transparent', color:'#fff', border:'2px solid #fff', borderRadius:'100px', boxShadow:'0 0 0 4px rgba(255,255,255,0.15)' },
-    { background:'rgba(255,255,255,0.18)', color:'#fff', border:'1.5px solid rgba(255,255,255,0.6)', borderRadius:'100px' },
-    { background:'#fff', color:'#1a1a1a', border:'none', borderRadius:'100px' },
-    { background:'transparent', color:'#fff', border:'2px solid rgba(255,255,255,0.8)', borderRadius:'100px' },
-    { background:'rgba(255,255,255,0.22)', color:'#fff', border:'1.5px solid rgba(255,255,255,0.55)', borderRadius:'100px' },
-    { background:'transparent', color:'#fff', border:'2px solid #fff', borderRadius:'6px' },
-    { background:'rgba(255,255,255,0.3)', color:'#fff', border:'1px solid rgba(255,255,255,0.6)', borderRadius:'14px' },
-    { background:'rgba(255,255,255,0.08)', color:'#fff', border:'2px solid rgba(255,255,255,0.7)', borderRadius:'100px', boxShadow:'inset 0 0 20px rgba(255,255,255,0.08)' },
-    { background:'rgba(255,255,255,0.15)', color:'#fff', border:'1.5px solid rgba(255,255,255,0.45)', borderRadius:'100px', padding:'13px 64px' },
-    { background:'rgba(255,255,255,0.22)', color:'#fff', border:'2px solid rgba(255,255,255,0.55)', borderRadius:'100px' },
-    { background:'transparent', color:'#fff', border:'2.5px solid #fff', borderRadius:'4px' },
-    { background:'rgba(255,255,255,0.14)', color:'rgba(255,255,255,0.9)', border:'1.5px solid rgba(255,255,255,0.4)', borderRadius:'16px' },
-    { background:'transparent', color:'#fff', border:'1.5px solid rgba(255,255,255,0.6)', borderRadius:'100px', boxShadow:'0 0 0 5px rgba(255,255,255,0.1)' },
-    { background:'rgba(255,255,255,0.28)', color:'#fff', border:'2px solid rgba(255,255,255,0.7)', borderRadius:'100px' },
-    { background:'rgba(255,255,255,0.2)', color:'#fff', border:'none', borderRadius:'100px', boxShadow:'0 0 0 3px rgba(255,255,255,0.3)' },
+    { before:{ background:'transparent', color:'#fff', border:'2px solid #fff', borderRadius:'100px' }, after:{ background:'#fff', color:'#1a1a1a', border:'2px solid #fff', borderRadius:'100px', boxShadow:'0 6px 30px rgba(255,255,255,0.35)' } },
+    { before:{ background:'transparent', color:'#fff', border:'2px solid #fff', borderRadius:'10px' }, after:{ background:'#fff', color:'#1a1a1a', border:'2px solid #fff', borderRadius:'10px', boxShadow:'0 6px 30px rgba(255,255,255,0.35)' } },
+    { before:{ background:'rgba(255,255,255,0.2)', color:'#fff', border:'1.5px solid rgba(255,255,255,0.5)', borderRadius:'100px' }, after:{ background:'rgba(255,255,255,0.95)', color:'#1a1a1a', border:'1.5px solid #fff', borderRadius:'100px', boxShadow:'0 8px 32px rgba(255,255,255,0.3)' } },
+    { before:{ background:'rgba(255,255,255,0.2)', color:'#fff', border:'1.5px solid rgba(255,255,255,0.5)', borderRadius:'12px' }, after:{ background:'rgba(255,255,255,0.95)', color:'#1a1a1a', border:'1.5px solid #fff', borderRadius:'12px', boxShadow:'0 8px 32px rgba(255,255,255,0.3)' } },
+    { before:{ background:'rgba(255,255,255,0.25)', color:'#fff', border:'none', borderRadius:'100px' }, after:{ background:'#fff', color:'#1a1a1a', border:'none', borderRadius:'100px', transform:'translateY(-3px)', boxShadow:'0 12px 36px rgba(255,255,255,0.35)' } },
+    { before:{ background:'transparent', color:'#fff', border:'2px solid #fff', borderRadius:'100px', boxShadow:'0 0 0 4px rgba(255,255,255,0.15)' }, after:{ background:'#fff', color:'#1a1a1a', border:'2px solid #fff', borderRadius:'100px', boxShadow:'0 0 0 5px rgba(255,255,255,0.25), 0 6px 28px rgba(255,255,255,0.3)' } },
+    { before:{ background:'rgba(255,255,255,0.18)', color:'#fff', border:'1.5px solid rgba(255,255,255,0.6)', borderRadius:'100px' }, after:{ background:'rgba(255,255,255,0.95)', color:'#1a1a1a', border:'1.5px solid #fff', borderRadius:'100px', transform:'scale(1.06)', boxShadow:'0 8px 28px rgba(255,255,255,0.3)' } },
+    { before:{ background:'#fff', color:'#1a1a1a', border:'none', borderRadius:'100px' }, after:{ background:'transparent', color:'#fff', border:'2px solid #fff', borderRadius:'100px', boxShadow:'0 0 24px rgba(255,255,255,0.25)' } },
+    { before:{ background:'transparent', color:'#fff', border:'2px solid rgba(255,255,255,0.8)', borderRadius:'100px' }, after:{ background:'#fff', color:'#1a1a1a', border:'2px solid #fff', borderRadius:'100px', boxShadow:'0 4px 0 rgba(200,200,200,0.6), 0 8px 24px rgba(255,255,255,0.3)' } },
+    { before:{ background:'rgba(255,255,255,0.22)', color:'#fff', border:'1.5px solid rgba(255,255,255,0.55)', borderRadius:'100px' }, after:{ background:'#fff', color:'#1a1a1a', border:'1.5px solid #fff', borderRadius:'100px', boxShadow:'0 0 0 3px rgba(255,255,255,0.2), 0 0 0 8px rgba(255,255,255,0.08), 0 6px 28px rgba(255,255,255,0.35)' } },
+    { before:{ background:'transparent', color:'#fff', border:'2px solid #fff', borderRadius:'6px' }, after:{ background:'#fff', color:'#1a1a1a', border:'2px solid #fff', borderRadius:'6px', boxShadow:'4px 4px 0 rgba(255,255,255,0.4)' } },
+    { before:{ background:'rgba(255,255,255,0.3)', color:'#fff', border:'1px solid rgba(255,255,255,0.6)', borderRadius:'14px' }, after:{ background:'#fff', color:'#1a1a1a', border:'1px solid #fff', borderRadius:'14px', transform:'translateY(-3px)', boxShadow:'0 12px 36px rgba(255,255,255,0.35)' } },
+    { before:{ background:'rgba(255,255,255,0.08)', color:'#fff', border:'2px solid rgba(255,255,255,0.7)', borderRadius:'100px' }, after:{ background:'#fff', color:'#1a1a1a', border:'2px solid #fff', borderRadius:'100px', boxShadow:'0 6px 28px rgba(255,255,255,0.35)' } },
+    { before:{ background:'rgba(255,255,255,0.15)', color:'#fff', border:'1.5px solid rgba(255,255,255,0.45)', borderRadius:'100px' }, after:{ background:'#fff', color:'#1a1a1a', border:'1.5px solid #fff', borderRadius:'100px', boxShadow:'0 6px 30px rgba(255,255,255,0.35)' } },
+    { before:{ background:'rgba(255,255,255,0.22)', color:'#fff', border:'2px solid rgba(255,255,255,0.55)', borderRadius:'100px' }, after:{ background:'rgba(255,255,255,0.95)', color:'#1a1a1a', border:'2px solid #fff', borderRadius:'100px', transform:'scale(1.05)', boxShadow:'0 0 0 4px rgba(255,255,255,0.2), 0 8px 30px rgba(255,255,255,0.35)' } },
+    { before:{ background:'transparent', color:'#fff', border:'2.5px solid #fff', borderRadius:'4px' }, after:{ background:'#fff', color:'#1a1a1a', border:'2.5px solid #fff', borderRadius:'4px', boxShadow:'0 6px 24px rgba(255,255,255,0.3)' } },
+    { before:{ background:'rgba(255,255,255,0.14)', color:'rgba(255,255,255,0.9)', border:'1.5px solid rgba(255,255,255,0.4)', borderRadius:'16px' }, after:{ background:'#fff', color:'#1a1a1a', border:'1.5px solid #fff', borderRadius:'16px', transform:'translateY(-2px)', boxShadow:'0 10px 30px rgba(255,255,255,0.3)' } },
+    { before:{ background:'transparent', color:'#fff', border:'1.5px solid rgba(255,255,255,0.6)', borderRadius:'100px', boxShadow:'0 0 0 5px rgba(255,255,255,0.1)' }, after:{ background:'rgba(255,255,255,0.95)', color:'#1a1a1a', border:'1.5px solid #fff', borderRadius:'100px', boxShadow:'0 0 0 5px rgba(255,255,255,0.2), 0 8px 28px rgba(255,255,255,0.35)' } },
+    { before:{ background:'rgba(255,255,255,0.28)', color:'#fff', border:'2px solid rgba(255,255,255,0.7)', borderRadius:'100px' }, after:{ background:'transparent', color:'#fff', border:'2px solid #fff', borderRadius:'100px', boxShadow:'0 0 30px rgba(255,255,255,0.3)', transform:'scale(1.04)' } },
+    { before:{ background:'rgba(255,255,255,0.2)', color:'#fff', border:'none', borderRadius:'100px', boxShadow:'0 0 0 3px rgba(255,255,255,0.3)' }, after:{ background:'#fff', color:'#1a1a1a', border:'none', borderRadius:'100px', boxShadow:'0 0 0 3px rgba(255,255,255,0.3), 0 0 0 8px rgba(255,255,255,0.1), 0 8px 32px rgba(255,255,255,0.4)', transform:'translateY(-2px)' } },
   ];
 
   const [btnIdx, setBtnIdx] = React.useState(0);
+  const [btnHovered, setBtnHovered] = React.useState(false);
   React.useEffect(() => {
-    const t = setInterval(() => setBtnIdx(i => (i + 1) % BTN_STYLES.length), 3000);
+    const t = setInterval(() => setBtnIdx(i => (i + 1) % BTN_STYLES.length), 10000);
     return () => clearInterval(t);
   }, []);
   return <div className="min-h-screen bg-background flex flex-col">
@@ -152,7 +153,14 @@ function HomePage() {
             duration: 0.6,
             delay: 0.4
           }}>
-              <Button onClick={scrollToMenu} size="lg" className="hero-btn text-lg px-8 py-6 active:scale-98" style={{ transition:'all 0.6s ease', ...BTN_STYLES[btnIdx] }}>
+              <Button
+                onClick={scrollToMenu}
+                size="lg"
+                className="hero-btn text-lg px-8 py-6 active:scale-98"
+                style={{ transition:'all 0.5s ease', ...(btnHovered ? BTN_STYLES[btnIdx].after : BTN_STYLES[btnIdx].before) }}
+                onMouseEnter={() => setBtnHovered(true)}
+                onMouseLeave={() => setBtnHovered(false)}
+              >
                 {t('hero.orderNow')}
               </Button>
             </motion.div>
