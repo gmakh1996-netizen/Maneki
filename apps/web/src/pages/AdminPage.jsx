@@ -30,7 +30,9 @@ export default function AdminPage() {
   const [loading, setLoading] = useState(false);
   const [newOrderAlert, setNewOrderAlert] = useState(null);
   const [soundEnabled, setSoundEnabled] = useState(false);
-  const [notifPermission, setNotifPermission] = useState(Notification.permission);
+  const [notifPermission, setNotifPermission] = useState(() =>
+    typeof Notification !== 'undefined' ? Notification.permission : 'denied'
+  );
   const isFirstLoad = useRef(true);
   const audioRef = useRef(null);
   const lastOrderIdRef = useRef(null);
@@ -68,7 +70,7 @@ export default function AdminPage() {
         beep();
         setNewOrderAlert(order);
         setOrders(prev => prev.find(o => o.id === order.id) ? prev : [order, ...prev]);
-        if (Notification.permission === 'granted') {
+        if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
           new Notification('🍣 ახალი შეკვეთა — Maneki Sushi', {
             body: `${order.customer_name} · ${order.phone} · ₾${Number(order.total).toFixed(2)}`,
             icon: '/favicon.ico', tag: 'new-order', requireInteraction: true,
@@ -150,7 +152,7 @@ export default function AdminPage() {
             {/* Notification permission */}
             {notifPermission !== 'granted' && (
               <button
-                onClick={() => Notification.requestPermission().then(p => setNotifPermission(p))}
+                onClick={() => typeof Notification !== 'undefined' && Notification.requestPermission().then(p => setNotifPermission(p))}
                 className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium border bg-primary/10 border-primary/30 text-primary hover:bg-primary/20"
               >
                 📱 Notification
