@@ -47,6 +47,10 @@ function CheckoutPage() {
   const [isLoading, setIsLoading] = useState(false);
   const submittingRef = useRef(false);
   const [deliveryMethod, setDeliveryMethod] = useState('pickup');
+  const [promoCode, setPromoCode] = useState('');
+  const [promoApplied, setPromoApplied] = useState(null); // { code, discount_type, discount_value }
+  const [promoError, setPromoError] = useState('');
+  const [promoLoading, setPromoLoading] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
     phone: '',
@@ -73,7 +77,30 @@ function CheckoutPage() {
 
   const selectedDelivery = DELIVERY_OPTIONS.find(opt => opt.id === deliveryMethod);
   const deliveryFee = selectedDelivery ? selectedDelivery.price : 0;
-  const total = subtotal + deliveryFee;
+  const discount = promoApplied
+    ? promoApplied.discount_type === 'percent'
+      ? Math.round(subtotal * promoApplied.discount_value / 100 * 100) / 100
+      : promoApplied.discount_value
+    : 0;
+  const total = Math.max(0, subtotal + deliveryFee - discount);
+
+  const applyPromoCode = async () => {
+    if (!promoCode.trim()) return;
+    setPromoLoading(true);
+    setPromoError('');
+    setPromoApplied(null);
+    const { data, error } = await supabase
+      .from('promo_codes')
+      .select('*')
+      .eq('code', promoCode.trim().toUpperCase())
+      .eq('is_active', true)
+      .single();
+    setPromoLoading(false);
+    if (error || !data) { setPromoError('პრომოკოდი არასწორია'); return; }
+    if (data.expires_at && new Date(data.expires_at) < new Date()) { setPromoError('პრომოკოდი ვადაგასულია'); return; }
+    if (data.max_uses && data.uses_count >= data.max_uses) { setPromoError('პრომოკოდი ამოწურულია'); return; }
+    setPromoApplied(data);
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -180,14 +207,19 @@ function CheckoutPage() {
         })),
         subtotal,
         delivery_fee: deliveryFee,
-        discount: 0,
+        discount,
         total,
-        promo_code: null,
+        promo_code: promoApplied?.code || null,
         chopstick_sets: formData.chopstickSets || 0,
         notes: formData.instructions || null,
         status: 'new'
       });
 
+      if (promoApplied) {
+        await supabase.from('promo_codes')
+          .update({ uses_count: promoApplied.uses_count + 1 })
+          .eq('id', promoApplied.id);
+      }
       localStorage.removeItem('cart');
       await sendTelegramNotification(order);
       setOrderPlaced(true);
@@ -475,6 +507,34 @@ function CheckoutPage() {
                 })}
               </div>
 
+              {/* Promo Code */}
+              <div className="pt-4 border-t border-border">
+                <p className="text-sm font-medium mb-2">პრომოკოდი</p>
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={promoCode}
+                    onChange={e => { setPromoCode(e.target.value.toUpperCase()); setPromoError(''); setPromoApplied(null); }}
+                    placeholder="კოდი"
+                    className="flex-1 h-9 rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
+                  />
+                  <button
+                    type="button"
+                    onClick={applyPromoCode}
+                    disabled={promoLoading || !promoCode.trim()}
+                    className="px-4 h-9 rounded-md bg-primary text-white text-sm font-medium disabled:opacity-50"
+                  >
+                    {promoLoading ? '...' : 'გამოყენება'}
+                  </button>
+                </div>
+                {promoError && <p className="text-xs text-destructive mt-1">{promoError}</p>}
+                {promoApplied && (
+                  <p className="text-xs text-green-600 mt-1">
+                    ✓ {promoApplied.code} — {promoApplied.discount_type === 'percent' ? `${promoApplied.discount_value}%` : `₾${promoApplied.discount_value}`} ფასდაკლება
+                  </p>
+                )}
+              </div>
+
               <div className="space-y-3 pt-4 border-t border-border">
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">{t('checkout.subtotal')}</span>
@@ -486,6 +546,12 @@ function CheckoutPage() {
                     {selectedDelivery?.isTaxi ? t('checkout.atTaxiPrices') : `₾${deliveryFee.toFixed(2)}`}
                   </span>
                 </div>
+                {discount > 0 && (
+                  <div className="flex justify-between text-sm text-green-600">
+                    <span>ფასდაკლება ({promoApplied?.code})</span>
+                    <span>-₾{discount.toFixed(2)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-lg font-bold pt-3 border-t border-border">
                   <span>{t('checkout.total')}</span>
                   <span className="text-primary tabular-nums">
