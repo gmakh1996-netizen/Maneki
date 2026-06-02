@@ -105,7 +105,8 @@ export default function AdminPage() {
 
   const fetchPromos = async () => {
     setLoading(true);
-    const { data } = await supabase.from('promo_codes').select('*').order('created_at', { ascending: false });
+    const { data, error } = await supabase.from('promo_codes').select('*').order('created_at', { ascending: false });
+    if (error) console.error('promo fetch error:', error);
     setPromos(data || []);
     setLoading(false);
   };
@@ -279,23 +280,23 @@ export default function AdminPage() {
             </div>
 
             {/* Stats */}
-            {!loading && promos.length > 0 && (() => {
+            {!loading && (() => {
               const now = new Date();
-              const active = promos.filter(p => p.is_active && (!p.expires_at || new Date(p.expires_at) > now) && (!p.valid_from || new Date(p.valid_from) <= now));
-              const expired = promos.filter(p => p.expires_at && new Date(p.expires_at) < now);
+              const activeCount = promos.filter(p => p.is_active && (!p.expires_at || new Date(p.expires_at) > now) && (!p.valid_from || new Date(p.valid_from) <= now)).length;
+              const expiredCount = promos.filter(p => p.expires_at && new Date(p.expires_at) < now).length;
               return (
-                <div className="flex gap-3">
+                <div className="flex flex-wrap gap-3">
                   <div className="bg-green-500/10 border border-green-500/30 rounded-xl px-4 py-3 flex items-center gap-2">
-                    <span className="w-2 h-2 rounded-full bg-green-500 inline-block"></span>
-                    <span className="text-sm font-medium text-green-600">აქტიური: {active.length}</span>
+                    <span className="w-2 h-2 rounded-full bg-green-500"></span>
+                    <span className="text-sm font-medium text-green-600">აქტიური: {activeCount}</span>
                   </div>
-                  <div className="bg-card border border-border rounded-xl px-4 py-3 flex items-center gap-2">
+                  <div className="bg-card border border-border rounded-xl px-4 py-3">
                     <span className="text-sm text-muted-foreground">სულ: {promos.length}</span>
                   </div>
-                  {expired.length > 0 && (
+                  {expiredCount > 0 && (
                     <div className="bg-red-500/10 border border-red-500/30 rounded-xl px-4 py-3 flex items-center gap-2">
-                      <span className="w-2 h-2 rounded-full bg-red-500 inline-block"></span>
-                      <span className="text-sm font-medium text-red-500">ვადაგასული: {expired.length}</span>
+                      <span className="w-2 h-2 rounded-full bg-red-500"></span>
+                      <span className="text-sm font-medium text-red-500">ვადაგასული: {expiredCount}</span>
                     </div>
                   )}
                 </div>
