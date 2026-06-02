@@ -181,6 +181,15 @@
     letter-spacing: 0.05em;
   }
 
+  /* Mobile hero button — orange */
+  @media (max-width: 639px) {
+    .hero-btn {
+      background: hsl(var(--primary)) !important;
+      color: #ffffff !important;
+      border-color: hsl(var(--primary)) !important;
+    }
+  }
+
   /* ── Seigaiha artistic accents ── */
 
   /* Side-wing decoration: pattern fades in from left & right edges */

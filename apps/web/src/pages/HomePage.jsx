@@ -123,7 +123,7 @@ function HomePage() {
             duration: 0.6,
             delay: 0.4
           }}>
-              <Button onClick={scrollToMenu} size="lg" className="text-lg px-8 py-6 transition-all duration-200 active:scale-98 rounded-xl border backdrop-blur-sm" style={{ background: 'rgba(20, 10, 3, 0.65)', color: '#f5e6c8', borderColor: 'rgba(212, 175, 95, 0.5)' }} onMouseEnter={e => e.currentTarget.style.background='rgba(20,10,3,0.85)'} onMouseLeave={e => e.currentTarget.style.background='rgba(20,10,3,0.65)'}>
+              <Button onClick={scrollToMenu} size="lg" className="hero-btn text-lg px-8 py-6 transition-all duration-200 active:scale-98 rounded-xl border backdrop-blur-sm" style={{ background: 'rgba(20, 10, 3, 0.65)', color: '#f5e6c8', borderColor: 'rgba(212, 175, 95, 0.5)' }} onMouseEnter={e => e.currentTarget.style.background='rgba(20,10,3,0.85)'} onMouseLeave={e => e.currentTarget.style.background='rgba(20,10,3,0.65)'}>
                 {t('hero.orderNow')}
               </Button>
             </motion.div>
