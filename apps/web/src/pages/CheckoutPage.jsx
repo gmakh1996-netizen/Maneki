@@ -507,7 +507,7 @@ function CheckoutPage() {
                     </RadioGroup>
                   </div>
 
-                  {deliveryMethod !== 'pickup' && (
+                  {deliveryMethod && deliveryMethod !== 'pickup' && (
                     <div className="space-y-2 animate-in fade-in slide-in-from-top-2 duration-300">
                       <Label htmlFor="address">{t('checkout.deliveryAddress')}</Label>
                       <Textarea
@@ -612,7 +612,7 @@ function CheckoutPage() {
                 </div>
               </div>
 
-              <div className="mt-4 p-3 bg-muted/50 rounded-lg border border-border/50">
+              {deliveryMethod && <div className="mt-4 p-3 bg-muted/50 rounded-lg border border-border/50">
                 <p className="text-xs text-muted-foreground flex items-center gap-2">
                   <span className="relative flex h-2 w-2 shrink-0">
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
@@ -623,7 +623,7 @@ function CheckoutPage() {
                     {deliveryMethod === 'pickup' ? t('checkout.prepMin') : t('checkout.delivMin')}
                   </span>
                 </p>
-              </div>
+              </div>}
             </div>
           </div>
         </div>
