@@ -3,15 +3,22 @@ import { supabase } from '../lib/supabase';
 import SimpleCalendar from '../components/SimpleCalendar';
 import { menuItems } from '../data/menuData';
 
-// Unique products (deduplicated by EN name), grouped by category
+// Unique products — prefer primary categories over filter categories
+const FILTER_CATS = new Set(['No Spicy Sushi Menu', 'No Raw Fish Menu', 'Roll Menu (Full List)']);
+
 const UNIQUE_PRODUCTS = (() => {
-  const seen = new Set();
-  const result = [];
+  // First pass: collect all appearances per product name
+  const byName = {};
   menuItems.forEach(item => {
     const name = item.name?.en || item.name;
-    if (!seen.has(name)) { seen.add(name); result.push({ name, price: item.price, category: item.category }); }
+    if (!byName[name]) byName[name] = [];
+    byName[name].push({ name, price: item.price, category: item.category });
   });
-  return result;
+  // Pick best category: prefer non-filter categories
+  return Object.values(byName).map(appearances => {
+    const primary = appearances.find(a => !FILTER_CATS.has(a.category));
+    return primary || appearances[0];
+  });
 })();
 
 const PRODUCTS_BY_CAT = UNIQUE_PRODUCTS.reduce((acc, p) => {
