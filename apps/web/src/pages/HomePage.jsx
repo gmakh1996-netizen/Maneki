@@ -116,6 +116,11 @@ function HomePage() {
     return best.discount_type === 'percent' ? `-${best.discount_value}%` : `-₾${best.discount_value}`;
   };
 
+  const getPromoCode = (itemName) => {
+    const matching = activePromos.filter(p => p.applicable_products?.includes(itemName));
+    return matching.length ? matching[0].code : null;
+  };
+
   const promoItems = promoProductNames.length > 0
     ? menuItems.filter(i => {
         const name = i.name?.en || i.name;
@@ -406,6 +411,7 @@ function HomePage() {
                                 item={item}
                                 onClick={() => handleCardClick(item)}
                                 promoLabel={isPromoCategory ? getBestDiscount(item.name?.en || item.name) : null}
+                                promoCode={isPromoCategory ? getPromoCode(item.name?.en || item.name) : null}
                               />
                             ))}
                           </div>
