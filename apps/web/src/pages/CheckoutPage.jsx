@@ -472,34 +472,6 @@ function CheckoutPage() {
                   </div>
                 </div>
 
-                {/* Promo Code — ფორმაში, submit-ამდე */}
-                <div className="mt-6 p-4 bg-muted/40 rounded-xl border border-border">
-                  <p className="text-sm font-medium mb-2">🎟 პრომოკოდი</p>
-                  <div className="flex gap-2">
-                    <input
-                      type="text"
-                      value={promoCode}
-                      onChange={e => { setPromoCode(e.target.value.toUpperCase()); setPromoError(''); setPromoApplied(null); }}
-                      placeholder="კოდი"
-                      className="flex-1 h-9 rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring"
-                    />
-                    <button
-                      type="button"
-                      onClick={applyPromoCode}
-                      disabled={promoLoading || !promoCode.trim()}
-                      className="px-4 h-9 rounded-md bg-primary text-white text-sm font-medium disabled:opacity-50"
-                    >
-                      {promoLoading ? '...' : 'გამოყენება'}
-                    </button>
-                  </div>
-                  {promoError && <p className="text-xs text-destructive mt-1">{promoError}</p>}
-                  {promoApplied && (
-                    <p className="text-xs text-green-600 mt-1">
-                      ✓ {promoApplied.code} — {promoApplied.discount_type === 'percent' ? `${promoApplied.discount_value}%` : `₾${promoApplied.discount_value}`} ფასდაკლება (-₾{discount.toFixed(2)})
-                    </p>
-                  )}
-                </div>
-
               </form>
             </div>
           </div>
@@ -523,6 +495,28 @@ function CheckoutPage() {
                     </div>
                   );
                 })}
+              </div>
+
+              {/* Promo Code */}
+              <div className="pt-4 border-t border-border">
+                <p className="text-sm font-medium mb-2">🎟 პრომოკოდი</p>
+                <div className="flex gap-2">
+                  <input type="text" value={promoCode}
+                    onChange={e => { setPromoCode(e.target.value.toUpperCase()); setPromoError(''); setPromoApplied(null); }}
+                    placeholder="კოდი"
+                    className="flex-1 h-9 rounded-md border border-input bg-background px-3 text-sm focus:outline-none focus:ring-1 focus:ring-ring" />
+                  <button type="button" onClick={applyPromoCode}
+                    disabled={promoLoading || !promoCode.trim()}
+                    className="px-4 h-9 rounded-md bg-primary text-white text-sm font-medium disabled:opacity-50">
+                    {promoLoading ? '...' : 'გამოყენება'}
+                  </button>
+                </div>
+                {promoError && <p className="text-xs text-destructive mt-1">{promoError}</p>}
+                {promoApplied && (
+                  <p className="text-xs text-green-600 mt-1">
+                    ✓ {promoApplied.code} — {promoApplied.discount_type === 'percent' ? `${promoApplied.discount_value}%` : `₾${promoApplied.discount_value}`} ფასდაკლება
+                  </p>
+                )}
               </div>
 
               <div className="space-y-3 pt-4 border-t border-border">
