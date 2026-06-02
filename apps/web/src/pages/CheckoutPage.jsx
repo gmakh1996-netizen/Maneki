@@ -301,7 +301,7 @@ function CheckoutPage() {
 
         <div className="grid lg:grid-cols-12 gap-8">
           {/* Order Form */}
-          <div className="lg:col-span-7">
+          <div className="lg:col-span-7 lg:order-1 order-2">
             <div className="bg-card rounded-2xl p-6 md:p-8 border border-border shadow-sm">
               <form onSubmit={handleSubmit} className="space-y-8">
 
@@ -517,7 +517,7 @@ function CheckoutPage() {
           </div>
 
           {/* Order Summary */}
-          <div className="lg:col-span-5">
+          <div className="lg:col-span-5 lg:order-2 order-1">
             <div className="bg-card rounded-2xl p-6 md:p-8 border border-border shadow-sm lg:sticky lg:top-24">
               <h2 className="text-xl font-semibold mb-6">{t('checkout.orderSummary')}</h2>
 
