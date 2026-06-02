@@ -375,44 +375,24 @@ function CheckoutPage() {
                     </div>
                   </div>
 
-                  <div className="grid sm:grid-cols-2 gap-4 items-start">
-                    <div className="space-y-2">
-                      <Label>{t('checkout.deliveryDate')}</Label>
-                      {/* Custom inline calendar — pure divs, iOS Safari safe */}
-                      <SimpleCalendar
-                        value={formData.deliveryDate}
-                        onChange={(dateStr) => {
-                          setFormData({ ...formData, deliveryDate: dateStr });
-                          setCalendarOpen(false);
-                        }}
-                        open={calendarOpen}
-                        onToggle={() => setCalendarOpen(v => !v)}
-                        minDate={today}
-                        maxDate={maxDate}
-                        theme={theme}
-                        placeholder={t('checkout.selectDate')}
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label>{t('checkout.deliveryTime')}</Label>
-                      <Select
-                        value={formData.deliveryTime}
-                        onValueChange={(val) => setFormData({ ...formData, deliveryTime: val })}
-                      >
-                        <SelectTrigger className="bg-input text-foreground w-full">
-                          <div className="flex items-center gap-2">
-                            <Clock className="h-4 w-4 shrink-0 text-muted-foreground" />
-                            <SelectValue placeholder={t('checkout.selectTime')} />
-                          </div>
-                        </SelectTrigger>
-                        <SelectContent>
-                          {TIME_SLOTS.map(slot => (
-                            <SelectItem key={slot} value={slot}>{slot}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
+                  <div className="space-y-2">
+                    <Label>{t('checkout.deliveryTime')}</Label>
+                    <Select
+                      value={formData.deliveryTime}
+                      onValueChange={(val) => setFormData({ ...formData, deliveryTime: val })}
+                    >
+                      <SelectTrigger className="bg-input text-foreground w-full">
+                        <div className="flex items-center gap-2">
+                          <Clock className="h-4 w-4 shrink-0 text-muted-foreground" />
+                          <SelectValue placeholder={t('checkout.selectTime')} />
+                        </div>
+                      </SelectTrigger>
+                      <SelectContent>
+                        {TIME_SLOTS.map(slot => (
+                          <SelectItem key={slot} value={slot}>{slot}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div className="space-y-2 pt-2">
