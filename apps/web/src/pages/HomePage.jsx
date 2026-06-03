@@ -185,7 +185,7 @@ function HomePage() {
           <div className="absolute inset-0">
             {/* Mobile image */}
             <img
-              src="https://images.unsplash.com/photo-1579871494447-9811cf80d66c?w=800&q=80&auto=format&fit=crop"
+              src="/hero-mobile.jpg"
               alt="Fresh sushi platter"
               className="sm:hidden w-full h-full object-cover object-center"
               fetchpriority="high"
