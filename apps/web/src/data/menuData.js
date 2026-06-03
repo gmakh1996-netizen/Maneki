@@ -1,5 +1,4 @@
 export const categories = [
-  'Set Menu',
   'Baked Rolls Menu',
   'Domburi Menu',
   'Gunkan Sushi Menu',
@@ -20,7 +19,6 @@ export const categories = [
 ];
 
 export const categoryTranslationKeys = {
-  'Set Menu': 'SETS',
   'Baked Rolls Menu': 'BAKED_ROLLS',
   'Domburi Menu': 'DOMBURI',
   'Gunkan Sushi Menu': 'GUNKAN',
@@ -75,7 +73,7 @@ export const menuItems = [
   { id: 11, name: getName('Roll "Hot Dog" with Crab'), description: getDesc(), price: 30, category: 'Hot Rolls Menu', image: '/images/webp/hot%20dog%20roll%20crab.webp' },
   { id: 12, name: getName('Roll "Hot Dog Mix" with Fried Salmon and Crab'), description: getDesc(), price: 33, category: 'Hot Rolls Menu', image: '/images/webp/hot%20dog%20roll%20mix.webp' },
   { id: 13, name: getName('Roll "Hot Dog" with Fried Salmon'), description: getDesc(), price: 35, category: 'Hot Rolls Menu', image: '/images/webp/hot%20dog%20roll%20salmon.webp' },
-  { id: 14, name: getName('Hot Set – 4 Tempura Rolls'), description: getDesc(), price: 32, category: 'Set Menu', image: '/images/webp/set%20hot%20rolls.webp' },
+  { id: 14, name: getName('Hot Set – 4 Tempura Rolls'), description: getDesc(), price: 32, category: 'Hot Rolls Menu', image: '/images/webp/set%20hot%20rolls.webp' },
   { id: 15, name: getName('Roll "Sandwich" with Salmon and Unagi'), description: getDesc(), price: 40, category: 'Hot Rolls Menu', image: '/images/webp/sandwich%20roll.webp' },
   { id: 16, name: getName('Hot Roll "California" with Crab'), description: getDesc(), price: 33, category: 'Hot Rolls Menu', image: '/images/webp/hot%20roll%20crab.webp' },
   { id: 17, name: getName('Hot Roll with Unagi'), description: getDesc(), price: 35, category: 'Hot Rolls Menu', image: '/images/webp/hot%20roll%20unagi.webp' },
@@ -162,7 +160,7 @@ export const menuItems = [
   { id: 84, name: getName('Salted Norwegian Salmon (200g)'), description: getDesc(), price: 30, category: 'Norwegian Salmon Menu', image: 'https://images.unsplash.com/photo-1697122334427-833eaf1799b9' },
 
   // ONIGIRI MENU
-  { id: 85, name: getName('Onigiri Set'), description: getDesc(), price: 50, category: 'Set Menu', image: '/images/webp/set%20onigiri.webp' },
+  { id: 85, name: getName('Onigiri Set'), description: getDesc(), price: 50, category: 'Onigiri Menu', image: '/images/webp/set%20onigiri.webp' },
   { id: 86, name: getName('Onigiri Shrimp'), description: getDesc(), price: 10, category: 'Onigiri Menu', image: '/images/webp/onigiri%20shrimp.webp' },
   { id: 87, name: getName('Onigiri Salmon'), description: getDesc(), price: 10, category: 'Onigiri Menu', image: '/images/webp/onigiri%20salmon.webp' },
   { id: 88, name: getName('Onigiri Unagi'), description: getDesc(), price: 11, category: 'Onigiri Menu', image: '/images/webp/onigiri%20unagi.webp' },
@@ -194,7 +192,7 @@ export const menuItems = [
   { id: 108, name: getName('Baked Salmon Roll'), description: getDesc(), price: 33, category: 'Roll Menu (Full List)', image: '/images/webp/baked%20salmon.webp' },
   { id: 109, name: getName('Rainbow Roll'), description: getDesc(), price: 36, category: 'Roll Menu (Full List)', image: '/images/webp/rainbow%20roll.webp' },
   { id: 110, name: getName('Roll Canada'), description: getDesc(), price: 38, category: 'Roll Menu (Full List)', image: '/images/webp/canada%20roll.webp' },
-  { id: 111, name: getName('Hot Set – 4 Tempura Rolls'), description: getDesc(), price: 132, category: 'Set Menu', image: '/images/webp/set%20hot%20rolls.webp' },
+  { id: 111, name: getName('Hot Set – 4 Tempura Rolls'), description: getDesc(), price: 132, category: 'Roll Menu (Full List)', image: '/images/webp/set%20hot%20rolls.webp' },
   { id: 112, name: getName('Roll "Sandwich" with Salmon and Unagi'), description: getDesc(), price: 40, category: 'Roll Menu (Full List)', image: '/images/webp/sandwich%20roll.webp' },
   { id: 113, name: getName('Hot Roll "California" with Crab'), description: getDesc(), price: 33, category: 'Roll Menu (Full List)', image: '/images/webp/hot%20roll%20crab.webp' },
   { id: 114, name: getName('Hot Roll with Unagi'), description: getDesc(), price: 35, category: 'Roll Menu (Full List)', image: '/images/webp/hot%20roll%20unagi.webp' },

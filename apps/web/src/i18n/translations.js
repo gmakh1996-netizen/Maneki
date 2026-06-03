@@ -21,7 +21,7 @@ export const translations = {
       gridView: "Grid View"
     },
     categories: {
-      SETS: "Set", BAKED_ROLLS: "Baked Rolls",
+      BAKED_ROLLS: "Baked Rolls",
       DOMBURI: "Domburi",
       GUNKAN: "Gunkan",
       HOT_ROLLS: "Hot Rolls",
@@ -145,7 +145,7 @@ export const translations = {
       gridView: "ბადის ხედი"
     },
     categories: {
-      SETS: "სეთი", BAKED_ROLLS: "გამომცხვარი როლები",
+      BAKED_ROLLS: "გამომცხვარი როლები",
       DOMBURI: "დომბური",
       GUNKAN: "გუნკანი",
       HOT_ROLLS: "ცხელი როლები",
@@ -269,7 +269,7 @@ export const translations = {
       gridView: "Сетка"
     },
     categories: {
-      SETS: "Сеты", BAKED_ROLLS: "Запеченные роллы",
+      BAKED_ROLLS: "Запеченные роллы",
       DOMBURI: "Домбури",
       GUNKAN: "Гункан",
       HOT_ROLLS: "Горячие роллы",
