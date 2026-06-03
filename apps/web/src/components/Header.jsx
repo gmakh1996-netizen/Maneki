@@ -21,7 +21,7 @@ function Header() {
           >
             <div className="relative flex items-center justify-center rounded-full p-1.5 overflow-hidden bg-white">
               <img
-                src="https://horizons-cdn.hostinger.com/b689a301-5c05-47d4-aff4-958d21843819/6b1343ab1c5643ab1921708e7cd255b0.png"
+                src="/logo.png"
                 alt="Maneki cat logo"
                 className="relative z-10 w-6 h-6 sm:w-7 sm:h-7 md:w-9 md:h-9 object-contain transition-transform duration-500 group-hover:scale-110"
               />
