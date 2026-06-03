@@ -16,7 +16,7 @@ function Header() {
           
           {/* Logo */}
           <div 
-            className="flex-shrink-0 group flex items-center gap-2 sm:gap-4 bg-gradient-to-r from-muted/50 to-transparent border border-border/60 hover:border-primary/40 rounded-full p-1.5 pr-3 sm:pr-6 shadow-soft hover:shadow-glow-primary transition-all duration-300 cursor-pointer"
+            className="flex-shrink-0 group flex items-center gap-2 sm:gap-4 bg-gradient-to-r from-muted/50 to-transparent border border-border/60 hover:border-primary/40 rounded-full py-1 px-1 pr-3 sm:pr-6 shadow-soft hover:shadow-glow-primary transition-all duration-300 cursor-pointer"
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           >
             <div className="relative flex items-center justify-center rounded-full overflow-hidden">
@@ -26,7 +26,7 @@ function Header() {
                 className="w-8 h-8 sm:w-9 sm:h-9 md:w-11 md:h-11 object-cover transition-transform duration-500 group-hover:scale-110"
               />
             </div>
-            <h1 className="text-sm sm:text-xl md:text-2xl font-samurai text-foreground group-hover:text-primary transition-colors duration-300 mt-0.5">
+            <h1 className="text-sm sm:text-xl md:text-2xl font-samurai text-foreground group-hover:text-primary transition-colors duration-300 leading-none">
               Maneki Sushi
             </h1>
           </div>
