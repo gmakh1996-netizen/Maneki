@@ -1,5 +1,6 @@
 export const categories = [
   'Set Menu',
+  'Lunch + Combo Menu',
   'Baked Rolls Menu',
   'Domburi Menu',
   'Gunkan Sushi Menu',
@@ -21,6 +22,7 @@ export const categories = [
 
 export const categoryTranslationKeys = {
   'Set Menu': 'SETS',
+  'Lunch + Combo Menu': 'LUNCH_COMBO',
   'Baked Rolls Menu': 'BAKED_ROLLS',
   'Domburi Menu': 'DOMBURI',
   'Gunkan Sushi Menu': 'GUNKAN',
@@ -236,5 +238,23 @@ export const menuItems = [
   { id: 144, name: getName('Set Gunkan'), description: getDesc(), price: 96, category: 'Set Menu', image: '/images/webp/gunkan salmon.webp' },
   { id: 145, name: getName('Combo Shrimp'), description: getDesc(), price: 34, category: 'Set Menu', image: '/images/webp/combo shrimp.webp' },
   { id: 146, name: getName('Noodle Lunch'), description: getDesc(), price: 42, category: 'Set Menu', image: '/images/webp/noodels lunch.webp' },
-  { id: 147, name: getName('Hot Set – 4 Tempura Rolls'), description: getDesc(), price: 132, category: 'Set Menu', image: '/images/webp/set hot rolls.webp' }
+  { id: 147, name: getName('Hot Set – 4 Tempura Rolls'), description: getDesc(), price: 132, category: 'Set Menu', image: '/images/webp/set hot rolls.webp' },
+
+  // LUNCH + COMBO MENU
+  { id: 149, name: getName('Combo Unagi'), description: getDesc(), price: 45, category: 'Lunch + Combo Menu', image: '/images/webp/combbo unagi.webp' },
+  { id: 150, name: getName('Combo Salmon'), description: getDesc(), price: 34, category: 'Lunch + Combo Menu', image: '/images/webp/combo salmon.webp' },
+  { id: 151, name: getName('Combo Shrimp'), description: getDesc(), price: 34, category: 'Lunch + Combo Menu', image: '/images/webp/combo shrimp.webp' },
+  { id: 152, name: getName('Noodle Lunch'), description: getDesc(), price: 42, category: 'Lunch + Combo Menu', image: '/images/webp/noodels lunch.webp' },
+  { id: 153, name: getName('Donburi Lunch'), description: getDesc(), price: 53, category: 'Lunch + Combo Menu', image: '/images/webp/domburi lunch.webp' },
+  { id: 154, name: getName('Heart Set'), description: getDesc(), price: 130, category: 'Lunch + Combo Menu', image: '/images/webp/heart set.webp' },
+  { id: 155, name: getName('Set for a Big Company (6 Rolls)'), description: getDesc(), price: 194, category: 'Lunch + Combo Menu', image: '/images/webp/set for big company .webp' },
+  { id: 156, name: getName('Set for 3-4 People'), description: getDesc(), price: 135, category: 'Lunch + Combo Menu', image: '/images/webp/set for 3-4 .webp' },
+  { id: 157, name: getName('Philadelphia Set'), description: getDesc(), price: 133, category: 'Lunch + Combo Menu', image: '/images/webp/set philadelphia .webp' },
+  { id: 158, name: getName('Set of Baked Rolls'), description: getDesc(), price: 158, category: 'Lunch + Combo Menu', image: '/images/webp/set baked roll.webp' },
+  { id: 159, name: getName('Hot Set – 4 Tempura Rolls'), description: getDesc(), price: 132, category: 'Lunch + Combo Menu', image: '/images/webp/set hot rolls.webp' },
+  { id: 160, name: getName('Set with Fried Salmon + Chicken'), description: getDesc(), price: 110, category: 'Lunch + Combo Menu', image: '/images/webp/set fried salmon and chicken.webp' },
+  { id: 161, name: getName('Set Mix with Baked Rolls'), description: getDesc(), price: 135, category: 'Lunch + Combo Menu', image: '/images/webp/set mix baked rolls.webp' },
+  { id: 162, name: getName('Set Tempura Mix'), description: getDesc(), price: 138, category: 'Lunch + Combo Menu', image: '/images/webp/set mix tempura roll.webp' },
+  { id: 163, name: getName('Set for Two'), description: getDesc(), price: 81, category: 'Lunch + Combo Menu', image: '/images/webp/set for two.webp' },
+  { id: 164, name: getName('Onigiri Set'), description: getDesc(), price: 50, category: 'Lunch + Combo Menu', image: '/images/webp/set onigiri.webp' }
 ];
