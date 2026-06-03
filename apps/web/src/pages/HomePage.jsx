@@ -229,19 +229,19 @@ function HomePage() {
         {/* Restaurant Info */}
         <section className="py-8 bg-card border-y border-border relative z-20 seigaiha-sides">
           <div className="w-full px-4 sm:px-6 lg:px-12">
-            <div className="grid grid-cols-3 md:grid-cols-5 gap-2 sm:gap-4 text-center items-center">
+            <div className="grid grid-cols-3 md:grid-cols-5 gap-1 sm:gap-4 text-center items-start">
               <a
                 href="https://maps.google.com/?q=Merab+Kostava+71+Tbilisi"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex flex-col items-center gap-3 hover:opacity-75 transition-opacity"
+                className="flex flex-col items-center gap-1.5 hover:opacity-75 transition-opacity"
               >
-                <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
-                  <MapPin className="w-5 h-5 text-primary" />
+                <div className="w-7 h-7 md:w-10 md:h-10 bg-primary/10 rounded-lg md:rounded-xl flex items-center justify-center shrink-0">
+                  <MapPin className="w-3.5 h-3.5 md:w-5 md:h-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground mb-1 text-sm">{t('info.pickup')}</h3>
-                  <p className="text-xs text-muted-foreground whitespace-pre-line">
+                  <h3 className="font-semibold text-foreground text-[10px] md:text-sm leading-tight">{t('info.pickup')}</h3>
+                  <p className="text-[9px] md:text-xs text-muted-foreground whitespace-pre-line leading-tight mt-0.5">
                     {t('info.pickupDesc')}
                   </p>
                 </div>
@@ -284,13 +284,13 @@ function HomePage() {
                 </svg>
               </div>
 
-              <div className="flex flex-col items-center gap-3">
-                <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
-                  <Clock className="w-5 h-5 text-primary" />
+              <div className="flex flex-col items-center gap-1.5">
+                <div className="w-7 h-7 md:w-10 md:h-10 bg-primary/10 rounded-lg md:rounded-xl flex items-center justify-center shrink-0">
+                  <Clock className="w-3.5 h-3.5 md:w-5 md:h-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground mb-1 text-sm">{t('info.deliveryTime')}</h3>
-                  <p className="text-xs text-muted-foreground whitespace-pre-line">
+                  <h3 className="font-semibold text-foreground text-[10px] md:text-sm leading-tight">{t('info.deliveryTime')}</h3>
+                  <p className="text-[9px] md:text-xs text-muted-foreground whitespace-pre-line leading-tight mt-0.5">
                     {t('info.deliveryTimeDesc')}
                   </p>
                 </div>
@@ -337,14 +337,14 @@ function HomePage() {
 
               <a
                 href="tel:+995598901848"
-                className="flex flex-col items-center gap-3 hover:opacity-75 transition-opacity"
+                className="flex flex-col items-center gap-1.5 hover:opacity-75 transition-opacity"
               >
-                <div className="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
-                  <Phone className="w-5 h-5 text-primary" />
+                <div className="w-7 h-7 md:w-10 md:h-10 bg-primary/10 rounded-lg md:rounded-xl flex items-center justify-center shrink-0">
+                  <Phone className="w-3.5 h-3.5 md:w-5 md:h-5 text-primary" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-foreground mb-1 text-sm">{t('info.contactUs')}</h3>
-                  <p className="text-xs text-muted-foreground whitespace-pre-line">
+                  <h3 className="font-semibold text-foreground text-[10px] md:text-sm leading-tight">{t('info.contactUs')}</h3>
+                  <p className="text-[9px] md:text-xs text-muted-foreground whitespace-pre-line leading-tight mt-0.5">
                     {t('info.contactDesc')}
                   </p>
                 </div>
