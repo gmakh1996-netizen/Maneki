@@ -113,7 +113,7 @@ export const menuItems = [
   { id: 43, name: getName('Donburi with Shrimps'), description: getDesc(), price: 36, category: 'No Raw Fish Menu', image: '/images/webp/domburi%20shrimp.webp' },
   { id: 44, name: getName('Hot Roll with Shrimp'), description: getDesc(), price: 30, category: 'No Raw Fish Menu', image: '/images/webp/hot%20roll%20shrimp.webp' },
   { id: 45, name: getName('Baked Chicken Roll'), description: getDesc(), price: 25, category: 'No Raw Fish Menu', image: '/images/webp/baked%20chicken%20.webp' },
-  { id: 46, name: getName('Chicken Roll'), description: getDesc(), price: 28, category: 'No Raw Fish Menu', image: 'https://images.unsplash.com/photo-1664739531822-03f1f38f96e7' },
+  { id: 46, name: getName('Chicken Roll'), description: getDesc(), price: 28, category: 'No Raw Fish Menu', image: '/images/webp/Chicken Roll.webp' },
 
   // NO SPICY SUSHI MENU
   { id: 47, name: getName('Baked Roll with Eel'), description: getDesc(), price: 33, category: 'No Spicy Sushi Menu', image: '/images/webp/baked%20unagi.webp' },
@@ -141,7 +141,7 @@ export const menuItems = [
   { id: 69, name: getName('California Roll with Crab'), description: getDesc(), price: 26, category: 'No Spicy Sushi Menu', image: '/images/webp/california%20crab.webp' },
   { id: 70, name: getName('Roll Philadelphia'), description: getDesc(), price: 34, category: 'No Spicy Sushi Menu', image: '/images/webp/philadelphia.webp' },
   { id: 71, name: getName('Philadelphia Luxury Roll'), description: getDesc(), price: 42, category: 'No Spicy Sushi Menu', image: '/images/webp/philadelphia%20lux.webp' },
-  { id: 72, name: getName('Chicken Roll'), description: getDesc(), price: 23, category: 'No Spicy Sushi Menu', image: 'https://images.unsplash.com/photo-1679279727888-7f39dd520b8b' },
+  { id: 72, name: getName('Chicken Roll'), description: getDesc(), price: 23, category: 'No Spicy Sushi Menu', image: '/images/webp/Chicken Roll.webp' },
   { id: 73, name: getName('Alaska Shrimp Roll'), description: getDesc(), price: 38, category: 'No Spicy Sushi Menu', image: '/images/webp/alaska%20roll.webp' },
   { id: 74, name: getName('Shrimp Tempura Roll'), description: getDesc(), price: 25, category: 'No Spicy Sushi Menu', image: '/images/webp/shrimp%20tempura%20roll.webp' },
   { id: 75, name: getName('Unagi Roll'), description: getDesc(), price: 40, category: 'No Spicy Sushi Menu', image: '/images/webp/unagi%20roll.webp' },
@@ -202,7 +202,7 @@ export const menuItems = [
   { id: 118, name: getName('California Roll with Crab'), description: getDesc(), price: 26, category: 'Roll Menu (Full List)', image: '/images/webp/california%20crab.webp' },
   { id: 119, name: getName('California Roll with Salmon'), description: getDesc(), price: 30, category: 'Roll Menu (Full List)', image: '/images/webp/california%20salmon.webp' },
   { id: 120, name: getName('Salmon Roll'), description: getDesc(), price: 36, category: 'Roll Menu (Full List)', image: '/images/webp/salmon%20roll.webp' },
-  { id: 121, name: getName('Chicken Roll'), description: getDesc(), price: 23, category: 'Roll Menu (Full List)', image: 'https://images.unsplash.com/photo-1691851684721-add6c86bc69d' },
+  { id: 121, name: getName('Chicken Roll'), description: getDesc(), price: 23, category: 'Roll Menu (Full List)', image: '/images/webp/Chicken Roll.webp' },
   { id: 122, name: getName('Alaska Shrimp Roll'), description: getDesc(), price: 38, category: 'Roll Menu (Full List)', image: '/images/webp/alaska%20roll.webp' },
   { id: 123, name: getName('Vegetarian Roll'), description: getDesc(), price: 18, category: 'Roll Menu (Full List)', image: '/images/webp/vegan%20roll.webp' },
   { id: 124, name: getName('Hot Roll Salmon'), description: getDesc(), price: 33, category: 'Roll Menu (Full List)', image: '/images/webp/hot%20roll%20salmon.webp' },
@@ -211,7 +211,7 @@ export const menuItems = [
 
   // SALAD MENU
   { id: 127, name: getName('Wakame Salad'), description: getDesc(), price: 13, category: 'Salad Menu', image: '/images/webp/Wakame%20salad.webp' },
-  { id: 128, name: getName('Spicy Kimchi Salad'), description: getDesc(), price: 13, category: 'Salad Menu', image: '/images/webp/Spicy%20Kimchi%20Salad.webp' },
+  { id: 128, name: getName('Spicy Kimchi Salad'), description: getDesc(), price: 13, category: 'Salad Menu', image: '/images/webp/Spicy Kimchi Salad.webp' },
 
   // SAUCE MENU
   { id: 129, name: getName('Spicy Sauce'), description: getDesc(), price: 1, category: 'Sauce Menu', image: '/images/webp/Spicy Sauce.webp' },
