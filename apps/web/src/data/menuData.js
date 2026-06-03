@@ -238,7 +238,7 @@ export const menuItems = [
   { id: 141, name: getName('Set for a Big Company (6 Rolls)'), description: getDesc(), price: 194, category: 'Set Menu', image: '/images/webp/set for big company .webp' },
   { id: 142, name: getName('Set for 3-4 People'), description: getDesc(), price: 135, category: 'Set Menu', image: '/images/webp/set for 3-4 .webp' },
   { id: 143, name: getName('Set for Two'), description: getDesc(), price: 81, category: 'Set Menu', image: '/images/webp/set for two.webp' },
-  { id: 144, name: getName('Set Gunkan'), description: getDesc(), price: 96, category: 'Set Menu', image: '/images/webp/gunkan salmon.webp' },
+  { id: 144, name: getName('Set Gunkan'), description: getDesc(), price: 96, category: 'Set Menu', image: '/images/webp/Set Gunkan.webp' },
 
   // LUNCH + COMBO MENU
   { id: 149, name: getName('Combo Unagi'), description: getDesc(), price: 45, category: 'Lunch + Combo Menu', image: '/images/webp/combbo unagi.webp' },
