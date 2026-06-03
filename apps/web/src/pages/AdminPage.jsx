@@ -273,6 +273,12 @@ export default function AdminPage() {
     fetchPromos();
   };
 
+  const togglePromoType = async (id, currentType) => {
+    const newType = currentType === 'promotion' ? 'promo_code' : 'promotion';
+    await supabase.from('promo_codes').update({ promo_type: newType }).eq('id', id);
+    setPromos(prev => prev.map(p => p.id === id ? { ...p, promo_type: newType } : p));
+  };
+
   const deletePromo = (id) => {
     setDialog({ message: t.confirmDeletePromo, onYes: async () => {
       setDialog(null);
@@ -760,9 +766,13 @@ export default function AdminPage() {
                               className="text-xs text-muted-foreground hover:text-primary">✏</button>
                           </div>
                         )}
-                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${promo.promo_type === 'promotion' ? 'bg-purple-500/15 text-purple-600' : 'bg-blue-500/15 text-blue-600'}`}>
+                        <button
+                          onClick={() => togglePromoType(promo.id, promo.promo_type)}
+                          className={`px-2 py-0.5 rounded-full text-xs font-medium transition-colors ${promo.promo_type === 'promotion' ? 'bg-purple-500/15 text-purple-600 hover:bg-purple-500/25' : 'bg-blue-500/15 text-blue-600 hover:bg-blue-500/25'}`}
+                          title={lang==='ka' ? 'ტიპის შეცვლა' : 'Toggle type'}
+                        >
                           {promo.promo_type === 'promotion' ? '🏷 Promotion' : '🎟 Promo Code'}
-                        </span>
+                        </button>
                         {isExpired ? <span className="px-2 py-0.5 rounded-full text-xs bg-red-500/15 text-red-500">{t.expiredStatus}</span>
                           : notStarted ? <span className="px-2 py-0.5 rounded-full text-xs bg-yellow-500/15 text-yellow-500">{t.notStarted}</span>
                           : isReallyActive ? <span className="px-2 py-0.5 rounded-full text-xs bg-green-500/15 text-green-600 flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>{t.activeStatus}</span>
