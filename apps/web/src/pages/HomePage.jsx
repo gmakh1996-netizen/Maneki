@@ -89,6 +89,7 @@ function HomePage() {
       const { data } = await supabase.from('promo_codes')
         .select('*')
         .eq('is_active', true)
+        .eq('promo_type', 'promotion')
         .not('applicable_products', 'is', null);
       if (!data) return;
       const filtered = data.filter(p => {

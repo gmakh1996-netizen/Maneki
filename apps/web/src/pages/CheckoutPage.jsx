@@ -64,7 +64,7 @@ function CheckoutPage() {
       const items = JSON.parse(localStorage.getItem('cart') || '[]');
       if (!items.length) return;
       const { data } = await supabase.from('promo_codes')
-        .select('*').eq('is_active', true).not('applicable_products', 'is', null);
+        .select('*').eq('is_active', true).eq('promo_type', 'promotion').not('applicable_products', 'is', null);
       if (!data) return;
       const matched = data.find(p => {
         if (p.valid_from && new Date(p.valid_from) > new Date()) return false;

@@ -64,6 +64,8 @@ const T = {
     newOrder: '🍣 New Order!', status: 'Status:', new: 'New', completed: 'Completed',
     revenue: 'Revenue', completedOrders: 'Completed',
     addPromo: 'New Promo Code', code: 'Code (e.g. SALE10)',
+    typePromoCode: 'Promo Code (manual entry)', typePromotion: 'Promotion (auto, shows on homepage)',
+    promoTypeLabel: 'Type',
     percent: 'Percent (%)', fixed: 'Fixed (₾)',
     discountPct: 'Discount % (e.g. 10)', discountFixed: 'Discount ₾ (e.g. 5)',
     maxUses: 'Max uses (empty=∞)', maxUsesEx: 'e.g. 100',
@@ -85,6 +87,8 @@ const T = {
     newOrder: '🍣 ახალი შეკვეთა!', status: 'სტატუსი:', new: 'ახალი', completed: 'დასრულდა',
     revenue: 'შემოსავალი', completedOrders: 'დასრულებული',
     addPromo: 'ახალი პრომოკოდი', code: 'კოდი (მაგ. SALE10)',
+    typePromoCode: 'პრომო კოდი (ხელით შეყვანა)', typePromotion: 'Promotion (ავტო, მთ. გვერდზე)',
+    promoTypeLabel: 'ტიპი',
     percent: 'პროცენტი (%)', fixed: 'ფიქსირებული (₾)',
     discountPct: 'ფასდ. % (მაგ. 10)', discountFixed: 'ფასდ. ₾ (მაგ. 5)',
     maxUses: 'მაქს. გამოყენება (ცარ.=∞)', maxUsesEx: 'მაგ. 100',
@@ -106,6 +110,8 @@ const T = {
     newOrder: '🍣 Новый заказ!', status: 'Статус:', new: 'Новый', completed: 'Завершён',
     revenue: 'Выручка', completedOrders: 'Завершённых',
     addPromo: 'Новый промокод', code: 'Код (напр. SALE10)',
+    typePromoCode: 'Промокод (ручной ввод)', typePromotion: 'Promotion (авто, на главной)',
+    promoTypeLabel: 'Тип',
     percent: 'Процент (%)', fixed: 'Фиксированный (₾)',
     discountPct: 'Скидка % (напр. 10)', discountFixed: 'Скидка ₾ (напр. 5)',
     maxUses: 'Макс. использований (пусто=∞)', maxUsesEx: 'напр. 100',
@@ -155,7 +161,7 @@ export default function AdminPage() {
   const [calFilterTo, setCalFilterTo] = useState(false);
 
   // Promo form
-  const [newPromo, setNewPromo] = useState({ code: '', discount_type: 'percent', discount_value: '', max_uses: '', valid_from: '', expires_at: '' });
+  const [newPromo, setNewPromo] = useState({ code: '', discount_type: 'percent', discount_value: '', max_uses: '', valid_from: '', expires_at: '', promo_type: 'promo_code' });
   const [selectedProducts, setSelectedProducts] = useState([]); // for promo
   const [promoProductOpen, setPromoProductOpen] = useState(null);
   const [calendarFromOpen, setCalendarFromOpen] = useState(false);
@@ -255,8 +261,9 @@ export default function AdminPage() {
       expires_at: newPromo.expires_at ? new Date(newPromo.expires_at + 'T23:59:59').toISOString() : null,
       is_active: true,
       applicable_products: selectedProducts.length > 0 ? selectedProducts : null,
+      promo_type: newPromo.promo_type,
     });
-    setNewPromo({ code: '', discount_type: 'percent', discount_value: '', max_uses: '', valid_from: '', expires_at: '' });
+    setNewPromo({ code: '', discount_type: 'percent', discount_value: '', max_uses: '', valid_from: '', expires_at: '', promo_type: 'promo_code' });
     setSelectedProducts([]);
     fetchPromos();
   };
@@ -607,6 +614,21 @@ export default function AdminPage() {
           <div className="space-y-4">
             <div className="bg-card border border-border rounded-xl p-4 space-y-3">
               <h2 className="font-semibold">{t.addPromo}</h2>
+
+              {/* Type selector */}
+              <div>
+                <p className="text-xs text-muted-foreground mb-1.5">{t.promoTypeLabel}</p>
+                <div className="flex gap-2 flex-wrap">
+                  {[['promo_code', t.typePromoCode], ['promotion', t.typePromotion]].map(([val, label]) => (
+                    <button key={val} type="button"
+                      onClick={() => setNewPromo(p => ({...p, promo_type: val}))}
+                      className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${newPromo.promo_type === val ? 'bg-primary text-white border-primary' : 'bg-muted border-border text-muted-foreground hover:bg-border'}`}>
+                      {label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
                 <input value={newPromo.code} onChange={e => setNewPromo(p => ({...p, code: e.target.value.toUpperCase()}))}
                   placeholder={t.code} className={inp} />
@@ -738,6 +760,9 @@ export default function AdminPage() {
                               className="text-xs text-muted-foreground hover:text-primary">✏</button>
                           </div>
                         )}
+                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${promo.promo_type === 'promotion' ? 'bg-purple-500/15 text-purple-600' : 'bg-blue-500/15 text-blue-600'}`}>
+                          {promo.promo_type === 'promotion' ? '🏷 Promotion' : '🎟 Promo Code'}
+                        </span>
                         {isExpired ? <span className="px-2 py-0.5 rounded-full text-xs bg-red-500/15 text-red-500">{t.expiredStatus}</span>
                           : notStarted ? <span className="px-2 py-0.5 rounded-full text-xs bg-yellow-500/15 text-yellow-500">{t.notStarted}</span>
                           : isReallyActive ? <span className="px-2 py-0.5 rounded-full text-xs bg-green-500/15 text-green-600 flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>{t.activeStatus}</span>
