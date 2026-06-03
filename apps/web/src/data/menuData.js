@@ -1,4 +1,5 @@
 export const categories = [
+  'Set Menu',
   'Baked Rolls Menu',
   'Domburi Menu',
   'Gunkan Sushi Menu',
@@ -19,6 +20,7 @@ export const categories = [
 ];
 
 export const categoryTranslationKeys = {
+  'Set Menu': 'SETS',
   'Baked Rolls Menu': 'BAKED_ROLLS',
   'Domburi Menu': 'DOMBURI',
   'Gunkan Sushi Menu': 'GUNKAN',
