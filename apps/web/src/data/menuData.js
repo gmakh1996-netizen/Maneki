@@ -1,23 +1,23 @@
 export const categories = [
   'Set Menu',
   'Lunch + Combo Menu',
-  'Baked Rolls Menu',
-  'Domburi Menu',
-  'Gunkan Sushi Menu',
-  'Hot Rolls Menu',
+  'Roll Menu (Full List)',
   'Maki Rolls Menu',
-  'Special Rolls Menu',
   'Nigiri Menu',
+  'Onigiri Menu',
+  'Gunkan Sushi Menu',
+  'Salad Menu',
+  'Noodles Menu',
+  'Poke Bowl Menu',
+  'Domburi Menu',
+  'Sauce Menu',
+  'Baked Rolls Menu',
+  'Hot Rolls Menu',
+  'Special Rolls Menu',
+  'Philadelphia Menu',
   'No Raw Fish Menu',
   'No Spicy Sushi Menu',
-  'Noodles Menu',
-  'Norwegian Salmon Menu',
-  'Onigiri Menu',
-  'Philadelphia Menu',
-  'Poke Bowl Menu',
-  'Roll Menu (Full List)',
-  'Salad Menu',
-  'Sauce Menu'
+  'Norwegian Salmon Menu'
 ];
 
 export const categoryTranslationKeys = {
