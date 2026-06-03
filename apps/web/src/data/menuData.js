@@ -225,7 +225,7 @@ export const menuItems = [
   { id: 133, name: getName('Set Mix with Baked Rolls'), description: getDesc(), price: 135, category: 'Set Menu', image: '/images/webp/set mix baked rolls.webp' },
   { id: 134, name: getName('Set Tempura Mix'), description: getDesc(), price: 138, category: 'Set Menu', image: '/images/webp/set mix tempura roll.webp' },
   { id: 135, name: getName('Philadelphia Set'), description: getDesc(), price: 133, category: 'Set Menu', image: '/images/webp/set philadelphia .webp' },
-  { id: 136, name: getName('Set with Fried Salmon + Chicken'), description: getDesc(), price: 110, category: 'Set Menu', image: '/images/webp/set fried salmon + chicken.webp' },
+  { id: 136, name: getName('Set with Fried Salmon + Chicken'), description: getDesc(), price: 110, category: 'Set Menu', image: '/images/webp/set fried salmon and chicken.webp' },
   { id: 137, name: getName('Heart Set'), description: getDesc(), price: 130, category: 'Set Menu', image: '/images/webp/heart set.webp' },
   { id: 138, name: getName('Set of Baked Rolls'), description: getDesc(), price: 158, category: 'Set Menu', image: '/images/webp/set baked roll.webp' },
   { id: 139, name: getName('Combo Unagi'), description: getDesc(), price: 45, category: 'Set Menu', image: '/images/webp/combbo unagi.webp' },
