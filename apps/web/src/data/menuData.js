@@ -236,6 +236,5 @@ export const menuItems = [
   { id: 144, name: getName('Set Gunkan'), description: getDesc(), price: 96, category: 'Set Menu', image: '/images/webp/gunkan salmon.webp' },
   { id: 145, name: getName('Combo Shrimp'), description: getDesc(), price: 34, category: 'Set Menu', image: '/images/webp/combo shrimp.webp' },
   { id: 146, name: getName('Noodle Lunch'), description: getDesc(), price: 42, category: 'Set Menu', image: '/images/webp/noodels lunch.webp' },
-  { id: 147, name: getName('Hot Set – 4 Tempura Rolls'), description: getDesc(), price: 132, category: 'Set Menu', image: '/images/webp/set hot rolls.webp' },
-  { id: 148, name: getName('Onigiri Set'), description: getDesc(), price: 50, category: 'Set Menu', image: '/images/webp/set onigiri.webp' }
+  { id: 147, name: getName('Hot Set – 4 Tempura Rolls'), description: getDesc(), price: 132, category: 'Set Menu', image: '/images/webp/set hot rolls.webp' }
 ];
