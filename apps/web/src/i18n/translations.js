@@ -145,7 +145,7 @@ export const translations = {
       gridView: "ბადის ხედი"
     },
     categories: {
-      SETS: "სეთი", LUNCH_COMBO: "ლანჩი + კომბო", BAKED_ROLLS: "გამომცხვარი როლები",
+      SETS: "სეტი", LUNCH_COMBO: "ლანჩი + კომბო", BAKED_ROLLS: "გამომცხვარი როლები",
       DOMBURI: "დომბური",
       GUNKAN: "გუნკანი",
       HOT_ROLLS: "ცხელი როლები",
