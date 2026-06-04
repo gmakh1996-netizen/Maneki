@@ -160,8 +160,8 @@ export const menuItems = [
   { id: 82, name: getName('Chicken Noodles'), description: getDesc(), price: 20, category: 'Noodles Menu', image: '/images/webp/noodles%20chicken.webp' },
 
   // NORWEGIAN SALMON MENU
-  { id: 83, name: getName('Citrus Salted Norwegian Salmon (200g)'), description: getDesc(), price: 30, category: 'Norwegian Salmon Menu', image: 'https://images.unsplash.com/photo-1608731002187-d3448d224d18' },
-  { id: 84, name: getName('Salted Norwegian Salmon (200g)'), description: getDesc(), price: 30, category: 'Norwegian Salmon Menu', image: 'https://images.unsplash.com/photo-1697122334427-833eaf1799b9' },
+  { id: 83, name: getName('Citrus Salted Norwegian Salmon (200g)'), description: getDesc(), price: 30, category: 'Norwegian Salmon Menu', image: '/images/webp/Citrus%20salted%20Norwegian%20salmon.webp' },
+  { id: 84, name: getName('Salted Norwegian Salmon (200g)'), description: getDesc(), price: 30, category: 'Norwegian Salmon Menu', image: '/images/webp/Salted%20Norwegian%20salmon.webp' },
 
   // ONIGIRI MENU
   { id: 85, name: getName('Onigiri Set'), description: getDesc(), price: 50, category: 'Onigiri Menu', image: '/images/webp/set%20onigiri.webp' },
