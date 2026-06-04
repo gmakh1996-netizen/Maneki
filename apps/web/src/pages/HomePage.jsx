@@ -181,7 +181,7 @@ function HomePage() {
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="relative min-h-[40dvh] sm:min-h-[60dvh] flex items-center justify-center overflow-hidden">
+        <section className="relative aspect-[2/3] sm:aspect-auto sm:min-h-[60dvh] flex items-center justify-center overflow-hidden">
           <div className="absolute inset-0">
             {/* Mobile image */}
             <img
