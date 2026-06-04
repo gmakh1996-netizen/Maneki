@@ -1,9 +1,53 @@
-import React from 'react';
-import { Phone, Clock, Sun, Moon, Instagram } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { Phone, Clock, Sun, Moon, Instagram, ChevronDown, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useLanguage } from '../hooks/useLanguage';
 import { useTheme } from '../hooks/useTheme';
+
+const LANGS = [
+  { value: 'en', label: 'English' },
+  { value: 'ka', label: 'ქართული' },
+  { value: 'ru', label: 'Русский' },
+];
+
+function LangDropdown({ language, setLanguage }) {
+  const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    const handler = (e) => { if (ref.current && !ref.current.contains(e.target)) setOpen(false); };
+    document.addEventListener('mousedown', handler);
+    return () => document.removeEventListener('mousedown', handler);
+  }, []);
+
+  const current = LANGS.find(l => l.value === language);
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        onClick={() => setOpen(o => !o)}
+        className="flex items-center gap-1.5 h-8 sm:h-9 px-3 rounded-md border border-border bg-card text-xs sm:text-sm font-medium text-foreground hover:bg-muted transition-colors"
+      >
+        {current?.label}
+        <ChevronDown className={`h-3.5 w-3.5 opacity-50 transition-transform ${open ? 'rotate-180' : ''}`} />
+      </button>
+      {open && (
+        <div className="absolute right-0 top-full mt-1 min-w-[110px] rounded-md border border-border bg-popover text-popover-foreground shadow-md z-[200]">
+          {LANGS.map(({ value, label }) => (
+            <button
+              key={value}
+              onClick={() => { setLanguage(value); setOpen(false); }}
+              className="w-full flex items-center justify-between px-3 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors first:rounded-t-md last:rounded-b-md"
+            >
+              {label}
+              {language === value && <Check className="h-3.5 w-3.5 text-primary" />}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
 
 function Header() {
   const { language, setLanguage, t } = useLanguage();
@@ -13,9 +57,9 @@ function Header() {
     <header className="sticky top-0 z-50 w-full bg-background/95 backdrop-blur-md border-b border-border shadow-sm flex flex-col justify-center">
       <div className="w-full px-4 sm:px-6 lg:px-12">
         <div className="flex items-center justify-between h-20">
-          
+
           {/* Logo */}
-          <div 
+          <div
             className="flex-shrink-0 group flex items-center gap-2 sm:gap-4 bg-gradient-to-r from-muted/50 to-transparent border border-border/60 hover:border-primary/40 rounded-full py-1 px-1 pr-3 sm:pr-6 shadow-soft hover:shadow-glow-primary transition-all duration-300 cursor-pointer"
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           >
@@ -55,17 +99,10 @@ function Header() {
               <Instagram className="w-4 h-4" />
             </a>
 
-            {/* Language + Theme — always visible */}
-            <Select value={language} onValueChange={setLanguage}>
-              <SelectTrigger className="w-auto min-w-[90px] h-8 sm:h-9 bg-card border-border font-medium text-xs sm:text-sm px-3">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="en">English</SelectItem>
-                <SelectItem value="ka">ქართული</SelectItem>
-                <SelectItem value="ru">Русский</SelectItem>
-              </SelectContent>
-            </Select>
+            {/* Language selector */}
+            <LangDropdown language={language} setLanguage={setLanguage} />
+
+            {/* Theme toggle */}
             <Button
               variant="outline"
               size="icon"
