@@ -67,7 +67,7 @@ function KanbanMenu() {
         <button
           onClick={() => setOpen(true)}
           aria-label="Category menu"
-          className="fixed right-0 top-1/2 -translate-y-1/2 z-40 w-11 h-40 transition-transform hover:-translate-x-1"
+          className="hidden lg:flex items-center justify-center fixed right-0 top-1/2 -translate-y-1/2 z-40 w-11 h-40 transition-transform hover:-translate-x-1"
           style={{ background: PAPER, borderRadius: '6px 0 0 6px', boxShadow: '0 4px 18px rgba(0,0,0,0.5)' }}
         >
           <PlaqueFrame id="kbt" />
@@ -83,9 +83,9 @@ function KanbanMenu() {
       {/* Open state: the unrolled signboard */}
       {open && (
         <>
-          <div className="fixed inset-0 z-40 bg-black/45" onClick={() => setOpen(false)} aria-hidden="true" />
+          <div className="hidden lg:block fixed inset-0 z-40 bg-black/45" onClick={() => setOpen(false)} aria-hidden="true" />
           <div
-            className="kanban-unroll fixed right-2 sm:right-4 top-1/2 -translate-y-1/2 z-40 w-[240px]"
+            className="kanban-unroll hidden lg:block fixed right-4 top-1/2 -translate-y-1/2 z-40 w-[240px]"
             style={{ background: PAPER, borderRadius: 4, boxShadow: '0 12px 44px rgba(0,0,0,0.65)' }}
             role="dialog" aria-label="Categories"
           >
