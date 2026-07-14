@@ -278,3 +278,24 @@
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
+
+/* ── Sakura side ambience ─────────────────────────────────────
+   Fixed decorative strips on the left/right viewport edges:
+   a line-art cherry branch + slowly falling petals. lg+ only. */
+@keyframes sakura-fall {
+  0%   { transform: translate3d(0, -6vh, 0) rotate(0deg); opacity: 0; }
+  8%   { opacity: var(--petal-o, 0.55); }
+  35%  { transform: translate3d(16px, 32vh, 0) rotate(150deg); }
+  65%  { transform: translate3d(-12px, 64vh, 0) rotate(260deg); }
+  90%  { opacity: var(--petal-o, 0.55); }
+  100% { transform: translate3d(12px, 106vh, 0) rotate(400deg); opacity: 0; }
+}
+.sakura-petal {
+  position: absolute;
+  top: 0;
+  animation: sakura-fall linear infinite;
+  will-change: transform, opacity;
+}
+@media (prefers-reduced-motion: reduce) {
+  .sakura-petal { animation: none; opacity: 0; }
+}

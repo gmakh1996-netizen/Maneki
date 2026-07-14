@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { MapPin, Clock, Phone, Grid2x2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Header from '@/components/Header.jsx';
+import SakuraSides from '@/components/SakuraSides.jsx';
 import MenuCard from '@/components/MenuCard.jsx';
 import ProductModal from '@/components/ProductModal.jsx';
 import Cart from '@/components/Cart.jsx';
@@ -13,6 +15,7 @@ import { menuItems, categories, getCategoryTranslationKey } from '@/data/menuDat
 import { useLanguage } from '../hooks/useLanguage';
 import { supabase } from '../lib/supabase';
 function HomePage() {
+  const navigate = useNavigate();
   const [cart, setCart] = useState([]);
   const [selectedItem, setSelectedItem] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -361,7 +364,8 @@ function HomePage() {
 
         {/* Menu Grid */}
         <section id="menu" className="py-16 bg-background scroll-mt-header seigaiha-top">
-          <div className="w-full px-4 sm:px-6 lg:px-12">
+          <SakuraSides />
+          <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6">
             <div className="flex gap-8">
               {/* Main Content Area */}
               <div className="flex-1 min-w-0 flex flex-col min-h-[600px]">
@@ -434,7 +438,7 @@ function HomePage() {
                                   <ChevronRight className="w-5 h-5" />
                                 </button>
                                 <button
-                                  onClick={() => handleCategorySelect(category)}
+                                  onClick={() => navigate(`/category/${encodeURIComponent(category)}`)}
                                   className="border border-primary/50 bg-card text-primary font-semibold uppercase rounded-full px-4 sm:px-6 h-8 sm:h-9 text-[11px] sm:text-sm transition-colors hover:bg-primary hover:text-primary-foreground hover:border-primary"
                                 >
                                   {t('menu.viewAll')}

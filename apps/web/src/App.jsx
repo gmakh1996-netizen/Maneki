@@ -4,6 +4,7 @@ import { Route, Routes, BrowserRouter as Router } from 'react-router-dom';
 import { Toaster } from '@/components/ui/sonner';
 import ScrollToTop from './components/ScrollToTop';
 import HomePage from './pages/HomePage';
+import CategoryPage from './pages/CategoryPage';
 import CheckoutPage from './pages/CheckoutPage';
 import AdminPage from './pages/AdminPage';
 import { ThemeProvider } from './context/ThemeContext';
@@ -17,6 +18,7 @@ function App() {
           <ScrollToTop />
           <Routes>
             <Route path="/" element={<HomePage />} />
+            <Route path="/category/:category" element={<CategoryPage />} />
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/admin" element={<AdminPage />} />
           </Routes>
