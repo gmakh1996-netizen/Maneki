@@ -16,6 +16,22 @@ const PETALS = [
   { top: 80, left: 64, size: 8,  dur: 22, delay: 11,  o: 0.35 },
 ];
 
+/* Mobile: sparse petals drifting across the full width of the section */
+const MOBILE_PETALS = [
+  { top: 0,  left: 8,  size: 11, dur: 18, delay: 0,    o: 0.45 },
+  { top: 5,  left: 72, size: 9,  dur: 23, delay: 6,    o: 0.35 },
+  { top: 12, left: 38, size: 12, dur: 20, delay: 11,   o: 0.4  },
+  { top: 20, left: 88, size: 8,  dur: 25, delay: 3,    o: 0.3  },
+  { top: 28, left: 18, size: 10, dur: 21, delay: 15,   o: 0.4  },
+  { top: 36, left: 58, size: 9,  dur: 24, delay: 8,    o: 0.35 },
+  { top: 45, left: 80, size: 12, dur: 19, delay: 1.5,  o: 0.45 },
+  { top: 53, left: 30, size: 8,  dur: 26, delay: 12,   o: 0.3  },
+  { top: 61, left: 66, size: 10, dur: 22, delay: 5,    o: 0.4  },
+  { top: 70, left: 10, size: 11, dur: 20, delay: 17,   o: 0.4  },
+  { top: 78, left: 46, size: 9,  dur: 24, delay: 9,    o: 0.35 },
+  { top: 86, left: 84, size: 10, dur: 21, delay: 2,    o: 0.4  },
+];
+
 /* Strip fades in at the very top and out before the section ends */
 const STRIP_MASK = 'linear-gradient(to bottom, transparent 0, black 60px, black calc(100% - 140px), transparent 100%)';
 
@@ -110,6 +126,10 @@ function BranchColumn() {
 function SakuraSides() {
   return (
     <>
+      {/* Mobile/tablet: petals drift across the whole section */}
+      <div className="lg:hidden absolute inset-0 z-0 pointer-events-none overflow-hidden" aria-hidden="true">
+        {MOBILE_PETALS.map((p, i) => <Petal key={i} {...p} />)}
+      </div>
       <div
         className="hidden lg:block absolute inset-y-0 left-0 w-24 z-0 pointer-events-none overflow-hidden"
         style={{ WebkitMaskImage: STRIP_MASK, maskImage: STRIP_MASK }}

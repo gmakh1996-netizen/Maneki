@@ -235,10 +235,10 @@ function HomePage() {
           </div>
         </section>
 
-        {/* Restaurant Info */}
-        <section className="py-8 bg-card border-y border-border relative z-20 seigaiha-sides">
+        {/* Restaurant Info — desktop only; the info lives in the footer on mobile */}
+        <section className="hidden md:block py-8 bg-card border-y border-border relative z-20 seigaiha-sides">
           <div className="w-full px-4 sm:px-6 lg:px-12">
-            <div className="grid grid-cols-3 md:grid-cols-5 gap-1 sm:gap-4 text-center items-center">
+            <div className="grid grid-cols-5 gap-4 text-center items-center">
               <a
                 href="https://maps.google.com/?q=Merab+Kostava+71+Tbilisi"
                 target="_blank"
