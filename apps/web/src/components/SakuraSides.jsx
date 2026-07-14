@@ -3,50 +3,47 @@ import React from 'react';
 const PINK = '#f2a9bd';
 const PINK_SOFT = 'rgba(242, 169, 189, 0.22)';
 
-/* Deterministic petal configs: top offset (% of strip height), horizontal position (%),
-   size, duration (s), delay (s), opacity */
-const PETALS = [
-  { top: 0,  left: 12, size: 11, dur: 16, delay: 0,   o: 0.55 },
-  { top: 8,  left: 46, size: 9,  dur: 21, delay: 4,   o: 0.4  },
-  { top: 18, left: 70, size: 12, dur: 18, delay: 9,   o: 0.5  },
-  { top: 30, left: 28, size: 8,  dur: 24, delay: 13,  o: 0.35 },
-  { top: 42, left: 58, size: 10, dur: 19, delay: 6.5, o: 0.45 },
-  { top: 55, left: 8,  size: 9,  dur: 23, delay: 17,  o: 0.4  },
-  { top: 68, left: 40, size: 11, dur: 20, delay: 2,   o: 0.5  },
-  { top: 80, left: 64, size: 8,  dur: 22, delay: 11,  o: 0.35 },
-];
+/* Deterministic pseudo-random petal generator. Every petal falls the FULL height
+   of the container; a negative delay (fraction of its cycle) scatters petals
+   along the whole path from the first frame, so the entire section rains. */
+const makePetals = (count, seed = 0) =>
+  Array.from({ length: count }, (_, i) => {
+    const dur = 35 + ((i * 11 + seed * 3) % 36); // 35–70s per full drop
+    return {
+      left: (i * 53 + seed * 17) % 90,
+      size: 8 + ((i * 7 + seed) % 6),
+      dur,
+      delay: (((i * 61.8 + seed * 13) % 100) / 100) * dur, // used as negative offset
+      sway: 6 + ((i * 5 + seed) % 5),
+      o: 0.3 + ((i * 13 + seed * 5) % 26) / 100,
+    };
+  });
 
-/* Mobile: sparse petals drifting across the full width of the section */
-const MOBILE_PETALS = [
-  { top: 0,  left: 8,  size: 11, dur: 18, delay: 0,    o: 0.45 },
-  { top: 5,  left: 72, size: 9,  dur: 23, delay: 6,    o: 0.35 },
-  { top: 12, left: 38, size: 12, dur: 20, delay: 11,   o: 0.4  },
-  { top: 20, left: 88, size: 8,  dur: 25, delay: 3,    o: 0.3  },
-  { top: 28, left: 18, size: 10, dur: 21, delay: 15,   o: 0.4  },
-  { top: 36, left: 58, size: 9,  dur: 24, delay: 8,    o: 0.35 },
-  { top: 45, left: 80, size: 12, dur: 19, delay: 1.5,  o: 0.45 },
-  { top: 53, left: 30, size: 8,  dur: 26, delay: 12,   o: 0.3  },
-  { top: 61, left: 66, size: 10, dur: 22, delay: 5,    o: 0.4  },
-  { top: 70, left: 10, size: 11, dur: 20, delay: 17,   o: 0.4  },
-  { top: 78, left: 46, size: 9,  dur: 24, delay: 9,    o: 0.35 },
-  { top: 86, left: 84, size: 10, dur: 21, delay: 2,    o: 0.4  },
-];
+/* Desktop side strips */
+const PETALS = makePetals(22, 1);
+/* Mobile: petals drifting across the full width of the section */
+const MOBILE_PETALS = makePetals(45, 4);
 
 /* Strip fades in at the very top and out before the section ends */
 const STRIP_MASK = 'linear-gradient(to bottom, transparent 0, black 60px, black calc(100% - 140px), transparent 100%)';
 
-function Petal({ top, left, size, dur, delay, o }) {
+function Petal({ left, size, dur, delay, sway, o }) {
   return (
-    <svg
-      viewBox="0 0 12 12" width={size} height={size}
-      className="sakura-petal"
-      style={{ top: `${top}%`, left: `${left}%`, animationDuration: `${dur}s`, animationDelay: `${delay}s`, '--petal-o': o }}
+    <div
+      className="sakura-petal-wrap"
+      style={{ left: `${left}%`, animationDuration: `${dur}s`, animationDelay: `-${delay}s` }}
     >
-      <path
-        d="M6 0.6 C8.9 2.1 10.1 5.4 8.4 8.8 C7.6 8.1 6.7 8.4 6 9.6 C5.3 8.4 4.4 8.1 3.6 8.8 C1.9 5.4 3.1 2.1 6 0.6 Z"
-        fill={PINK}
-      />
-    </svg>
+      <svg
+        viewBox="0 0 12 12" width={size} height={size}
+        className="sakura-petal-inner"
+        style={{ opacity: o, animationDuration: `${sway}s` }}
+      >
+        <path
+          d="M6 0.6 C8.9 2.1 10.1 5.4 8.4 8.8 C7.6 8.1 6.7 8.4 6 9.6 C5.3 8.4 4.4 8.1 3.6 8.8 C1.9 5.4 3.1 2.1 6 0.6 Z"
+          fill={PINK}
+        />
+      </svg>
+    </div>
   );
 }
 
@@ -126,9 +123,23 @@ function BranchColumn() {
 function SakuraSides() {
   return (
     <>
-      {/* Mobile/tablet: petals drift across the whole section */}
+      {/* Mobile/tablet: petals drift across the whole section, and a dragon
+          occasionally glides through behind the products at three heights */}
       <div className="lg:hidden absolute inset-0 z-0 pointer-events-none overflow-hidden" aria-hidden="true">
         {MOBILE_PETALS.map((p, i) => <Petal key={i} {...p} />)}
+        {[
+          { top: 16, w: 200, dur: 36, delay: -8 },
+          { top: 47, w: 170, dur: 46, delay: -30 },
+          { top: 76, w: 220, dur: 40, delay: -19 },
+        ].map((d, i) => (
+          <div key={`drg${i}`} className="dragon-cross"
+            style={{ top: `${d.top}%`, animationDuration: `${d.dur}s`, animationDelay: `${d.delay}s` }}>
+            <div className="dragon-float">
+              <img src="/dragon.png" alt="" width={d.w} height={Math.round(d.w * 452 / 1100)}
+                decoding="async" style={{ opacity: 0.5 }} />
+            </div>
+          </div>
+        ))}
       </div>
       <div
         className="hidden lg:block absolute inset-y-0 left-0 w-24 z-0 pointer-events-none overflow-hidden"
@@ -147,7 +158,7 @@ function SakuraSides() {
           <BranchColumn />
         </div>
         {PETALS.map((p, i) => (
-          <Petal key={i} {...p} delay={p.delay + 2.5} left={100 - p.left - 12} />
+          <Petal key={i} {...p} delay={p.delay + 2.5} left={Math.max(0, 88 - p.left)} />
         ))}
       </div>
     </>

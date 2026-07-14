@@ -288,20 +288,53 @@
 /* ── Sakura side ambience ─────────────────────────────────────
    Fixed decorative strips on the left/right viewport edges:
    a line-art cherry branch + slowly falling petals. lg+ only. */
-@keyframes sakura-fall {
-  0%   { transform: translate3d(0, -6vh, 0) rotate(0deg); opacity: 0; }
-  8%   { opacity: var(--petal-o, 0.55); }
-  35%  { transform: translate3d(16px, 32vh, 0) rotate(150deg); }
-  65%  { transform: translate3d(-12px, 64vh, 0) rotate(260deg); }
-  90%  { opacity: var(--petal-o, 0.55); }
-  100% { transform: translate3d(12px, 106vh, 0) rotate(400deg); opacity: 0; }
+/* Petal wrapper travels the FULL height of its container (top of the animated
+   section to its bottom); the inner svg sways and spins independently. */
+@keyframes sakura-drop {
+  from { top: -3%; }
+  to   { top: 103%; }
 }
-.sakura-petal {
+@keyframes sakura-sway {
+  0%   { transform: translateX(0) rotate(0deg); }
+  25%  { transform: translateX(13px) rotate(95deg); }
+  50%  { transform: translateX(-9px) rotate(185deg); }
+  75%  { transform: translateX(11px) rotate(275deg); }
+  100% { transform: translateX(0) rotate(360deg); }
+}
+.sakura-petal-wrap {
   position: absolute;
-  top: 0;
-  animation: sakura-fall linear infinite;
-  will-change: transform, opacity;
+  top: -3%;
+  animation: sakura-drop linear infinite;
+}
+.sakura-petal-inner {
+  display: block;
+  animation: sakura-sway ease-in-out infinite;
 }
 @media (prefers-reduced-motion: reduce) {
-  .sakura-petal { animation: none; opacity: 0; }
+  .sakura-petal-wrap { animation: none; opacity: 0; }
+  .sakura-petal-inner { animation: none; }
+}
+
+/* Dragons gliding across the menu behind the products (mobile ambient layer).
+   Outer layer crosses the full width; inner layer floats gently. */
+@keyframes dragon-cross {
+  from { transform: translateX(-260px); }
+  to   { transform: translateX(calc(100vw + 60px)); }
+}
+@keyframes dragon-float {
+  from { transform: translateY(-5px) rotate(-1deg); }
+  to   { transform: translateY(5px) rotate(1deg); }
+}
+.dragon-cross {
+  position: absolute;
+  left: 0;
+  z-index: 0;
+  animation: dragon-cross linear infinite;
+}
+.dragon-float {
+  animation: dragon-float 3.2s ease-in-out infinite alternate;
+}
+@media (prefers-reduced-motion: reduce) {
+  .dragon-cross, .dragon-float { animation: none; }
+  .dragon-cross { opacity: 0; }
 }
