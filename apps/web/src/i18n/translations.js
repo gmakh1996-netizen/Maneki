@@ -18,7 +18,8 @@ export const translations = {
     },
     menu: {
       allProducts: "All products",
-      gridView: "Grid View"
+      gridView: "Grid View",
+      viewAll: "View all"
     },
     categories: {
       SETS: "Set", LUNCH_COMBO: "Lunch + Combo", BAKED_ROLLS: "Baked Rolls",
@@ -51,7 +52,8 @@ export const translations = {
       quantity: "Quantity",
       addToCart: "Add to Cart",
       addedToCart: "Added to cart",
-      currency: "₾"
+      currency: "₾",
+      pieces: "pcs"
     },
     footer: {
       brand: "Sushi Delivery",
@@ -142,7 +144,8 @@ export const translations = {
     },
     menu: {
       allProducts: "ყველა პროდუქტი",
-      gridView: "ბადის ხედი"
+      gridView: "ბადის ხედი",
+      viewAll: "ყველას ნახვა"
     },
     categories: {
       SETS: "სეტი", LUNCH_COMBO: "ლანჩი + კომბო", BAKED_ROLLS: "გამომცხვარი როლები",
@@ -175,7 +178,8 @@ export const translations = {
       quantity: "რაოდენობა",
       addToCart: "კალათაში დამატება",
       addedToCart: "დაემატა კალათაში",
-      currency: "₾"
+      currency: "₾",
+      pieces: "ნაჭერი"
     },
     footer: {
       brand: "სუშის მიტანა",
@@ -266,7 +270,8 @@ export const translations = {
     },
     menu: {
       allProducts: "Все продукты",
-      gridView: "Сетка"
+      gridView: "Сетка",
+      viewAll: "Смотреть все"
     },
     categories: {
       SETS: "Сеты", LUNCH_COMBO: "Ланч + Комбо", BAKED_ROLLS: "Запеченные роллы",
@@ -299,7 +304,8 @@ export const translations = {
       quantity: "Количество",
       addToCart: "В корзину",
       addedToCart: "Добавлено в корзину",
-      currency: "₾"
+      currency: "₾",
+      pieces: "шт"
     },
     footer: {
       brand: "Доставка Суши",

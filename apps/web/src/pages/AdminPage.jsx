@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Pencil, Trash2, Ticket, Tag, MapPin, CalendarDays, RotateCw, Bell, Volume2, VolumeX, Check, Crosshair, X } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import SimpleCalendar from '../components/SimpleCalendar';
 import { menuItems } from '../data/menuData';
@@ -59,9 +60,9 @@ const ADMIN_PASSWORD = 'maneki2024';
 const T = {
   en: {
     title: 'Admin Panel — Maneki Sushi', logout: 'Logout',
-    soundOn: '🔔 Sound On', soundOff: '🔕 Sound Off', notifEnable: '📱 Notifications',
+    soundOn: 'Sound On', soundOff: 'Sound Off', notifEnable: 'Notifications',
     orders: 'Orders', promos: 'Promo Codes', total: 'Total', refresh: 'Refresh',
-    newOrder: '🍣 New Order!', status: 'Status:', new: 'New', completed: 'Completed',
+    newOrder: 'New Order!', status: 'Status:', new: 'New', completed: 'Completed',
     revenue: 'Revenue', completedOrders: 'Completed',
     addPromo: 'New Promo Code', code: 'Code (e.g. SALE10)',
     typePromoCode: 'Promo Code (manual entry)', typePromotion: 'Promotion (auto, shows on homepage)',
@@ -82,9 +83,9 @@ const T = {
   },
   ka: {
     title: 'ადმინ პანელი — Maneki Sushi', logout: 'გასვლა',
-    soundOn: '🔔 ხმა ჩართ.', soundOff: '🔕 ხმა გამორთ.', notifEnable: '📱 Notification',
+    soundOn: 'ხმა ჩართ.', soundOff: 'ხმა გამორთ.', notifEnable: 'Notification',
     orders: 'შეკვეთები', promos: 'პრომოკოდები', total: 'სულ', refresh: 'განახლება',
-    newOrder: '🍣 ახალი შეკვეთა!', status: 'სტატუსი:', new: 'ახალი', completed: 'დასრულდა',
+    newOrder: 'ახალი შეკვეთა!', status: 'სტატუსი:', new: 'ახალი', completed: 'დასრულდა',
     revenue: 'შემოსავალი', completedOrders: 'დასრულებული',
     addPromo: 'ახალი პრომოკოდი', code: 'კოდი (მაგ. SALE10)',
     typePromoCode: 'პრომო კოდი (ხელით შეყვანა)', typePromotion: 'Promotion (ავტო, მთ. გვერდზე)',
@@ -105,9 +106,9 @@ const T = {
   },
   ru: {
     title: 'Админ Панель — Maneki Sushi', logout: 'Выйти',
-    soundOn: '🔔 Звук вкл.', soundOff: '🔕 Звук выкл.', notifEnable: '📱 Уведомления',
+    soundOn: 'Звук вкл.', soundOff: 'Звук выкл.', notifEnable: 'Уведомления',
     orders: 'Заказы', promos: 'Промокоды', total: 'Всего', refresh: 'Обновить',
-    newOrder: '🍣 Новый заказ!', status: 'Статус:', new: 'Новый', completed: 'Завершён',
+    newOrder: 'Новый заказ!', status: 'Статус:', new: 'Новый', completed: 'Завершён',
     revenue: 'Выручка', completedOrders: 'Завершённых',
     addPromo: 'Новый промокод', code: 'Код (напр. SALE10)',
     typePromoCode: 'Промокод (ручной ввод)', typePromotion: 'Promotion (авто, на главной)',
@@ -167,14 +168,11 @@ export default function AdminPage() {
   const [calendarFromOpen, setCalendarFromOpen] = useState(false);
   const [calendarToOpen, setCalendarToOpen] = useState(false);
 
-  // Edit promo
+  // Edit promo (unified panel)
   const [editingPromo, setEditingPromo] = useState(null);
   const [editMaxUses, setEditMaxUses] = useState('');
-  const [editingPromoCode, setEditingPromoCode] = useState(null);
   const [editPromoCodeValue, setEditPromoCodeValue] = useState('');
-  const [editPromoProducts, setEditPromoProducts] = useState(null); // promo id being edited for products
   const [editPromoSelectedProducts, setEditPromoSelectedProducts] = useState([]);
-  const [editPromoProductCat, setEditPromoProductCat] = useState(null);
 
   // Edit order
   const [editingOrderId, setEditingOrderId] = useState(null);
@@ -212,7 +210,7 @@ export default function AdminPage() {
         setNewOrderAlert(order);
         setOrders(prev => prev.find(o => o.id === order.id) ? prev : [order, ...prev]);
         if (typeof Notification !== 'undefined' && Notification.permission === 'granted') {
-          new Notification('🍣 Maneki Sushi', {
+          new Notification('Maneki Sushi', {
             body: `${order.customer_name} · ${order.phone} · ₾${Number(order.total).toFixed(2)}`,
             icon: '/favicon.ico', tag: 'new-order', requireInteraction: true,
           });
@@ -251,8 +249,11 @@ export default function AdminPage() {
   };
 
   const addPromo = async () => {
-    if (!newPromo.code || !newPromo.discount_value) return;
-    await supabase.from('promo_codes').insert({
+    if (!newPromo.code || !newPromo.discount_value) {
+      alert(lang === 'ka' ? 'შეავსე კოდი და ფასდაკლების ველი' : lang === 'ru' ? 'Заполните код и размер скидки' : 'Fill in the code and discount fields');
+      return;
+    }
+    const { error } = await supabase.from('promo_codes').insert({
       code: newPromo.code.toUpperCase(),
       discount_type: newPromo.discount_type,
       discount_value: Number(newPromo.discount_value),
@@ -263,6 +264,10 @@ export default function AdminPage() {
       applicable_products: selectedProducts.length > 0 ? selectedProducts : null,
       promo_type: newPromo.promo_type,
     });
+    if (error) {
+      alert((lang === 'ka' ? 'ვერ დაემატა: ' : lang === 'ru' ? 'Не удалось добавить: ' : 'Failed to add: ') + error.message);
+      return;
+    }
     setNewPromo({ code: '', discount_type: 'percent', discount_value: '', max_uses: '', valid_from: '', expires_at: '', promo_type: 'promo_code' });
     setSelectedProducts([]);
     fetchPromos();
@@ -323,26 +328,29 @@ export default function AdminPage() {
     setEditingOrderId(null);
   };
 
-  const savePromoCodeName = async (id) => {
+  const openPromoEdit = (promo) => {
+    setEditingPromo(promo.id);
+    setEditPromoCodeValue(promo.code);
+    setEditMaxUses(promo.max_uses ?? '');
+    setEditPromoSelectedProducts(promo.applicable_products || []);
+  };
+
+  const savePromoEdit = async (id) => {
     const code = editPromoCodeValue.trim().toUpperCase();
-    if (!code) return;
-    await supabase.from('promo_codes').update({ code }).eq('id', id);
-    setPromos(prev => prev.map(p => p.id === id ? { ...p, code } : p));
-    setEditingPromoCode(null);
-  };
-
-  const saveMaxUses = async (id) => {
-    const val = editMaxUses === '' ? null : Number(editMaxUses);
-    await supabase.from('promo_codes').update({ max_uses: val }).eq('id', id);
-    setPromos(prev => prev.map(p => p.id === id ? { ...p, max_uses: val } : p));
+    if (!code) {
+      alert(lang === 'ka' ? 'კოდი ცარიელია' : lang === 'ru' ? 'Код пустой' : 'Code is empty');
+      return;
+    }
+    const max_uses = editMaxUses === '' ? null : Number(editMaxUses);
+    const applicable_products = editPromoSelectedProducts.length > 0 ? editPromoSelectedProducts : null;
+    const { error } = await supabase.from('promo_codes')
+      .update({ code, max_uses, applicable_products }).eq('id', id);
+    if (error) {
+      alert((lang === 'ka' ? 'ვერ შეინახა: ' : lang === 'ru' ? 'Не сохранилось: ' : 'Failed to save: ') + error.message);
+      return;
+    }
+    setPromos(prev => prev.map(p => p.id === id ? { ...p, code, max_uses, applicable_products } : p));
     setEditingPromo(null);
-  };
-
-  const savePromoProducts = async (id) => {
-    const val = editPromoSelectedProducts.length > 0 ? editPromoSelectedProducts : null;
-    await supabase.from('promo_codes').update({ applicable_products: val }).eq('id', id);
-    setPromos(prev => prev.map(p => p.id === id ? { ...p, applicable_products: val } : p));
-    setEditPromoProducts(null);
   };
 
   // Filter orders by date
@@ -356,20 +364,32 @@ export default function AdminPage() {
   const completedRevenue = filteredOrders.filter(o => o.status === 'completed').reduce((s, o) => s + Number(o.total), 0);
   const completedCount = filteredOrders.filter(o => o.status === 'completed').length;
 
-  const inp = 'w-full h-10 rounded-lg border border-input bg-background px-3 text-base sm:text-sm focus:outline-none focus:ring-1 focus:ring-ring';
+  const inp = 'w-full h-11 rounded-xl border border-border bg-background/70 px-3.5 text-base sm:text-sm transition-all focus:outline-none focus:ring-2 focus:ring-primary/35 focus:border-primary/60 placeholder:text-muted-foreground/60';
 
   if (!authed) return (
-    <div className="min-h-screen bg-background flex items-center justify-center p-4">
-      <div className="bg-card border border-border rounded-2xl p-8 w-full max-w-sm space-y-4">
-        <h1 className="text-xl font-bold text-center">Admin Panel</h1>
-        <input type="password" placeholder={t.password} value={pass}
-          onChange={e => setPass(e.target.value)} onKeyDown={e => e.key === 'Enter' && login()}
-          className={inp} />
-        <button onClick={login} className="w-full h-10 bg-primary text-white rounded-lg font-medium">{t.login}</button>
-        <div className="flex justify-center gap-2">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4 seigaiha-sides">
+      <div className="relative bg-card/80 backdrop-blur-xl border border-border rounded-3xl p-8 sm:p-10 w-full max-w-sm space-y-6 shadow-2xl">
+        <div className="absolute inset-x-0 top-0 h-1 rounded-t-3xl bg-gradient-to-r from-transparent via-primary to-transparent" />
+        <div className="text-center space-y-1.5">
+          <div className="mx-auto w-12 h-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+            <span className="text-xl font-bold text-primary select-none">M</span>
+          </div>
+          <h1 className="text-2xl font-bold tracking-tight">Maneki Sushi</h1>
+          <p className="text-xs uppercase tracking-[0.2em] text-muted-foreground">Admin Panel</p>
+        </div>
+        <div className="space-y-3">
+          <input type="password" placeholder={t.password} value={pass}
+            onChange={e => setPass(e.target.value)} onKeyDown={e => e.key === 'Enter' && login()}
+            className={inp} />
+          <button onClick={login}
+            className="w-full h-11 bg-primary text-primary-foreground rounded-xl font-semibold tracking-wide transition-all hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/25 active:scale-[0.98]">
+            {t.login}
+          </button>
+        </div>
+        <div className="flex justify-center gap-1 pt-1">
           {['en','ka','ru'].map(l => (
             <button key={l} onClick={() => setLang(l)}
-              className={`px-3 py-1 rounded-md text-xs font-medium ${lang===l ? 'bg-primary text-white' : 'bg-muted text-muted-foreground'}`}>
+              className={`px-3.5 py-1.5 rounded-full text-xs font-semibold transition-colors ${lang===l ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground hover:bg-muted'}`}>
               {l.toUpperCase()}
             </button>
           ))}
@@ -383,28 +403,35 @@ export default function AdminPage() {
       <audio src="/beep.wav" preload="auto" style={{display:'none'}} />
 
       {/* Header */}
-      <div className="sticky top-0 z-10 bg-background/95 backdrop-blur border-b border-border px-4 py-3">
+      <div className="sticky top-0 z-10 bg-background/80 backdrop-blur-xl border-b border-border/60 px-4 py-3">
         <div className="max-w-4xl mx-auto flex items-center justify-between gap-2 flex-wrap">
-          <h1 className="text-base sm:text-lg font-bold truncate">{t.title}</h1>
-          <div className="flex items-center gap-1.5 flex-wrap">
-            {['en','ka','ru'].map(l => (
-              <button key={l} onClick={() => setLang(l)}
-                className={`px-2 py-1 rounded text-xs font-medium ${lang===l ? 'bg-primary text-white' : 'bg-muted text-muted-foreground'}`}>
-                {l.toUpperCase()}
-              </button>
-            ))}
+          <div className="flex items-center gap-2.5 min-w-0">
+            <span className="w-2 h-2 rounded-full bg-primary shrink-0" />
+            <h1 className="text-base sm:text-lg font-bold tracking-tight truncate">{t.title}</h1>
+          </div>
+          <div className="flex items-center gap-2 flex-wrap">
+            <div className="flex items-center bg-muted/70 border border-border/60 rounded-full p-0.5">
+              {['en','ka','ru'].map(l => (
+                <button key={l} onClick={() => setLang(l)}
+                  className={`px-2.5 py-1 rounded-full text-[11px] font-semibold transition-colors ${lang===l ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}>
+                  {l.toUpperCase()}
+                </button>
+              ))}
+            </div>
             <button onClick={() => { if (!soundEnabled) { getAudio().volume = 0.8; beep(); } setSoundEnabled(v => !v); }}
-              className={`px-2.5 py-1.5 rounded-lg text-xs font-medium border ${soundEnabled ? 'bg-green-500/10 border-green-500/30 text-green-600' : 'bg-muted border-border text-muted-foreground'}`}>
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${soundEnabled ? 'bg-card border-primary/35 text-foreground' : 'bg-muted border-border text-muted-foreground'}`}>
+              {soundEnabled ? <Volume2 className="w-3.5 h-3.5 text-primary" /> : <VolumeX className="w-3.5 h-3.5" />}
               {soundEnabled ? t.soundOn : t.soundOff}
             </button>
             {notifPermission !== 'granted' && typeof Notification !== 'undefined' && (
               <button onClick={() => Notification.requestPermission().then(p => setNotifPermission(p))}
-                className="px-2.5 py-1.5 rounded-lg text-xs font-medium border bg-primary/10 border-primary/30 text-primary">
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium border border-border bg-card text-muted-foreground transition-colors hover:text-foreground hover:border-primary/35">
+                <Bell className="w-3.5 h-3.5" />
                 {t.notifEnable}
               </button>
             )}
             <button onClick={() => { sessionStorage.removeItem('admin'); setAuthed(false); }}
-              className="text-xs text-muted-foreground hover:text-foreground px-2">{t.logout}</button>
+              className="text-xs text-muted-foreground hover:text-foreground px-2 transition-colors">{t.logout}</button>
           </div>
         </div>
       </div>
@@ -412,16 +439,16 @@ export default function AdminPage() {
       <div className="max-w-4xl mx-auto px-4 py-6 space-y-4">
         {/* Custom confirm dialog */}
         {dialog && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
-            <div className="bg-card border border-border rounded-2xl p-6 w-full max-w-sm shadow-xl space-y-4">
-              <p className="text-sm font-medium text-center whitespace-pre-line">{dialog.message}</p>
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4">
+            <div className="bg-card border border-border rounded-2xl p-6 w-full max-w-sm shadow-2xl space-y-5">
+              <p className="text-sm font-medium text-center whitespace-pre-line leading-relaxed">{dialog.message}</p>
               <div className="flex gap-3">
                 <button onClick={() => { dialog.onNo(); }}
-                  className="flex-1 h-10 rounded-lg border border-border bg-muted text-sm font-medium hover:bg-border">
+                  className="flex-1 h-11 rounded-xl border border-border bg-muted/60 text-sm font-medium transition-colors hover:bg-muted">
                   არა
                 </button>
                 <button onClick={() => { dialog.onYes(); }}
-                  className="flex-1 h-10 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary/90">
+                  className="flex-1 h-11 rounded-xl bg-primary text-primary-foreground text-sm font-semibold transition-all hover:bg-primary/90 active:scale-[0.98]">
                   კი
                 </button>
               </div>
@@ -431,20 +458,26 @@ export default function AdminPage() {
 
         {/* New order alert */}
         {newOrderAlert && (
-          <div className="p-4 bg-primary text-white rounded-xl flex items-center justify-between shadow-lg">
-            <div>
-              <p className="font-bold">{t.newOrder}</p>
-              <p className="text-sm opacity-90">{newOrderAlert.customer_name} · {newOrderAlert.phone} · ₾{Number(newOrderAlert.total).toFixed(2)}</p>
+          <div className="p-4 bg-gradient-to-r from-primary to-primary/85 text-primary-foreground rounded-2xl flex items-center justify-between shadow-lg shadow-primary/25">
+            <div className="flex items-center gap-3 min-w-0">
+              <span className="relative flex h-2.5 w-2.5 shrink-0">
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-60"></span>
+                <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-white"></span>
+              </span>
+              <div className="min-w-0">
+                <p className="font-bold">{t.newOrder}</p>
+                <p className="text-sm opacity-90 truncate">{newOrderAlert.customer_name} · {newOrderAlert.phone} · ₾{Number(newOrderAlert.total).toFixed(2)}</p>
+              </div>
             </div>
-            <button onClick={() => setNewOrderAlert(null)} className="text-white/70 hover:text-white text-xl ml-4">✕</button>
+            <button onClick={() => setNewOrderAlert(null)} className="text-white/70 hover:text-white text-xl ml-4 shrink-0">✕</button>
           </div>
         )}
 
         {/* Tabs */}
-        <div className="flex gap-2">
+        <div className="inline-flex items-center bg-card border border-border rounded-full p-1 shadow-sm">
           {[['orders', t.orders], ['promos', t.promos]].map(([id, label]) => (
             <button key={id} onClick={() => setTab(id)}
-              className={`px-4 py-2 rounded-lg text-sm font-medium ${tab===id ? 'bg-primary text-white' : 'bg-card border border-border hover:bg-muted'}`}>
+              className={`px-5 py-2 rounded-full text-sm font-semibold transition-all ${tab===id ? 'bg-primary text-primary-foreground shadow-sm' : 'text-muted-foreground hover:text-foreground'}`}>
               {label}
             </button>
           ))}
@@ -455,20 +488,21 @@ export default function AdminPage() {
           <div className="space-y-3">
             {/* Revenue */}
             {completedCount > 0 && (
-              <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4 flex items-center justify-between">
+              <div className="relative overflow-hidden bg-card border border-border rounded-2xl p-5 flex items-center justify-between shadow-sm">
+                <div className="absolute inset-y-0 left-0 w-1 bg-primary rounded-l-2xl" />
                 <div>
-                  <p className="text-xs text-emerald-600 font-medium uppercase tracking-wide">{t.revenue}</p>
-                  <p className="text-2xl font-bold text-emerald-600">₾{completedRevenue.toFixed(2)}</p>
+                  <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-[0.15em]">{t.revenue}</p>
+                  <p className="text-3xl font-bold tracking-tight text-foreground mt-1">₾{completedRevenue.toFixed(2)}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-xs text-muted-foreground">{t.completedOrders}</p>
-                  <p className="text-lg font-semibold text-emerald-600">{completedCount}</p>
+                  <p className="text-[11px] text-muted-foreground font-semibold uppercase tracking-[0.15em]">{t.completedOrders}</p>
+                  <p className="text-xl font-bold text-foreground mt-1">{completedCount}</p>
                 </div>
               </div>
             )}
 
             {/* Date filter */}
-            <div className="bg-card border border-border rounded-xl p-4">
+            <div className="bg-card border border-border rounded-2xl p-4 shadow-sm">
               <div className="grid grid-cols-2 gap-3">
                 <div>
                   <p className="text-xs text-muted-foreground mb-1">{t.filterFrom}</p>
@@ -501,43 +535,46 @@ export default function AdminPage() {
               )}
             </div>
 
-            <div className="flex justify-between items-center">
-              <p className="text-sm text-muted-foreground">{t.total}: {filteredOrders.length}</p>
-              <button onClick={fetchOrders} className="text-sm text-primary">{t.refresh}</button>
+            <div className="flex justify-between items-center px-1">
+              <p className="text-sm text-muted-foreground">{t.total}: <span className="font-semibold text-foreground">{filteredOrders.length}</span></p>
+              <button onClick={fetchOrders} className="flex items-center gap-1.5 text-sm font-medium text-primary transition-colors hover:text-primary/80"><RotateCw className="w-3.5 h-3.5" /> {t.refresh}</button>
             </div>
 
             {loading ? <p className="text-center py-8 text-muted-foreground">{t.loading}</p>
               : filteredOrders.length === 0 ? <p className="text-center py-8 text-muted-foreground">{t.noOrders}</p>
               : filteredOrders.map(order => (
-              <div key={order.id} className={`bg-card border rounded-xl p-4 space-y-3 ${order.status === 'completed' ? 'border-emerald-500/30' : 'border-border'}`}>
+              <div key={order.id} className={`bg-card border rounded-2xl p-4 sm:p-5 space-y-3 shadow-sm transition-shadow hover:shadow-md ${order.status === 'completed' ? 'border-primary/25' : 'border-border'}`}>
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0 flex-1">
                     <p className="font-semibold truncate">{order.customer_name} — {order.phone}</p>
                     <p className="text-xs text-muted-foreground">
                       {dateLabel(order.created_at, t)} · {new Date(order.created_at).toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'})}
                     </p>
-                    {order.address && <p className="text-sm mt-0.5">📍 {order.address}</p>}
-                    {order.delivery_date && <p className="text-sm">📅 {order.delivery_date} {order.delivery_time}</p>}
+                    {order.address && <p className="text-sm mt-1 flex items-center gap-1.5"><MapPin className="w-3.5 h-3.5 text-muted-foreground shrink-0" />{order.address}</p>}
+                    {order.delivery_date && <p className="text-sm mt-0.5 flex items-center gap-1.5"><CalendarDays className="w-3.5 h-3.5 text-muted-foreground shrink-0" />{order.delivery_date} {order.delivery_time}</p>}
                   </div>
-                  <div className="text-right shrink-0 flex flex-col items-end gap-1">
-                    <p className="font-bold text-primary">₾{Number(order.total).toFixed(2)}</p>
-                    {order.promo_code && <p className="text-xs text-green-600">🎟 {order.promo_code}</p>}
+                  <div className="text-right shrink-0 flex flex-col items-end gap-1.5">
+                    <p className="text-lg font-bold tracking-tight text-primary">₾{Number(order.total).toFixed(2)}</p>
+                    {order.promo_code && <p className="text-xs font-medium text-primary flex items-center gap-1"><Ticket className="w-3 h-3" />{order.promo_code}</p>}
                     <button onClick={() => editingOrderId === order.id ? setEditingOrderId(null) : startEditOrder(order)}
-                      className="text-xs text-primary border border-primary/30 px-2 py-0.5 rounded-md hover:bg-primary/10">
-                      ✏ {editingOrderId === order.id ? t.cancelEdit : t.editOrder}
+                      className="flex items-center gap-1.5 text-xs font-medium text-foreground/80 border border-border px-2.5 py-1 rounded-full transition-colors hover:text-primary hover:border-primary/40">
+                      <Pencil className="w-3 h-3" />{editingOrderId === order.id ? t.cancelEdit : t.editOrder}
                     </button>
                     <button onClick={() => deleteOrder(order.id)}
-                      className="text-xs text-red-500 border border-red-500/30 px-2 py-0.5 rounded-md hover:bg-red-500/10">
-                      🗑 {t.deleteOrder}
+                      className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground border border-border px-2.5 py-1 rounded-full transition-colors hover:text-red-400 hover:border-red-400/40">
+                      <Trash2 className="w-3 h-3" />{t.deleteOrder}
                     </button>
                   </div>
                 </div>
 
                 {/* Items list (normal view) */}
                 {editingOrderId !== order.id && (
-                  <div className="text-xs text-muted-foreground space-y-0.5">
+                  <div className="text-xs text-muted-foreground space-y-1 bg-muted/40 border border-border/50 rounded-xl px-3 py-2.5">
                     {(order.items || []).map((item, i) => (
-                      <p key={i}>• {item.name?.en || item.name} ×{item.quantity} — ₾{(item.price * item.quantity).toFixed(2)}</p>
+                      <p key={i} className="flex justify-between gap-2">
+                        <span className="truncate">{item.name?.en || item.name} <span className="text-muted-foreground/70">×{item.quantity}</span></span>
+                        <span className="shrink-0 font-medium text-foreground/80">₾{(item.price * item.quantity).toFixed(2)}</span>
+                      </p>
                     ))}
                   </div>
                 )}
@@ -560,7 +597,7 @@ export default function AdminPage() {
                               className="w-6 h-6 rounded bg-muted text-sm flex items-center justify-center hover:bg-border">+</button>
                           </div>
                           <button onClick={() => removeEditItem(item.name)}
-                            className="text-red-500 text-xs hover:text-red-600">✕</button>
+                            className="text-muted-foreground transition-colors hover:text-red-400"><X className="w-3.5 h-3.5" /></button>
                         </div>
                       ))}
                     </div>
@@ -596,16 +633,16 @@ export default function AdminPage() {
                     {/* Save */}
                     <button onClick={() => saveEditOrder(order)}
                       className="w-full h-9 bg-primary text-white rounded-lg text-sm font-medium">
-                      💾 {t.saveOrder}
+                      <span className="flex items-center justify-center gap-1.5"><Check className="w-4 h-4" />{t.saveOrder}</span>
                     </button>
                   </div>
                 )}
 
                 {/* Only 2 statuses */}
                 <div className="flex gap-2">
-                  {[['new', 'bg-blue-500', t.new], ['completed', 'bg-emerald-600', t.completed]].map(([key, color, label]) => (
+                  {[['new', t.new], ['completed', t.completed]].map(([key, label]) => (
                     <button key={key} onClick={() => updateStatus(order.id, key)}
-                      className={`flex-1 py-1.5 rounded-lg text-xs text-white font-medium transition-opacity ${color} ${order.status===key ? 'opacity-100 ring-2 ring-offset-1 ring-primary' : 'opacity-35 hover:opacity-70'}`}>
+                      className={`flex-1 py-2 rounded-xl text-xs font-semibold border transition-all ${order.status===key ? 'bg-primary text-primary-foreground border-primary shadow-sm' : 'bg-transparent border-border text-muted-foreground hover:text-foreground hover:bg-muted/50'}`}>
                       {label}
                     </button>
                   ))}
@@ -618,17 +655,20 @@ export default function AdminPage() {
         {/* PROMOS */}
         {tab === 'promos' && (
           <div className="space-y-4">
-            <div className="bg-card border border-border rounded-xl p-4 space-y-3">
-              <h2 className="font-semibold">{t.addPromo}</h2>
+            <div className="bg-card border border-border rounded-2xl p-5 space-y-4 shadow-sm">
+              <div className="flex items-center gap-2.5">
+                <span className="w-1 h-5 rounded-full bg-primary" />
+                <h2 className="font-bold tracking-tight">{t.addPromo}</h2>
+              </div>
 
               {/* Type selector */}
               <div>
-                <p className="text-xs text-muted-foreground mb-1.5">{t.promoTypeLabel}</p>
+                <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground mb-2">{t.promoTypeLabel}</p>
                 <div className="flex gap-2 flex-wrap">
                   {[['promo_code', t.typePromoCode], ['promotion', t.typePromotion]].map(([val, label]) => (
                     <button key={val} type="button"
                       onClick={() => setNewPromo(p => ({...p, promo_type: val}))}
-                      className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition-colors ${newPromo.promo_type === val ? 'bg-primary text-white border-primary' : 'bg-muted border-border text-muted-foreground hover:bg-border'}`}>
+                      className={`px-3.5 py-2 rounded-xl text-xs font-semibold border transition-all ${newPromo.promo_type === val ? 'bg-primary text-primary-foreground border-primary shadow-sm' : 'bg-muted/60 border-border text-muted-foreground hover:text-foreground hover:bg-muted'}`}>
                       {label}
                     </button>
                   ))}
@@ -686,7 +726,7 @@ export default function AdminPage() {
                   <div className="max-h-56 overflow-y-auto p-2 space-y-1">
                     {selectedProducts.length > 0 && (
                       <button type="button" onClick={() => setSelectedProducts([])}
-                        className="w-full text-xs text-red-500 text-left px-2 py-1 hover:bg-red-500/10 rounded">
+                        className="w-full text-xs text-muted-foreground text-left px-2 py-1 rounded transition-colors hover:text-red-400 hover:bg-muted/50">
                         ✕ {lang==='ka' ? 'ყველას გაუქმება' : lang==='ru' ? 'Сбросить всё' : 'Clear all'}
                       </button>
                     )}
@@ -710,7 +750,10 @@ export default function AdminPage() {
                 )}
               </div>
 
-              <button onClick={addPromo} className="h-10 px-6 bg-primary text-white rounded-lg text-sm font-medium">{t.add}</button>
+              <button onClick={addPromo}
+                className="h-11 px-7 bg-primary text-primary-foreground rounded-xl text-sm font-semibold transition-all hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/25 active:scale-[0.98]">
+                {t.add}
+              </button>
             </div>
 
             {(() => {
@@ -719,17 +762,17 @@ export default function AdminPage() {
               const expiredCount = promos.filter(p => p.expires_at && new Date(p.expires_at) < now).length;
               return (
                 <div className="flex flex-wrap gap-2">
-                  <div className="bg-green-500/10 border border-green-500/30 rounded-lg px-3 py-2 flex items-center gap-1.5">
-                    <span className="w-2 h-2 rounded-full bg-green-500"></span>
-                    <span className="text-sm font-medium text-green-600">{t.active}: {activeCount}</span>
+                  <div className="bg-card border border-emerald-500/30 rounded-full px-4 py-2 flex items-center gap-2">
+                    <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span className="text-sm font-semibold text-foreground">{t.active}: {activeCount}</span>
                   </div>
-                  <div className="bg-card border border-border rounded-lg px-3 py-2">
-                    <span className="text-sm text-muted-foreground">{t.totalPromos}: {promos.length}</span>
+                  <div className="bg-card border border-border rounded-full px-4 py-2">
+                    <span className="text-sm text-muted-foreground">{t.totalPromos}: <span className="font-semibold text-foreground">{promos.length}</span></span>
                   </div>
                   {expiredCount > 0 && (
-                    <div className="bg-red-500/10 border border-red-500/30 rounded-lg px-3 py-2 flex items-center gap-1.5">
-                      <span className="w-2 h-2 rounded-full bg-red-500"></span>
-                      <span className="text-sm font-medium text-red-500">{t.expired}: {expiredCount}</span>
+                    <div className="bg-card border border-border rounded-full px-4 py-2 flex items-center gap-2">
+                      <span className="w-2 h-2 rounded-full bg-muted-foreground/50"></span>
+                      <span className="text-sm font-medium text-muted-foreground">{t.expired}: {expiredCount}</span>
                     </div>
                   )}
                 </div>
@@ -743,40 +786,22 @@ export default function AdminPage() {
               const notStarted = promo.valid_from && new Date(promo.valid_from) > now;
               const isReallyActive = promo.is_active && !isExpired && !notStarted;
               return (
-                <div key={promo.id} className={`bg-card border rounded-xl p-4 space-y-2 ${isReallyActive ? 'border-green-500/30' : 'border-border opacity-60'}`}>
+                <div key={promo.id} className={`bg-card border rounded-2xl p-4 sm:p-5 space-y-2.5 shadow-sm transition-shadow hover:shadow-md ${isReallyActive ? 'border-primary/25' : 'border-border opacity-60'}`}>
                   <div className="flex items-start justify-between gap-2">
                     <div className="min-w-0 flex-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        {editingPromoCode === promo.id ? (
-                          <div className="flex items-center gap-2">
-                            <input
-                              value={editPromoCodeValue}
-                              onChange={e => setEditPromoCodeValue(e.target.value.toUpperCase())}
-                              className="h-8 w-36 rounded-md border border-input bg-background px-2 text-base sm:text-sm font-bold focus:outline-none focus:ring-1 focus:ring-ring"
-                              autoFocus
-                              onKeyDown={e => e.key === 'Enter' && savePromoCodeName(promo.id)}
-                            />
-                            <button onClick={() => savePromoCodeName(promo.id)} className="h-8 px-3 bg-primary text-white rounded-md text-xs">{t.save}</button>
-                            <button onClick={() => setEditingPromoCode(null)} className="h-8 px-2 bg-muted rounded-md text-xs">✕</button>
-                          </div>
-                        ) : (
-                          <div className="flex items-center gap-2">
-                            <p className="font-bold">{promo.code}</p>
-                            <button onClick={() => { setEditingPromoCode(promo.id); setEditPromoCodeValue(promo.code); setEditingPromo(null); setEditPromoProducts(null); }}
-                              className="text-xs text-muted-foreground hover:text-primary">✏</button>
-                          </div>
-                        )}
+                        <p className="font-bold tracking-wide">{promo.code}</p>
                         <button
                           onClick={() => togglePromoType(promo.id, promo.promo_type)}
-                          className={`px-2 py-0.5 rounded-full text-xs font-medium transition-colors ${promo.promo_type === 'promotion' ? 'bg-purple-500/15 text-purple-600 hover:bg-purple-500/25' : 'bg-blue-500/15 text-blue-600 hover:bg-blue-500/25'}`}
+                          className="flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium border border-border bg-muted/50 text-muted-foreground transition-colors hover:text-foreground hover:border-primary/40"
                           title={lang==='ka' ? 'ტიპის შეცვლა' : 'Toggle type'}
                         >
-                          {promo.promo_type === 'promotion' ? '🏷 Promotion' : '🎟 Promo Code'}
+                          {promo.promo_type === 'promotion' ? <><Tag className="w-3 h-3" />Promotion</> : <><Ticket className="w-3 h-3" />Promo Code</>}
                         </button>
-                        {isExpired ? <span className="px-2 py-0.5 rounded-full text-xs bg-red-500/15 text-red-500">{t.expiredStatus}</span>
-                          : notStarted ? <span className="px-2 py-0.5 rounded-full text-xs bg-yellow-500/15 text-yellow-500">{t.notStarted}</span>
-                          : isReallyActive ? <span className="px-2 py-0.5 rounded-full text-xs bg-green-500/15 text-green-600 flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>{t.activeStatus}</span>
-                          : <span className="px-2 py-0.5 rounded-full text-xs bg-muted text-muted-foreground">{t.disabled}</span>}
+                        {isExpired ? <span className="px-2.5 py-0.5 rounded-full text-xs bg-muted text-muted-foreground">{t.expiredStatus}</span>
+                          : notStarted ? <span className="px-2.5 py-0.5 rounded-full text-xs bg-muted text-muted-foreground">{t.notStarted}</span>
+                          : isReallyActive ? <span className="px-2.5 py-0.5 rounded-full text-xs bg-emerald-500/10 text-emerald-500 font-medium flex items-center gap-1.5"><span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>{t.activeStatus}</span>
+                          : <span className="px-2.5 py-0.5 rounded-full text-xs bg-muted text-muted-foreground">{t.disabled}</span>}
                       </div>
                       <p className="text-xs text-muted-foreground mt-0.5">
                         {promo.discount_type==='percent' ? `${promo.discount_value}% ${t.discount}` : `₾${promo.discount_value} ${t.discount}`}
@@ -785,75 +810,92 @@ export default function AdminPage() {
                         {(promo.valid_from||promo.expires_at) && ` · ${promo.valid_from ? new Date(promo.valid_from).toLocaleDateString() : '∞'} → ${promo.expires_at ? new Date(promo.expires_at).toLocaleDateString() : '∞'}`}
                       </p>
                       {promo.applicable_products?.length > 0 && (
-                        <p className="text-xs text-primary mt-0.5">🎯 {promo.applicable_products.length} {lang==='ka' ? 'პროდუქტი' : lang==='ru' ? 'продукта' : 'products'}: {promo.applicable_products.slice(0,2).join(', ')}{promo.applicable_products.length > 2 ? `...` : ''}</p>
+                        <p className="text-xs text-primary mt-1 flex items-center gap-1"><Crosshair className="w-3 h-3 shrink-0" />{promo.applicable_products.length} {lang==='ka' ? 'პროდუქტი' : lang==='ru' ? 'продукта' : 'products'}: {promo.applicable_products.slice(0,2).join(', ')}{promo.applicable_products.length > 2 ? `...` : ''}</p>
                       )}
                     </div>
-                    <div className="flex flex-col gap-1 shrink-0">
+                    <div className="flex flex-col gap-1.5 shrink-0 items-end">
+                      <button onClick={() => editingPromo === promo.id ? setEditingPromo(null) : openPromoEdit(promo)}
+                        className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border transition-colors ${editingPromo === promo.id ? 'bg-primary text-primary-foreground border-primary' : 'border-primary/40 text-primary hover:bg-primary/10'}`}>
+                        <Pencil className="w-3 h-3" />{lang==='ka' ? 'რედაქტირება' : lang==='ru' ? 'Редакт.' : 'Edit'}
+                      </button>
                       <button onClick={() => togglePromo(promo.id, promo.is_active)}
-                        className={`px-2.5 py-1 rounded-lg text-xs font-medium ${promo.is_active ? 'bg-red-500/10 text-red-500' : 'bg-green-500/10 text-green-600'}`}>
+                        className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${promo.is_active ? 'border-border text-muted-foreground hover:text-foreground hover:bg-muted/50' : 'border-primary/40 text-primary hover:bg-primary/10'}`}>
                         {promo.is_active ? t.disable : t.enable}
                       </button>
                       <button onClick={() => deletePromo(promo.id)}
-                        className="px-2.5 py-1 rounded-lg text-xs font-medium bg-red-500/10 text-red-500">
-                        🗑 {t.deletePromo}
+                        className="flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border border-border text-muted-foreground transition-colors hover:text-red-400 hover:border-red-400/40">
+                        <Trash2 className="w-3 h-3" />{t.deletePromo}
                       </button>
                     </div>
                   </div>
-                  {/* Edit max uses */}
-                  {editingPromo === promo.id ? (
-                    <div className="flex gap-2 items-center">
-                      <input type="number" value={editMaxUses} onChange={e => setEditMaxUses(e.target.value)}
-                        placeholder="∞" className="h-8 w-28 rounded-md border border-input bg-background px-2 text-base sm:text-sm focus:outline-none" />
-                      <button onClick={() => saveMaxUses(promo.id)} className="h-8 px-3 bg-primary text-white rounded-md text-xs">{t.save}</button>
-                      <button onClick={() => setEditingPromo(null)} className="h-8 px-3 bg-muted rounded-md text-xs">✕</button>
-                    </div>
-                  ) : (
-                    <button onClick={() => { setEditingPromo(promo.id); setEditMaxUses(promo.max_uses ?? ''); setEditPromoProducts(null); }}
-                      className="text-xs text-primary hover:underline">✏ {t.editMaxUses}</button>
-                  )}
-
-                  {/* Edit applicable products */}
-                  {editPromoProducts === promo.id ? (
-                    <div className="border border-primary/30 rounded-xl overflow-hidden mt-1">
-                      <div className="flex items-center justify-between px-3 py-2 bg-primary/10">
-                        <span className="text-xs font-semibold">{lang==='ka' ? 'პროდუქტების რედაქტირება' : 'Edit products'}</span>
+                  {/* Unified edit panel */}
+                  {editingPromo === promo.id && (
+                    <div className="border border-primary/25 rounded-xl overflow-hidden mt-1">
+                      <div className="flex items-center justify-between px-3.5 py-2.5 bg-muted/40 border-b border-border/60">
+                        <span className="text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground">
+                          {lang==='ka' ? 'რედაქტირება' : lang==='ru' ? 'Редактирование' : 'Edit promo'}
+                        </span>
                         <div className="flex gap-2">
-                          <button onClick={() => savePromoProducts(promo.id)} className="h-7 px-3 bg-primary text-white rounded-md text-xs">{t.save}</button>
-                          <button onClick={() => setEditPromoProducts(null)} className="h-7 px-3 bg-muted rounded-md text-xs">✕</button>
+                          <button onClick={() => savePromoEdit(promo.id)}
+                            className="flex items-center gap-1.5 h-8 px-4 bg-primary text-primary-foreground rounded-full text-xs font-semibold transition-all hover:bg-primary/90">
+                            <Check className="w-3.5 h-3.5" />{t.save}
+                          </button>
+                          <button onClick={() => setEditingPromo(null)}
+                            className="h-8 w-8 flex items-center justify-center rounded-full border border-border text-muted-foreground transition-colors hover:text-foreground hover:bg-muted">
+                            <X className="w-3.5 h-3.5" />
+                          </button>
                         </div>
                       </div>
-                      <div className="p-2 max-h-52 overflow-y-auto space-y-1">
-                        <button type="button" onClick={() => setEditPromoSelectedProducts([])}
-                          className="w-full text-xs text-red-500 text-left px-2 py-1 hover:bg-red-500/10 rounded">
-                          ✕ {lang==='ka' ? 'ყველას გაუქმება' : 'Clear all'}
-                        </button>
-                        {Object.entries(PRODUCTS_BY_CAT).map(([cat, prods]) => (
-                          <div key={cat}>
-                            <p className="text-xs font-semibold text-muted-foreground px-2 py-1">{cat}</p>
-                            {prods.map((p, i) => (
-                              <label key={i} className="flex items-center gap-2 px-2 py-1 rounded hover:bg-muted cursor-pointer">
-                                <input type="checkbox"
-                                  checked={editPromoSelectedProducts.includes(p.name)}
-                                  onChange={e => setEditPromoSelectedProducts(prev =>
-                                    e.target.checked ? [...prev, p.name] : prev.filter(n => n !== p.name)
-                                  )} />
-                                <span className="text-sm flex-1">{p.name}</span>
-                                <span className="text-xs text-muted-foreground">₾{p.price}</span>
-                              </label>
+                      <div className="p-3.5 space-y-3">
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                          <div>
+                            <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground mb-1.5">
+                              {lang==='ka' ? 'კოდი' : lang==='ru' ? 'Код' : 'Code'}
+                            </p>
+                            <input value={editPromoCodeValue}
+                              onChange={e => setEditPromoCodeValue(e.target.value.toUpperCase())}
+                              onKeyDown={e => e.key === 'Enter' && savePromoEdit(promo.id)}
+                              className={inp} />
+                          </div>
+                          <div>
+                            <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground mb-1.5">{t.maxUses}</p>
+                            <input type="number" value={editMaxUses}
+                              onChange={e => setEditMaxUses(e.target.value)}
+                              placeholder="∞" className={inp} />
+                          </div>
+                        </div>
+                        <div>
+                          <p className="text-[11px] font-semibold uppercase tracking-[0.15em] text-muted-foreground mb-1.5">
+                            {lang==='ka' ? 'პროდუქტები' : lang==='ru' ? 'Продукты' : 'Products'}
+                            {' '}({editPromoSelectedProducts.length > 0 ? editPromoSelectedProducts.length : (lang==='ka' ? 'ყველა' : lang==='ru' ? 'все' : 'all')})
+                          </p>
+                          <div className="border border-border rounded-xl max-h-52 overflow-y-auto p-2 space-y-1">
+                            {editPromoSelectedProducts.length > 0 && (
+                              <button type="button" onClick={() => setEditPromoSelectedProducts([])}
+                                className="w-full text-xs text-muted-foreground text-left px-2 py-1 rounded transition-colors hover:text-red-400 hover:bg-muted/50">
+                                ✕ {lang==='ka' ? 'ყველას გაუქმება' : 'Clear all'}
+                              </button>
+                            )}
+                            {Object.entries(PRODUCTS_BY_CAT).map(([cat, prods]) => (
+                              <div key={cat}>
+                                <p className="text-xs font-semibold text-muted-foreground px-2 py-1">{cat}</p>
+                                {prods.map((p, i) => (
+                                  <label key={i} className="flex items-center gap-2 px-2 py-1 rounded hover:bg-muted cursor-pointer">
+                                    <input type="checkbox"
+                                      checked={editPromoSelectedProducts.includes(p.name)}
+                                      onChange={e => setEditPromoSelectedProducts(prev =>
+                                        e.target.checked ? [...prev, p.name] : prev.filter(n => n !== p.name)
+                                      )} />
+                                    <span className="text-sm flex-1">{p.name}</span>
+                                    <span className="text-xs text-muted-foreground">₾{p.price}</span>
+                                  </label>
+                                ))}
+                              </div>
                             ))}
                           </div>
-                        ))}
+                        </div>
                       </div>
                     </div>
-                  ) : (
-                    <button onClick={() => {
-                      setEditPromoProducts(promo.id);
-                      setEditPromoSelectedProducts(promo.applicable_products || []);
-                      setEditPromoProductCat(null);
-                      setEditingPromo(null);
-                    }} className="text-xs text-primary hover:underline">
-                      🎯 {lang==='ka' ? 'პროდუქტების რედაქტირება' : lang==='ru' ? 'Редакт. продукты' : 'Edit products'} ({promo.applicable_products?.length ?? lang==='ka' ? 'ყველა' : 'all'})
-                    </button>
                   )}
                 </div>
               );

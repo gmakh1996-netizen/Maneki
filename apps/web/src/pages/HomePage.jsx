@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Helmet } from 'react-helmet';
-import { MapPin, Clock, Phone, Grid2x2 } from 'lucide-react';
+import { MapPin, Clock, Phone, Grid2x2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -80,6 +80,11 @@ function HomePage() {
   };
   const toggleGridLayout = () => {
     setGridLayout(prev => prev === 'single' ? 'compact' : 'single');
+  };
+  const scrollRefs = React.useRef({});
+  const scrollCategory = (category, dir) => {
+    const el = scrollRefs.current[category];
+    if (el) el.scrollBy({ left: dir * el.clientWidth * 0.9, behavior: 'smooth' });
   };
   const [activePromos, setActivePromos] = useState([]);
 
@@ -359,7 +364,7 @@ function HomePage() {
           <div className="w-full px-4 sm:px-6 lg:px-12">
             <div className="flex gap-8">
               {/* Main Content Area */}
-              <div className="flex-1 flex flex-col min-h-[600px]">
+              <div className="flex-1 min-w-0 flex flex-col min-h-[600px]">
                 
                 {/* Controls Bar */}
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
@@ -384,10 +389,11 @@ function HomePage() {
                 </div>
 
                 {/* Products */}
-                <div className="flex-1">
+                <div className="flex-1 min-w-0">
                   <AnimatePresence mode="popLayout">
                     {displayCategories.map(category => {
                     const isPromoCategory = category === PROMO_CAT;
+                    const isCarousel = activeCategory === 'ALL';
                     const categoryItems = isPromoCategory
                       ? promoItems
                       : menuItems.filter(item => item.category === category);
@@ -404,25 +410,67 @@ function HomePage() {
                     }} transition={{
                       duration: 0.3
                     }} className="mb-16">
-                          <div className="flex items-center gap-4 mb-8">
-                            <h2 className="text-3xl font-bold text-foreground" style={{
+                          <div className="flex items-center gap-3 sm:gap-4 mb-8">
+                            <h2 className="text-2xl sm:text-3xl font-bold text-foreground shrink-0" style={{
                           letterSpacing: '-0.02em'
                         }}>
                               {category === PROMO_CAT ? (language === 'ka' ? 'პრომო' : language === 'ru' ? 'Промо' : 'Promotion') : t(`categories.${getCategoryTranslationKey(category)}`)}
                             </h2>
-                            <div className="seigaiha-line flex-1 mt-2"></div>
+                            <div className="seigaiha-line flex-1 mt-2 min-w-0"></div>
+                            {isCarousel && (
+                              <div className="flex items-center gap-2 shrink-0">
+                                <button
+                                  onClick={() => scrollCategory(category, -1)}
+                                  className="hidden sm:flex w-9 h-9 rounded-full border border-border bg-card text-foreground items-center justify-center hover:bg-muted transition-colors"
+                                  aria-label="Scroll left"
+                                >
+                                  <ChevronLeft className="w-5 h-5" />
+                                </button>
+                                <button
+                                  onClick={() => scrollCategory(category, 1)}
+                                  className="hidden sm:flex w-9 h-9 rounded-full border border-border bg-card text-foreground items-center justify-center hover:bg-muted transition-colors"
+                                  aria-label="Scroll right"
+                                >
+                                  <ChevronRight className="w-5 h-5" />
+                                </button>
+                                <button
+                                  onClick={() => handleCategorySelect(category)}
+                                  className="border border-primary/50 bg-card text-primary font-semibold uppercase rounded-full px-4 sm:px-6 h-8 sm:h-9 text-[11px] sm:text-sm transition-colors hover:bg-primary hover:text-primary-foreground hover:border-primary"
+                                >
+                                  {t('menu.viewAll')}
+                                </button>
+                              </div>
+                            )}
                           </div>
-                          <div className={`grid gap-4 sm:gap-6 ${gridLayout === 'compact' ? 'grid-cols-2' : 'grid-cols-1'} sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5`}>
-                            {categoryItems.map(item => (
-                              <MenuCard
-                                key={item.id}
-                                item={item}
-                                onClick={() => handleCardClick(item)}
-                                promoLabel={isPromoCategory ? getBestDiscount(item.name?.en || item.name) : null}
-                                discountedPrice={isPromoCategory ? calcDiscountedPrice(item.price, item.name?.en || item.name) : null}
-                              />
-                            ))}
-                          </div>
+                          {isCarousel ? (
+                            <div
+                              ref={el => { scrollRefs.current[category] = el; }}
+                              className="no-scrollbar flex gap-4 sm:gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory pb-1"
+                            >
+                              {categoryItems.map(item => (
+                                <div key={item.id} className="snap-start shrink-0 w-[calc(50%-0.5rem)] sm:w-[calc(50%-0.75rem)] lg:w-[calc(25%-1.125rem)] xl:w-[calc(20%-1.2rem)]">
+                                  <MenuCard
+                                    item={item}
+                                    onClick={() => handleCardClick(item)}
+                                    promoLabel={getBestDiscount(item.name?.en || item.name)}
+                                    discountedPrice={calcDiscountedPrice(item.price, item.name?.en || item.name)}
+                                  />
+                                </div>
+                              ))}
+                            </div>
+                          ) : (
+                            <div className={`grid gap-4 sm:gap-6 ${gridLayout === 'compact' ? 'grid-cols-2' : 'grid-cols-1'} sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-5`}>
+                              {categoryItems.map(item => (
+                                <MenuCard
+                                  key={item.id}
+                                  item={item}
+                                  onClick={() => handleCardClick(item)}
+                                  promoLabel={getBestDiscount(item.name?.en || item.name)}
+                                  discountedPrice={calcDiscountedPrice(item.price, item.name?.en || item.name)}
+                                />
+                              ))}
+                            </div>
+                          )}
                         </motion.div>;
                   })}
                   </AnimatePresence>

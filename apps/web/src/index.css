@@ -270,3 +270,11 @@
     scroll-margin-top: var(--header-height);
   }
 }
+/* Hide horizontal scrollbar on category carousels */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
