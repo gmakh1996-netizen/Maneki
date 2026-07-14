@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Header from '@/components/Header.jsx';
 import SakuraSides from '@/components/SakuraSides.jsx';
+import KanbanMenu from '@/components/KanbanMenu.jsx';
 import MenuCard from '@/components/MenuCard.jsx';
 import ProductModal from '@/components/ProductModal.jsx';
 import Cart from '@/components/Cart.jsx';
@@ -186,6 +187,7 @@ function HomePage() {
       </Helmet>
 
       <Header />
+      <KanbanMenu />
 
       <main className="flex-1">
         {/* Hero Section */}

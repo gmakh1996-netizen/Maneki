@@ -338,3 +338,16 @@
   .dragon-cross, .dragon-float { animation: none; }
   .dragon-cross { opacity: 0; }
 }
+
+/* Kanban signboard unrolls like a hanging scroll */
+@keyframes kanban-unroll {
+  from { transform: translateY(-50%) scaleY(0.04); opacity: 0.4; }
+  to   { transform: translateY(-50%) scaleY(1); opacity: 1; }
+}
+.kanban-unroll {
+  transform-origin: top center;
+  animation: kanban-unroll 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .kanban-unroll { animation: none; }
+}

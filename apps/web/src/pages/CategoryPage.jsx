@@ -4,6 +4,7 @@ import { Helmet } from 'react-helmet';
 import { ArrowLeft } from 'lucide-react';
 import Header from '@/components/Header.jsx';
 import SakuraSides from '@/components/SakuraSides.jsx';
+import KanbanMenu from '@/components/KanbanMenu.jsx';
 import MenuCard from '@/components/MenuCard.jsx';
 import ProductModal from '@/components/ProductModal.jsx';
 import Cart from '@/components/Cart.jsx';
@@ -124,6 +125,7 @@ function CategoryPage() {
       </Helmet>
 
       <Header />
+      <KanbanMenu />
 
       <main className="relative flex-1 py-10 sm:py-14">
         <SakuraSides />
