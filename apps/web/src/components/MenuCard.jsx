@@ -39,7 +39,7 @@ function MenuCard({ item, onClick, promoLabel, discountedPrice }) {
 
       {/* Info below image */}
       <div className="pt-2.5 sm:pt-4 text-center px-1">
-        <h3 className="text-foreground font-bold uppercase leading-tight line-clamp-2 text-[11px] sm:text-base tracking-wide group-hover:text-primary transition-colors">
+        <h3 className="text-foreground font-bold uppercase leading-tight sm:leading-tight line-clamp-2 min-h-[2.5em] text-[11px] sm:text-base tracking-wide group-hover:text-primary transition-colors">
           {itemName}
         </h3>
         {item.pieces != null && (
