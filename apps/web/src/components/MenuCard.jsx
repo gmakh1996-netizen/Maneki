@@ -1,8 +1,10 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Plus } from 'lucide-react';
 import { useLanguage } from '../hooks/useLanguage';
 
+/** Menu card, delivery-app style: rounded tile, inset photo, price and a round add button. */
 function MenuCard({ item, onClick, promoLabel, discountedPrice }) {
   const { language, t } = useLanguage();
 
@@ -13,6 +15,7 @@ function MenuCard({ item, onClick, promoLabel, discountedPrice }) {
     : item.image?.includes('?')
       ? item.image
       : `${item.image}?w=600&q=75&auto=format&fit=crop`;
+  const currency = t('product.currency');
 
   return (
     <motion.div
@@ -20,12 +23,12 @@ function MenuCard({ item, onClick, promoLabel, discountedPrice }) {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
       onClick={onClick}
-      className="group relative cursor-pointer transition-all duration-300 hover:-translate-y-1"
+      className="group relative cursor-pointer select-none rounded-[28px] bg-muted/60 p-2 sm:p-2.5 transition-colors hover:bg-muted"
     >
-      <div className="relative aspect-[4/3] overflow-hidden rounded-2xl bg-muted border border-border transition-shadow duration-300 group-hover:shadow-xl">
+      <div className="relative aspect-square rounded-[22px] overflow-hidden bg-background">
         {/* Discount badge — top-left corner of image */}
         {promoLabel && (
-          <div className="absolute top-2 left-2 sm:top-3 sm:left-3 z-10 bg-red-600 text-white px-2.5 py-1 sm:px-3.5 sm:py-1.5 rounded-full font-extrabold text-sm sm:text-base tracking-wide" style={{ whiteSpace: 'nowrap' }}>
+          <div className="absolute top-2 left-2 z-10 bg-badge text-badge-foreground px-2.5 py-1 rounded-full font-extrabold text-xs sm:text-sm tracking-wide" style={{ whiteSpace: 'nowrap' }}>
             {promoLabel}
           </div>
         )}
@@ -37,9 +40,8 @@ function MenuCard({ item, onClick, promoLabel, discountedPrice }) {
         />
       </div>
 
-      {/* Info below image */}
-      <div className="pt-2.5 sm:pt-4 text-center px-1">
-        <h3 className="text-foreground font-bold uppercase leading-tight sm:leading-tight line-clamp-2 min-h-[2.5em] text-[11px] sm:text-base tracking-wide group-hover:text-primary transition-colors">
+      <div className="px-1.5 pt-2.5">
+        <h3 className="text-foreground font-semibold text-xs sm:text-[15px] leading-tight line-clamp-2 min-h-[2.5em]">
           {itemName}
         </h3>
         {item.pieces != null && (
@@ -47,21 +49,18 @@ function MenuCard({ item, onClick, promoLabel, discountedPrice }) {
             {item.pieces} {t('product.pieces')}
           </p>
         )}
-        <div className="mt-1 sm:mt-1.5 flex flex-col items-center leading-tight">
+        <div className="mt-2 flex items-center justify-between gap-2">
           {discountedPrice != null ? (
-            <>
-              <span className="text-primary font-bold text-sm sm:text-lg">
-                {discountedPrice.toFixed(2)} {t('product.currency')}
-              </span>
-              <span className="text-muted-foreground line-through text-[11px] sm:text-sm">
-                {item.price.toFixed(2)}
-              </span>
-            </>
-          ) : (
-            <span className="text-primary font-bold text-sm sm:text-lg">
-              {item.price.toFixed(2)} {t('product.currency')}
+            <span className="flex flex-col leading-tight">
+              <span className="text-price font-extrabold text-sm sm:text-lg">{discountedPrice.toFixed(2)} {currency}</span>
+              <span className="text-muted-foreground line-through text-[11px] sm:text-sm">{item.price.toFixed(2)}</span>
             </span>
+          ) : (
+            <span className="text-price font-extrabold text-sm sm:text-lg">{item.price.toFixed(2)} {currency}</span>
           )}
+          <span className="shrink-0 w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-foreground text-background grid place-items-center transition-all group-hover:scale-110 group-hover:bg-primary group-hover:text-primary-foreground group-hover:shadow-[0_6px_16px_hsl(var(--primary)/0.45)]">
+            <Plus className="w-5 h-5" />
+          </span>
         </div>
       </div>
     </motion.div>

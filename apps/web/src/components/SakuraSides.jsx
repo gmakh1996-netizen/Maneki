@@ -1,7 +1,7 @@
 import React from 'react';
 
-const PINK = '#f2a9bd';
-const PINK_SOFT = 'rgba(242, 169, 189, 0.22)';
+const PINK = 'var(--petal, #f2a9bd)';
+const PINK_SOFT = 'var(--petal-soft, rgba(242, 169, 189, 0.22))';
 
 /* Deterministic pseudo-random petal generator. Every petal falls the FULL height
    of the container; a negative delay (fraction of its cycle) scatters petals
@@ -63,14 +63,14 @@ function BranchSvg() {
               transform={`rotate(${a})`}
               fill={PINK_SOFT} stroke={PINK} strokeWidth="1" strokeOpacity="0.8" />
           ))}
-          <circle cx="0" cy="0" r="1.6" fill="hsl(16 100% 60% / 0.85)" />
+          <circle cx="0" cy="0" r="1.6" fill="hsl(var(--branch) / 0.85)" />
         </g>
         <g id="bud">
           <circle cx="0" cy="0" r="3" fill={PINK_SOFT} stroke={PINK} strokeWidth="1" strokeOpacity="0.7" />
         </g>
       </defs>
 
-      <g fill="none" stroke="hsl(16 100% 60%)" strokeOpacity="0.6" strokeLinecap="round">
+      <g fill="none" stroke="hsl(var(--branch))" strokeOpacity="0.6" strokeLinecap="round">
         {/* Trunk: starts and ends dead-centre so tiles chain seamlessly */}
         <path strokeWidth="2.2" d="M55 0 C40 100 76 210 55 330 C36 450 74 560 55 680 C42 770 66 845 55 900" />
         {/* Twigs, anchored on the trunk curve */}

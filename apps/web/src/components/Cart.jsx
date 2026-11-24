@@ -46,8 +46,8 @@ function Cart({ items, onRemoveItem, onUpdateQuantity }) {
         aria-expanded={isExpanded}
       >
         <div className="flex items-center gap-3">
-          <div className="bg-primary/10 w-8 h-8 rounded-xl flex items-center justify-center">
-            <ShoppingCart className="w-4 h-4 text-primary" />
+          <div className="bg-accent2/10 w-8 h-8 rounded-xl flex items-center justify-center">
+            <ShoppingCart className="w-4 h-4 text-accent2" />
           </div>
           <h2 className="text-lg font-bold text-foreground">{t('cart.title')}</h2>
           <span className="bg-primary text-primary-foreground text-xs font-bold px-2 py-0.5 rounded-full">
@@ -90,7 +90,7 @@ function Cart({ items, onRemoveItem, onUpdateQuantity }) {
                               {itemName}
                             </h3>
                             <div className="flex justify-between items-center mb-2">
-                              <p className="text-sm font-semibold text-primary">
+                              <p className="text-sm font-semibold text-price">
                                 {(item.price * item.quantity).toFixed(2)} {t('product.currency')}
                               </p>
                               <p className="text-xs text-muted-foreground">
@@ -141,7 +141,7 @@ function Cart({ items, onRemoveItem, onUpdateQuantity }) {
                 </div>
                 <div className="flex justify-between text-lg font-bold pt-3 border-t border-border text-foreground">
                   <span>{t('cart.total')}</span>
-                  <span className="text-primary tabular-nums">{total.toFixed(2)} {t('product.currency')}</span>
+                  <span className="text-price tabular-nums">{total.toFixed(2)} {t('product.currency')}</span>
                 </div>
                 <Button
                   onClick={handleCheckout}

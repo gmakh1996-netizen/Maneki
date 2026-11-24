@@ -55,12 +55,12 @@ function ProductModal({ item, isOpen, onClose, onAddToCart }) {
           {/* Product Details */}
           <div className="flex flex-col gap-4">
             <div>
-              <p className="text-sm font-medium text-primary mb-1 uppercase tracking-wider">{catName}</p>
+              <p className="text-sm font-medium text-accent2 mb-1 uppercase tracking-wider">{catName}</p>
               <p className="text-base leading-relaxed text-muted-foreground">{itemDesc}</p>
             </div>
 
             <div className="text-3xl font-bold text-foreground">
-              {item.price.toFixed(2)} <span className="text-primary">{t('product.currency')}</span>
+              {item.price.toFixed(2)} <span className="text-price">{t('product.currency')}</span>
             </div>
 
             {/* Quantity Selector */}

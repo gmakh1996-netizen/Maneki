@@ -40,7 +40,7 @@ function LangDropdown({ language, setLanguage }) {
               className="w-full flex items-center justify-between px-3 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground transition-colors first:rounded-t-md last:rounded-b-md"
             >
               {label}
-              {language === value && <Check className="h-3.5 w-3.5 text-primary" />}
+              {language === value && <Check className="h-3.5 w-3.5 text-accent2" />}
             </button>
           ))}
         </div>
@@ -60,7 +60,7 @@ function Header() {
 
           {/* Logo */}
           <div
-            className="flex-shrink-0 group flex items-center gap-2 sm:gap-4 bg-gradient-to-r from-muted/50 to-transparent border border-border/60 hover:border-primary/40 rounded-full py-1 px-1 pr-3 sm:pr-6 shadow-soft hover:shadow-glow-primary transition-all duration-300 cursor-pointer"
+            className="flex-shrink-0 group flex items-center gap-2 sm:gap-4 bg-gradient-to-r from-muted/50 to-transparent border border-border/60 hover:border-accent2/40 rounded-full py-1 px-1 pr-3 sm:pr-6 shadow-soft hover:shadow-glow-primary transition-all duration-300 cursor-pointer"
             onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
           >
             <div className="relative flex items-center justify-center rounded-full overflow-hidden">
@@ -70,7 +70,7 @@ function Header() {
                 className="w-8 h-8 sm:w-9 sm:h-9 md:w-11 md:h-11 object-cover transition-transform duration-500 group-hover:scale-110"
               />
             </div>
-            <h1 className="text-sm sm:text-xl md:text-2xl font-samurai text-foreground group-hover:text-primary transition-colors duration-300 leading-none">
+            <h1 className="text-sm sm:text-xl md:text-2xl font-samurai text-foreground group-hover:text-accent2 transition-colors duration-300 leading-none">
               Maneki Sushi
             </h1>
           </div>
@@ -79,7 +79,7 @@ function Header() {
             {/* Contact Info — desktop only */}
             <div className="hidden md:flex items-center gap-4 mr-2">
               <a href="tel:+995598901848" className="flex items-center gap-2 text-sm bg-muted/30 px-3 py-1.5 rounded-full border border-border/40 hover:bg-muted/50 transition-colors">
-                <Phone className="w-4 h-4 text-primary" />
+                <Phone className="w-4 h-4 text-accent2" />
                 <span className="font-semibold tracking-wide">+995 598 901 848</span>
               </a>
               <div className="flex items-center gap-2 text-sm text-muted-foreground font-medium">
@@ -93,7 +93,7 @@ function Header() {
               href="https://www.instagram.com/maneki.sushi/"
               target="_blank"
               rel="noopener noreferrer"
-              className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-card border border-border hover:bg-primary/10 hover:border-primary/40 hover:text-primary flex items-center justify-center text-muted-foreground transition-all duration-200"
+              className="w-8 h-8 sm:w-9 sm:h-9 rounded-lg bg-card border border-border hover:bg-accent2/10 hover:border-accent2/40 hover:text-accent2 flex items-center justify-center text-muted-foreground transition-all duration-200"
               aria-label="Instagram"
             >
               <Instagram className="w-4 h-4" />

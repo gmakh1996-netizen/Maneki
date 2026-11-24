@@ -16,7 +16,7 @@ function SimpleCalendar({ value, onChange, open, onToggle, minDate, maxDate, the
   const color = theme === 'dark' ? '#fafafa' : '#18181b';
   const muted = theme === 'dark' ? '#888' : '#999';
   const border = theme === 'dark' ? '#2a2a2e' : '#e2e8f0';
-  const primary = '#ff6b35';
+  const primary = 'hsl(var(--primary))';
 
   const minD = new Date(minDate + 'T00:00:00');
   const maxD = new Date(maxDate + 'T00:00:00');
@@ -104,7 +104,7 @@ function SimpleCalendar({ value, onChange, open, onToggle, minDate, maxDate, the
                   style={{
                     width: '100%', aspectRatio: '1', border: 'none', borderRadius: '6px',
                     cursor: isDisabled ? 'default' : 'pointer', fontSize: '13px', fontWeight: 500,
-                    backgroundColor: isSelected ? primary : isToday ? `${primary}22` : 'transparent',
+                    backgroundColor: isSelected ? primary : isToday ? 'hsl(var(--primary) / 0.13)' : 'transparent',
                     color: isSelected ? '#fff' : isDisabled ? muted : color,
                     opacity: isDisabled ? 0.4 : 1,
                     display: 'flex', alignItems: 'center', justifyContent: 'center',

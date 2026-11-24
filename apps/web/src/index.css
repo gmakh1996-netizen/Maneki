@@ -119,7 +119,9 @@
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
     font-family: 'Outfit', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-    overflow-x: hidden;
+    /* clip, not hidden: hidden made <body> a scroll box of its own, so the sticky header and the
+       sticky category menu never stuck. clip still stops sideways scrolling. */
+    overflow-x: clip;
     max-width: 100vw;
     line-height: 1.625;
     -webkit-font-smoothing: antialiased;
@@ -203,7 +205,37 @@
     }
   }
 
-  /* ── Seigaiha artistic accents ── */
+  /* Colour roles. Orange (--primary) stays the action colour: hero, Order Now, checkout, cart count,
+     hover. Its companion is kinpaku gold (--accent2): icons, "View all", headings' details, footer,
+     the wave pattern. The page itself is warm charcoal rather than cold grey, with sakura pink as the
+     third, decorative colour. So: orange = act, gold = guide, pink = decorate. HSL triplets. */
+  :root {
+    --accent2: 34 62% 36%;            /* gold, darker for the light theme */
+    --price: var(--foreground);       /* prices on cards, cart, modal */
+    --badge: 0 72% 51%;               /* discount badge: red, apart from the orange CTA */
+    --badge-foreground: 0 0% 100%;
+    --pattern: 34 62% 36%;            /* seigaiha waves in gold */
+    --branch: 26 30% 40%;             /* sakura branches: warm bark */
+    --glow: var(--primary);           /* hero neon light: the one big orange statement */
+    --glow-text: 16 100% 89%;         /* hero neon letters */
+    --kanban: #f1e6cf;                /* MENU sign: washi paper ... */
+    --kanban-ink: #a8321a;            /* ... with vermilion ink */
+  }
+  .dark {
+    --accent2: 38 58% 64%;            /* kinpaku gold on the dark page */
+    --pattern: 38 58% 64%;
+    --branch: 28 32% 50%;
+    /* Warm charcoal instead of cold grey; --muted (the menu cards) is left as it is. */
+    --background: 24 12% 5%;
+    --card: 24 10% 8%;
+    --popover: 24 10% 8%;
+    --secondary: 24 8% 14%;
+    --border: 28 12% 17%;
+    --input: 28 12% 17%;
+  }
+
+  /* ── Seigaiha artistic accents ── (the wave tile is a mask; its colour is --pattern) */
+  :root { --seigaiha: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='40'%3E%3Ccircle cx='0' cy='40' r='40' fill='none' stroke='%23ff6b35' stroke-width='1.5' stroke-opacity='1'/%3E%3Ccircle cx='80' cy='40' r='40' fill='none' stroke='%23ff6b35' stroke-width='1.5' stroke-opacity='1'/%3E%3Ccircle cx='40' cy='0' r='40' fill='none' stroke='%23ff6b35' stroke-width='1.2' stroke-opacity='0.75'/%3E%3C/svg%3E"); }
 
   /* Side-wing decoration: pattern fades in from left & right edges */
   .seigaiha-sides {
@@ -214,12 +246,17 @@
     content: '';
     position: absolute;
     inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='40'%3E%3Ccircle cx='0' cy='40' r='40' fill='none' stroke='%23ff6b35' stroke-width='1.5' stroke-opacity='1'/%3E%3Ccircle cx='80' cy='40' r='40' fill='none' stroke='%23ff6b35' stroke-width='1.5' stroke-opacity='1'/%3E%3Ccircle cx='40' cy='0' r='40' fill='none' stroke='%23ff6b35' stroke-width='1.2' stroke-opacity='0.75'/%3E%3C/svg%3E");
-    background-size: 80px 40px;
-    -webkit-mask-image: linear-gradient(to right, black 0%, transparent 20%, transparent 80%, black 100%);
-    mask-image: linear-gradient(to right, black 0%, transparent 20%, transparent 80%, black 100%);
     opacity: 0.10;
     pointer-events: none;
+    background-color: hsl(var(--pattern));
+    -webkit-mask-image: var(--seigaiha), linear-gradient(to right, black 0%, transparent 20%, transparent 80%, black 100%);
+    mask-image: var(--seigaiha), linear-gradient(to right, black 0%, transparent 20%, transparent 80%, black 100%);
+    -webkit-mask-size: 80px 40px, 100% 100%;
+    mask-size: 80px 40px, 100% 100%;
+    -webkit-mask-repeat: repeat, no-repeat;
+    mask-repeat: repeat, no-repeat;
+    -webkit-mask-composite: source-in;
+    mask-composite: intersect;
   }
 
   /* Top-edge decoration: pattern fades down from top */
@@ -231,22 +268,32 @@
     position: absolute;
     top: 0; left: 0; right: 0;
     height: 110px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='40'%3E%3Ccircle cx='0' cy='40' r='40' fill='none' stroke='%23ff6b35' stroke-width='1.5' stroke-opacity='1'/%3E%3Ccircle cx='80' cy='40' r='40' fill='none' stroke='%23ff6b35' stroke-width='1.5' stroke-opacity='1'/%3E%3Ccircle cx='40' cy='0' r='40' fill='none' stroke='%23ff6b35' stroke-width='1.2' stroke-opacity='0.75'/%3E%3C/svg%3E");
-    background-size: 80px 40px;
-    -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
-    mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
     opacity: 0.08;
     pointer-events: none;
+    background-color: hsl(var(--pattern));
+    -webkit-mask-image: var(--seigaiha), linear-gradient(to bottom, black 0%, transparent 100%);
+    mask-image: var(--seigaiha), linear-gradient(to bottom, black 0%, transparent 100%);
+    -webkit-mask-size: 80px 40px, 100% 100%;
+    mask-size: 80px 40px, 100% 100%;
+    -webkit-mask-repeat: repeat, no-repeat;
+    mask-repeat: repeat, no-repeat;
+    -webkit-mask-composite: source-in;
+    mask-composite: intersect;
   }
 
   /* Horizontal divider line with wave texture */
   .seigaiha-line {
     height: 20px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='40'%3E%3Ccircle cx='0' cy='40' r='40' fill='none' stroke='%23ff6b35' stroke-width='1.5' stroke-opacity='1'/%3E%3Ccircle cx='80' cy='40' r='40' fill='none' stroke='%23ff6b35' stroke-width='1.5' stroke-opacity='1'/%3E%3Ccircle cx='40' cy='0' r='40' fill='none' stroke='%23ff6b35' stroke-width='1.2' stroke-opacity='0.75'/%3E%3C/svg%3E");
-    background-size: 40px 20px;
-    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%);
-    mask-image: linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%);
     opacity: 0.12;
+    background-color: hsl(var(--pattern));
+    -webkit-mask-image: var(--seigaiha), linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%);
+    mask-image: var(--seigaiha), linear-gradient(to bottom, transparent 0%, black 30%, black 70%, transparent 100%);
+    -webkit-mask-size: 40px 20px, 100% 100%;
+    mask-size: 40px 20px, 100% 100%;
+    -webkit-mask-repeat: repeat, no-repeat;
+    mask-repeat: repeat, no-repeat;
+    -webkit-mask-composite: source-in;
+    mask-composite: intersect;
   }
 
   /* Soft Shadows & Depth Effects */

@@ -42,6 +42,13 @@ module.exports = {
           DEFAULT: "hsl(var(--accent))",
           foreground: "hsl(var(--accent-foreground))",
         },
+        // Semantic roles (src/theme/Palettes.jsx): secondary accent, price text, discount badge
+        accent2: "hsl(var(--accent2) / <alpha-value>)",
+        price: "hsl(var(--price) / <alpha-value>)",
+        badge: {
+          DEFAULT: "hsl(var(--badge) / <alpha-value>)",
+          foreground: "hsl(var(--badge-foreground) / <alpha-value>)",
+        },
         popover: {
           DEFAULT: "hsl(var(--popover))",
           foreground: "hsl(var(--popover-foreground))",

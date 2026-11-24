@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import { MapPin, Clock, Phone, Grid2x2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Button } from '@/components/ui/button';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import Header from '@/components/Header.jsx';
 import SakuraSides from '@/components/SakuraSides.jsx';
@@ -15,6 +14,8 @@ import Footer from '@/components/Footer.jsx';
 import { menuItems, categories, getCategoryTranslationKey } from '@/data/menuData';
 import { useLanguage } from '../hooks/useLanguage';
 import { supabase } from '../lib/supabase';
+import NeonHero from '@/components/NeonHero.jsx';
+import { CategoryNav } from '@/components/CategoryNav.jsx';
 function HomePage() {
   const navigate = useNavigate();
   const [cart, setCart] = useState([]);
@@ -69,7 +70,9 @@ function HomePage() {
   const scrollToMenu = () => {
     const element = document.getElementById('menu');
     if (element) {
-      const headerOffset = 140;
+      // With the sticky category menu, land the first title just under it (the section has 64px top padding).
+      const nav = document.querySelector('nav[aria-label="Menu categories"]');
+      const headerOffset = nav ? nav.offsetHeight + 32 : 140;
       const elementPosition = element.getBoundingClientRect().top;
       const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
       window.scrollTo({
@@ -151,35 +154,13 @@ function HomePage() {
 
   const displayCategories = activeCategory === 'ALL' ? allCategories : [activeCategory];
 
-  const BTN_STYLES = [
-    { before:{ background:'transparent', color:'#fff', border:'2px solid #fff', borderRadius:'100px' }, after:{ background:'#fff', color:'#1a1a1a', border:'2px solid #fff', borderRadius:'100px', boxShadow:'0 6px 30px rgba(255,255,255,0.35)' } },
-    { before:{ background:'transparent', color:'#fff', border:'2px solid #fff', borderRadius:'10px' }, after:{ background:'#fff', color:'#1a1a1a', border:'2px solid #fff', borderRadius:'10px', boxShadow:'0 6px 30px rgba(255,255,255,0.35)' } },
-    { before:{ background:'rgba(255,255,255,0.2)', color:'#fff', border:'1.5px solid rgba(255,255,255,0.5)', borderRadius:'100px' }, after:{ background:'rgba(255,255,255,0.95)', color:'#1a1a1a', border:'1.5px solid #fff', borderRadius:'100px', boxShadow:'0 8px 32px rgba(255,255,255,0.3)' } },
-    { before:{ background:'rgba(255,255,255,0.2)', color:'#fff', border:'1.5px solid rgba(255,255,255,0.5)', borderRadius:'12px' }, after:{ background:'rgba(255,255,255,0.95)', color:'#1a1a1a', border:'1.5px solid #fff', borderRadius:'12px', boxShadow:'0 8px 32px rgba(255,255,255,0.3)' } },
-    { before:{ background:'rgba(255,255,255,0.25)', color:'#fff', border:'none', borderRadius:'100px' }, after:{ background:'#fff', color:'#1a1a1a', border:'none', borderRadius:'100px', transform:'translateY(-3px)', boxShadow:'0 12px 36px rgba(255,255,255,0.35)' } },
-    { before:{ background:'transparent', color:'#fff', border:'2px solid #fff', borderRadius:'100px', boxShadow:'0 0 0 4px rgba(255,255,255,0.15)' }, after:{ background:'#fff', color:'#1a1a1a', border:'2px solid #fff', borderRadius:'100px', boxShadow:'0 0 0 5px rgba(255,255,255,0.25), 0 6px 28px rgba(255,255,255,0.3)' } },
-    { before:{ background:'rgba(255,255,255,0.18)', color:'#fff', border:'1.5px solid rgba(255,255,255,0.6)', borderRadius:'100px' }, after:{ background:'rgba(255,255,255,0.95)', color:'#1a1a1a', border:'1.5px solid #fff', borderRadius:'100px', transform:'scale(1.06)', boxShadow:'0 8px 28px rgba(255,255,255,0.3)' } },
-    { before:{ background:'#fff', color:'#1a1a1a', border:'none', borderRadius:'100px' }, after:{ background:'transparent', color:'#fff', border:'2px solid #fff', borderRadius:'100px', boxShadow:'0 0 24px rgba(255,255,255,0.25)' } },
-    { before:{ background:'transparent', color:'#fff', border:'2px solid rgba(255,255,255,0.8)', borderRadius:'100px' }, after:{ background:'#fff', color:'#1a1a1a', border:'2px solid #fff', borderRadius:'100px', boxShadow:'0 4px 0 rgba(200,200,200,0.6), 0 8px 24px rgba(255,255,255,0.3)' } },
-    { before:{ background:'rgba(255,255,255,0.22)', color:'#fff', border:'1.5px solid rgba(255,255,255,0.55)', borderRadius:'100px' }, after:{ background:'#fff', color:'#1a1a1a', border:'1.5px solid #fff', borderRadius:'100px', boxShadow:'0 0 0 3px rgba(255,255,255,0.2), 0 0 0 8px rgba(255,255,255,0.08), 0 6px 28px rgba(255,255,255,0.35)' } },
-    { before:{ background:'transparent', color:'#fff', border:'2px solid #fff', borderRadius:'6px' }, after:{ background:'#fff', color:'#1a1a1a', border:'2px solid #fff', borderRadius:'6px', boxShadow:'4px 4px 0 rgba(255,255,255,0.4)' } },
-    { before:{ background:'rgba(255,255,255,0.3)', color:'#fff', border:'1px solid rgba(255,255,255,0.6)', borderRadius:'14px' }, after:{ background:'#fff', color:'#1a1a1a', border:'1px solid #fff', borderRadius:'14px', transform:'translateY(-3px)', boxShadow:'0 12px 36px rgba(255,255,255,0.35)' } },
-    { before:{ background:'rgba(255,255,255,0.08)', color:'#fff', border:'2px solid rgba(255,255,255,0.7)', borderRadius:'100px' }, after:{ background:'#fff', color:'#1a1a1a', border:'2px solid #fff', borderRadius:'100px', boxShadow:'0 6px 28px rgba(255,255,255,0.35)' } },
-    { before:{ background:'rgba(255,255,255,0.15)', color:'#fff', border:'1.5px solid rgba(255,255,255,0.45)', borderRadius:'100px' }, after:{ background:'#fff', color:'#1a1a1a', border:'1.5px solid #fff', borderRadius:'100px', boxShadow:'0 6px 30px rgba(255,255,255,0.35)' } },
-    { before:{ background:'rgba(255,255,255,0.22)', color:'#fff', border:'2px solid rgba(255,255,255,0.55)', borderRadius:'100px' }, after:{ background:'rgba(255,255,255,0.95)', color:'#1a1a1a', border:'2px solid #fff', borderRadius:'100px', transform:'scale(1.05)', boxShadow:'0 0 0 4px rgba(255,255,255,0.2), 0 8px 30px rgba(255,255,255,0.35)' } },
-    { before:{ background:'transparent', color:'#fff', border:'2.5px solid #fff', borderRadius:'4px' }, after:{ background:'#fff', color:'#1a1a1a', border:'2.5px solid #fff', borderRadius:'4px', boxShadow:'0 6px 24px rgba(255,255,255,0.3)' } },
-    { before:{ background:'rgba(255,255,255,0.14)', color:'rgba(255,255,255,0.9)', border:'1.5px solid rgba(255,255,255,0.4)', borderRadius:'16px' }, after:{ background:'#fff', color:'#1a1a1a', border:'1.5px solid #fff', borderRadius:'16px', transform:'translateY(-2px)', boxShadow:'0 10px 30px rgba(255,255,255,0.3)' } },
-    { before:{ background:'transparent', color:'#fff', border:'1.5px solid rgba(255,255,255,0.6)', borderRadius:'100px', boxShadow:'0 0 0 5px rgba(255,255,255,0.1)' }, after:{ background:'rgba(255,255,255,0.95)', color:'#1a1a1a', border:'1.5px solid #fff', borderRadius:'100px', boxShadow:'0 0 0 5px rgba(255,255,255,0.2), 0 8px 28px rgba(255,255,255,0.35)' } },
-    { before:{ background:'rgba(255,255,255,0.28)', color:'#fff', border:'2px solid rgba(255,255,255,0.7)', borderRadius:'100px' }, after:{ background:'transparent', color:'#fff', border:'2px solid #fff', borderRadius:'100px', boxShadow:'0 0 30px rgba(255,255,255,0.3)', transform:'scale(1.04)' } },
-    { before:{ background:'rgba(255,255,255,0.2)', color:'#fff', border:'none', borderRadius:'100px', boxShadow:'0 0 0 3px rgba(255,255,255,0.3)' }, after:{ background:'#fff', color:'#1a1a1a', border:'none', borderRadius:'100px', boxShadow:'0 0 0 3px rgba(255,255,255,0.3), 0 0 0 8px rgba(255,255,255,0.1), 0 8px 32px rgba(255,255,255,0.4)', transform:'translateY(-2px)' } },
-  ];
+  // Horizontal category menu (photo stories): labels and one photo per category.
+  const promoLabel = language === 'ka' ? 'პრომო' : language === 'ru' ? 'Промо' : 'Promotion';
+  const navLabel = cat => cat === 'ALL' ? t('menu.allProducts') : cat === PROMO_CAT ? promoLabel : t(`categories.${getCategoryTranslationKey(cat)}`);
+  const navImage = cat => cat === 'ALL' ? '/hero-mobile.jpg'
+    : cat === PROMO_CAT ? promoItems[0]?.image
+    : menuItems.find(i => i.category === cat)?.image;
 
-  const [btnIdx, setBtnIdx] = React.useState(0);
-  const [btnHovered, setBtnHovered] = React.useState(false);
-  React.useEffect(() => {
-    const t = setInterval(() => setBtnIdx(i => (i + 1) % BTN_STYLES.length), 10000);
-    return () => clearInterval(t);
-  }, []);
   return <div className="min-h-screen bg-background flex flex-col">
       <Helmet>
         <title>Sushi Delivery - Fresh Japanese Cuisine</title>
@@ -191,54 +172,10 @@ function HomePage() {
 
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="relative aspect-square sm:aspect-auto sm:min-h-[60dvh] flex items-center justify-center overflow-hidden">
-          <div className="absolute inset-0">
-            {/* Mobile image */}
-            <img
-              src="/hero-mobile.jpg"
-              alt="Fresh sushi platter"
-              className="sm:hidden w-full h-full object-cover object-center"
-              fetchpriority="high"
-              loading="eager"
-            />
-            {/* Desktop image */}
-            <img
-              src="https://horizons-cdn.hostinger.com/b689a301-5c05-47d4-aff4-958d21843819/kana_sansetsu_-_frolicking_birds_in_plum_and_willow_trees-byNLk.jpg"
-              alt="Fresh sushi platter"
-              className="hidden sm:block w-full h-full object-cover object-center"
-              fetchpriority="high"
-              loading="eager"
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/50 to-transparent" />
-          </div>
-          
-          <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center pt-12">
-            <motion.div initial={{
-            opacity: 0,
-            y: 30
-          }} animate={{
-            opacity: 1,
-            y: 0
-          }} transition={{
-            duration: 0.6,
-            delay: 0.4
-          }}>
-              <Button
-                onClick={scrollToMenu}
-                size="lg"
-                className="hero-btn text-lg px-8 py-6 active:scale-98"
-                style={{ transition:'all 0.5s ease', ...(btnHovered ? BTN_STYLES[btnIdx].after : BTN_STYLES[btnIdx].before) }}
-                onMouseEnter={() => setBtnHovered(true)}
-                onMouseLeave={() => setBtnHovered(false)}
-              >
-                {t('hero.orderNow')}
-              </Button>
-            </motion.div>
-          </div>
-        </section>
+        <NeonHero />
 
         {/* Restaurant Info — desktop only; the info lives in the footer on mobile */}
-        <section className="hidden md:block py-8 bg-card border-y border-border relative z-20 seigaiha-sides overflow-hidden">
+        <section className="hidden md:block py-8 bg-card bg-[radial-gradient(ellipse_at_50%_0%,hsl(var(--accent2)/0.10),transparent_70%)] border-y border-accent2/15 relative z-20 seigaiha-sides overflow-hidden">
           <div className="relative z-10 w-full px-4 sm:px-6 lg:px-12">
             <div className="grid grid-cols-5 gap-4 text-center items-center">
               <a
@@ -247,8 +184,8 @@ function HomePage() {
                 rel="noopener noreferrer"
                 className="flex flex-col items-center gap-1.5 hover:opacity-75 transition-opacity"
               >
-                <div className="w-7 h-7 md:w-10 md:h-10 bg-primary/10 rounded-lg md:rounded-xl flex items-center justify-center shrink-0">
-                  <MapPin className="w-3.5 h-3.5 md:w-5 md:h-5 text-primary" />
+                <div className="w-7 h-7 md:w-10 md:h-10 bg-accent2/10 rounded-lg md:rounded-xl flex items-center justify-center shrink-0">
+                  <MapPin className="w-3.5 h-3.5 md:w-5 md:h-5 text-accent2" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-foreground text-[10px] md:text-sm leading-tight">{t('info.pickup')}</h3>
@@ -260,7 +197,7 @@ function HomePage() {
               {/* Wayō Buddhist Main Hall 金堂 */}
               <div className="hidden md:flex items-center justify-center" aria-hidden="true">
                 <svg viewBox="0 0 100 140" width="110" height="140" xmlns="http://www.w3.org/2000/svg" fill="none">
-                  <g stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-primary" opacity="0.4">
+                  <g stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-accent2" opacity="0.4">
                     <path d="M30,24 L50,8 L70,24"/>
                     <line x1="30" y1="24" x2="70" y2="24"/>
                     <line x1="4" y1="50" x2="30" y2="24"/>
@@ -296,8 +233,8 @@ function HomePage() {
               </div>
 
               <div className="flex flex-col items-center gap-1.5">
-                <div className="w-7 h-7 md:w-10 md:h-10 bg-primary/10 rounded-lg md:rounded-xl flex items-center justify-center shrink-0">
-                  <Clock className="w-3.5 h-3.5 md:w-5 md:h-5 text-primary" />
+                <div className="w-7 h-7 md:w-10 md:h-10 bg-accent2/10 rounded-lg md:rounded-xl flex items-center justify-center shrink-0">
+                  <Clock className="w-3.5 h-3.5 md:w-5 md:h-5 text-accent2" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-foreground text-[10px] md:text-sm leading-tight">{t('info.deliveryTime')}</h3>
@@ -309,7 +246,7 @@ function HomePage() {
               {/* Wayō Buddhist Three-Story Pagoda 三重塔 */}
               <div className="hidden md:flex items-center justify-center" aria-hidden="true">
                 <svg viewBox="0 0 100 140" width="110" height="140" xmlns="http://www.w3.org/2000/svg" fill="none">
-                  <g stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-primary" opacity="0.4">
+                  <g stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" className="text-accent2" opacity="0.4">
                     <line x1="50" y1="3" x2="50" y2="16"/>
                     <circle cx="50" cy="7" r="2.5"/>
                     <line x1="32" y1="26" x2="50" y2="15"/>
@@ -350,8 +287,8 @@ function HomePage() {
                 href="tel:+995598901848"
                 className="flex flex-col items-center gap-1.5 hover:opacity-75 transition-opacity"
               >
-                <div className="w-7 h-7 md:w-10 md:h-10 bg-primary/10 rounded-lg md:rounded-xl flex items-center justify-center shrink-0">
-                  <Phone className="w-3.5 h-3.5 md:w-5 md:h-5 text-primary" />
+                <div className="w-7 h-7 md:w-10 md:h-10 bg-accent2/10 rounded-lg md:rounded-xl flex items-center justify-center shrink-0">
+                  <Phone className="w-3.5 h-3.5 md:w-5 md:h-5 text-accent2" />
                 </div>
                 <div>
                   <h3 className="font-semibold text-foreground text-[10px] md:text-sm leading-tight">{t('info.contactUs')}</h3>
@@ -363,6 +300,8 @@ function HomePage() {
             </div>
           </div>
         </section>
+
+        <CategoryNav categories={allCategories} active={activeCategory} onSelect={handleCategorySelect} labelFor={navLabel} imageFor={navImage} />
 
         {/* Menu Grid */}
         <section id="menu" className="py-16 bg-background scroll-mt-header seigaiha-top">
@@ -388,7 +327,7 @@ function HomePage() {
 
                   {/* Mobile Layout Toggle */}
                   <div className="flex sm:hidden">
-                    <button onClick={toggleGridLayout} className={`flex items-center justify-center w-10 h-10 rounded-xl transition-colors border ${gridLayout === 'compact' ? 'bg-primary text-primary-foreground border-primary shadow-sm' : 'bg-card text-muted-foreground border-border hover:bg-muted hover:text-foreground'}`} aria-label="Toggle grid layout">
+                    <button onClick={toggleGridLayout} className={`flex items-center justify-center w-10 h-10 rounded-xl transition-colors border ${gridLayout === 'compact' ? 'bg-foreground text-background border-foreground shadow-sm' : 'bg-card text-muted-foreground border-border hover:bg-muted hover:text-foreground'}`} aria-label="Toggle grid layout">
                       <Grid2x2 className="w-4 h-4" />
                     </button>
                   </div>
@@ -417,9 +356,7 @@ function HomePage() {
                       duration: 0.3
                     }} className="mb-16">
                           <div className="flex items-center gap-3 sm:gap-4 mb-8">
-                            <h2 className="text-2xl sm:text-3xl font-bold text-foreground shrink-0" style={{
-                          letterSpacing: '-0.02em'
-                        }}>
+                            <h2 className="relative pb-2 text-xl sm:text-2xl font-bold text-foreground shrink-0 after:absolute after:left-0 after:bottom-0 after:h-[3px] after:w-7 after:rounded-full after:bg-accent2" style={{ letterSpacing: '-0.02em' }}>
                               {category === PROMO_CAT ? (language === 'ka' ? 'პრომო' : language === 'ru' ? 'Промо' : 'Promotion') : t(`categories.${getCategoryTranslationKey(category)}`)}
                             </h2>
                             <div className="seigaiha-line flex-1 mt-2 min-w-0"></div>
@@ -441,7 +378,7 @@ function HomePage() {
                                 </button>
                                 <button
                                   onClick={() => navigate(`/category/${encodeURIComponent(category)}`)}
-                                  className="border border-primary/50 bg-card text-primary font-semibold uppercase rounded-full px-4 sm:px-6 h-8 sm:h-9 text-[11px] sm:text-sm transition-colors hover:bg-primary hover:text-primary-foreground hover:border-primary"
+                                  className="border border-accent2/50 bg-card text-accent2 font-semibold uppercase rounded-full px-4 sm:px-6 h-8 sm:h-9 text-[11px] sm:text-sm transition-colors hover:bg-accent2 hover:text-background hover:border-accent2"
                                 >
                                   {t('menu.viewAll')}
                                 </button>
@@ -499,6 +436,8 @@ function HomePage() {
         </div>}
 
       <Footer />
+
+
 
       <ProductModal item={selectedItem} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} onAddToCart={handleAddToCart} />
     </div>;

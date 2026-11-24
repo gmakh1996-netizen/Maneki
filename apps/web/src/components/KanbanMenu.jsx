@@ -3,8 +3,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { categories, getCategoryTranslationKey } from '@/data/menuData';
 import { translations } from '@/i18n/translations';
 
-const INK = '#17100a';
-const PAPER = '#e08a3e';
+const INK = 'var(--kanban-ink, #17100a)';
+const PAPER = 'var(--kanban, #e9dcc6)';
 
 /* Aged-paper texture + hand-brushed double frame, like a traditional kanban sign */
 function PlaqueFrame({ id }) {
